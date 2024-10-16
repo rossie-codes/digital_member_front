@@ -54,7 +54,7 @@ const DeletedRedemptionItemsPage: React.FC = () => {
   useEffect(() => {
     const fetchDeletedRedemptionItems = async () => {
       try {
-        const response = await fetch('http://localhost:3000/redemption_item/get_deleted_redemption_item_list', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/get_deleted_redemption_item_list`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

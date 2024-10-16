@@ -78,7 +78,7 @@ const DiscountCodeListPage: React.FC = () => {
 
   const fetchDiscountCodes = async () => {
     try {
-      const response = await fetch('http://localhost:3000/discount_code/get_discount_code_list', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/get_discount_code_list`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -305,7 +305,7 @@ const DiscountCodeListPage: React.FC = () => {
         });
       } else {
         // Add new discount code
-        response = await fetch('http://localhost:3000/discount_code/post_new_discount_code', {
+        response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/post_new_discount_code`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

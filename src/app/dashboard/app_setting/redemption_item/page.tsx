@@ -71,7 +71,7 @@ const GetGiftSettingPage: React.FC = () => {
 
   const fetchRedemptionItems = async () => {
     try {
-      const response = await fetch('http://localhost:3000/redemption_item/get_redemption_list', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/get_redemption_list`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -258,7 +258,7 @@ const GetGiftSettingPage: React.FC = () => {
         });
       } else {
         // Add new item
-        response = await fetch('http://localhost:3000/redemption_item/post_redemption_item', {
+        response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/post_redemption_item`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

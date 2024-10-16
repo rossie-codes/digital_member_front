@@ -41,7 +41,7 @@
 //   useEffect(() => {
 //     const fetchSettings = async () => {
 //       try {
-//         const response = await fetch('http://localhost:3000/gift_setting/get_gift_setting', {
+//         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/gift_setting/get_gift_setting', {
 //           method: 'GET',
 //           headers: {
 //             'Content-Type': 'application/json',
@@ -95,7 +95,7 @@
 //     console.log('Settings to save:', settings);
 
 //     try {
-//       const response = await fetch('http://localhost:3000/gift_setting/post_gift_setting', {
+//       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/gift_setting/post_gift_setting', {
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',

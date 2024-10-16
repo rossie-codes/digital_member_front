@@ -59,7 +59,7 @@
 //   useEffect(() => {
 //     const fetchTiers = async () => {
 //       try {
-//         const response = await fetch('http://localhost:3000/admin/membership_tier_setting', {
+//         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/membership_tier_setting', {
 //           method: 'GET', // Ensure you're using the correct method
 //         });
 
@@ -133,7 +133,7 @@
 //     console.log('Form Submitted Successfully:', updatedMemberTiers);
 
 //     try {
-//       const response = await fetch('http://localhost:3000/admin/membership_tier', {
+//       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/membership_tier', {
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',

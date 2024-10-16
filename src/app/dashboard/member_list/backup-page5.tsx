@@ -43,7 +43,7 @@
 //   const fetchData = async () => {
 //     setLoading(true);
 //     try {
-//       const response = await fetch('http://localhost:3000/member/get_member_list');
+//       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list');
 
 //       if (!response.ok) {
 //         throw new Error(`HTTP error! status: ${response.status}`);
@@ -101,7 +101,7 @@
 //     try {
 //       setAddingMember(true);
 //       // Send the data to the backend
-//       const response = await fetch('http://localhost:3000/member/post_new_member', {
+//       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/member/post_new_member', {
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',

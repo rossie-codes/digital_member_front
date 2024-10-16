@@ -36,7 +36,7 @@
 
 //       const fetchData = async () => {
 //         try {
-//           const response = await fetch('http://localhost:3000/member');
+//           const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/member');
 
 //           console.log('Response OK:', response.ok);
 

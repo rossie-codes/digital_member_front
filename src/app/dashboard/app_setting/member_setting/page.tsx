@@ -132,7 +132,7 @@ const GetMemberSettingPage: React.FC = () => {
     };
   
     try {
-      const response = await fetch('http://localhost:3000/admin_setting/post_admin_setting', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin_setting/post_admin_setting`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -166,7 +166,7 @@ const GetMemberSettingPage: React.FC = () => {
     };
   
     try {
-      const response = await fetch('http://localhost:3000/admin_setting/post_member_point_rule', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin_setting/post_member_point_rule`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

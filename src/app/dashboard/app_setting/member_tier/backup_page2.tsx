@@ -70,7 +70,7 @@
 //     console.log('Form Submitted Successfully:', values);
 
 //     try {
-//       const response = await fetch('http://localhost:3000/admin/membership_tier', { // Replace with your actual endpoint
+//       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/membership_tier', { // Replace with your actual endpoint
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',

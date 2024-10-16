@@ -64,7 +64,7 @@ const GetMemberTierPage: React.FC = () => {
 
       // console.log('fetchTier try begin');
 
-      const response = await fetch('http://localhost:3000/membership_tier/get_membership_tier_setting', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/membership_tier/get_membership_tier_setting`, {
         method: 'GET', // Ensure you're using the correct method
       });
       // console.log('fetchTier try fetch finish: ', response);
@@ -147,7 +147,7 @@ const onFinish = async (values: MemberTierFormValues) => {
   console.log('Form Submitted Successfully:', updatedMemberTiers);
 
   try {
-    const response = await fetch('http://localhost:3000/membership_tier/post_membership_tier_setting', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/membership_tier/post_membership_tier_setting`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
