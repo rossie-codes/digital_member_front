@@ -1,0 +1,31 @@
+.container {
+  display: grid;
+  grid-template-rows: 50px 1fr 50px;
+  /* 分配 header、content 和 footer 的高度 */
+  height: 100vh;
+  /* 占满整个视窗高度 */
+}
+
+.header {
+  grid-row: 1;
+  /* 占第一行 */
+  background-color: #f0f0f0;
+  /* 设置背景颜色 */
+}
+
+.content {
+  grid-row: 2;
+  /* 占第二行 */
+  padding: 20px;
+  /* 设置内边距 */
+}
+
+.footer {
+  grid-row: 3;
+  /* 占第三行 */
+  background-color: #eee;
+  /* 设置背景颜色 */
+  text-align: center;
+  /* 设置文字居中 */
+}
+
