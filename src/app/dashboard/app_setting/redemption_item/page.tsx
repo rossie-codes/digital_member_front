@@ -188,7 +188,7 @@ const GetGiftSettingPage: React.FC = () => {
   const handleToggleActive = async (id: number, isActive: boolean) => {
     try {
       // Update the item's active status in the backend
-      const response = await fetch(`http://localhost:3000/redemption_item/put_redemption_item_status/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/put_redemption_item_status/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -249,7 +249,7 @@ const GetGiftSettingPage: React.FC = () => {
 
       if (isEditing && editingItemId !== null) {
         // Update existing item
-        response = await fetch(`http://localhost:3000/redemption_item/update_item/${editingItemId}`, {
+        response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/update_item/${editingItemId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -303,7 +303,7 @@ const GetGiftSettingPage: React.FC = () => {
 
   const handleDeleteItem = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:3000/redemption_item/delete_redemption_item/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/delete_redemption_item/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -88,7 +88,7 @@ const GetMemberDetailPage: React.FC = () => {
       try {
         console.log(memberPhone)
         const response = await fetch(
-          `http://localhost:3000/member/get_member_detail/${memberPhone}`, 
+          `${process.env.NEXT_PUBLIC_API_URL}/member/get_member_detail/${memberPhone}`, 
           {
             method: 'GET',
             headers: {
@@ -123,7 +123,7 @@ const GetMemberDetailPage: React.FC = () => {
     // Handle the form submission to update member details
     try {
       const response = await fetch(
-        `http://localhost:3000/member/update_member/${memberPhone}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/member/update_member/${memberPhone}`,
         {
           method: "POST",
           headers: {
@@ -147,7 +147,7 @@ const GetMemberDetailPage: React.FC = () => {
   const handleSuspendMembership = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/member/suspend_membership/${memberPhone}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/member/suspend_membership/${memberPhone}`,
         {
           method: "POST",
           headers: {

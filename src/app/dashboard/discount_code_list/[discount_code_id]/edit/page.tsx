@@ -59,7 +59,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
         const fetchDiscountCode = async () => {
             try {
                 console.log(discount_code_id)
-                const response = await fetch(`http://localhost:3000/discount_code/get_discount_code_detail/${discount_code_id}`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/get_discount_code_detail/${discount_code_id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -129,7 +129,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
         try {
             setUpdating(true);
 
-            const response = await fetch(`http://localhost:3000/discount_code/put_discount_code_detail/${discount_code_id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/put_discount_code_detail/${discount_code_id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -161,7 +161,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                 okType: 'danger',
                 cancelText: 'No',
                 onOk: async () => {
-                    const response = await fetch(`http://localhost:3000/discount_code/delete_discount_code/${discount_code_id}`, {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/delete_discount_code/${discount_code_id}`, {
                         method: 'DELETE',
                     });
 

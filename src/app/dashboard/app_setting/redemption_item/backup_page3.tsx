@@ -163,7 +163,7 @@
 //   const handleToggleActive = async (id: number, isActive: boolean) => {
 //     try {
 //       // Update the item's active status in the backend
-//       const response = await fetch(`http://localhost:3000/redemption_item/update_item/${id}`, {
+//       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/update_item/${id}`, {
 //         method: 'PATCH',
 //         headers: {
 //           'Content-Type': 'application/json',
@@ -224,7 +224,7 @@
 
 //       if (isEditing && editingItemId !== null) {
 //         // Update existing item
-//         response = await fetch(`http://localhost:3000/redemption_item/update_item/${editingItemId}`, {
+//         response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/update_item/${editingItemId}`, {
 //           method: 'PUT',
 //           headers: {
 //             'Content-Type': 'application/json',
@@ -284,7 +284,7 @@
 
 //   const handleDeleteItem = async (id: number) => {
 //     try {
-//       const response = await fetch(`http://localhost:3000/redemption_item/delete_item/${id}`, {
+//       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/delete_item/${id}`, {
 //         method: 'DELETE',
 //       });
 

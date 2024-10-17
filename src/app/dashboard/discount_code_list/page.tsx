@@ -230,7 +230,7 @@ const DiscountCodeListPage: React.FC = () => {
   const handleToggleActive = async (id: number, isActive: boolean) => {
     try {
       // Update the discount code's active status in the backend
-      const response = await fetch(`http://localhost:3000/discount_code/update_discount_code/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/update_discount_code/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -296,7 +296,7 @@ const DiscountCodeListPage: React.FC = () => {
 
       if (isEditing && editingItemId !== null) {
         // Update existing discount code
-        response = await fetch(`http://localhost:3000/discount_code/update_discount_code/${editingItemId}`, {
+        response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/update_discount_code/${editingItemId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -348,7 +348,7 @@ const DiscountCodeListPage: React.FC = () => {
 
   const handleDeleteItem = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:3000/discount_code/delete_discount_code/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/delete_discount_code/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

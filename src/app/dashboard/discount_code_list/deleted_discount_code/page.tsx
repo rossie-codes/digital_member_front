@@ -160,7 +160,7 @@ const DeletedDiscountCodePage: React.FC = () => {
   // Function to handle restoring an item
   const handleRestoreItem = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:3000/discount_code/restore_discount_code/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/restore_discount_code/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -190,7 +190,7 @@ const DeletedDiscountCodePage: React.FC = () => {
   //       okType: 'danger',
   //       cancelText: 'No',
   //       onOk: async () => {
-  //         const response = await fetch(`http://localhost:3000/redemption_item/permanent_delete_item/${id}`, {
+  //         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/permanent_delete_item/${id}`, {
   //           method: 'DELETE',
   //         });
   //         if (!response.ok) {

@@ -44,7 +44,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
         const fetchRedemptionItem = async () => {
             try {
                 console.log(redemption_item_id)
-                const response = await fetch(`http://localhost:3000/redemption_item/get_redemption_item_detail/${redemption_item_id}`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/get_redemption_item_detail/${redemption_item_id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
         try {
             setUpdating(true);
 
-            const response = await fetch(`http://localhost:3000/redemption_item/put_redemption_item_detail/${redemption_item_id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/put_redemption_item_detail/${redemption_item_id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                 cancelText: 'No',
                 onOk: async () => {
 
-                    const response = await fetch(`http://localhost:3000/redemption_item/delete_redemption_item/${redemption_item_id}`, {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/delete_redemption_item/${redemption_item_id}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
