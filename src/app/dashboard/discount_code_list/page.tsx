@@ -230,7 +230,7 @@ const DiscountCodeListPage: React.FC = () => {
   const handleToggleActive = async (id: number, isActive: boolean) => {
     try {
       // Update the discount code's active status in the backend
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/update_discount_code/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/put_discount_code_is_active/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
