@@ -31,6 +31,8 @@ interface NewMember {
 interface FetchParams {
   page: number;
   pageSize: number;
+  sortField?: string;
+  sortOrder?: string;
 }
 
 
@@ -72,10 +74,17 @@ const GetMemberListPage: React.FC = () => {
   const fetchData = async (params: FetchParams = { page: 1, pageSize: 10 }) => {
     setLoading(true);
     try {
-      const { page, pageSize } = params;
+      const { page, pageSize, sortField, sortOrder } = params;
 
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        pageSize: pageSize.toString(),
+      });
+      if (sortField) queryParams.append('sortField', sortField);
+      if (sortOrder) queryParams.append('sortOrder', sortOrder);
+      
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list?page=${page}&pageSize=${pageSize}`
+        `${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list?${queryParams.toString()}`
       );
 
       if (!response.ok) {
@@ -137,7 +146,7 @@ const GetMemberListPage: React.FC = () => {
         pageSize: pagination.pageSize,
       });
     }
-  }, []);
+  }, [pagination]);
 
   const onSearch = (value: string) => {
     setSearchText(value.trim().toLowerCase());
@@ -248,13 +257,15 @@ const GetMemberListPage: React.FC = () => {
     },
   ];
 
-  const handleTableChange = (pagination: any) => {
+  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
     setPagination(pagination);
-
-    // Fetch data based on the new pagination
+  
+    // Fetch data based on the new pagination and sorting
     fetchData({
       page: pagination.current,
       pageSize: pagination.pageSize,
+      sortField: sorter.field,
+      sortOrder: sorter.order,
     });
   };
 
