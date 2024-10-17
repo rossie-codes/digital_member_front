@@ -188,7 +188,7 @@ const GetGiftSettingPage: React.FC = () => {
   const handleToggleActive = async (id: number, isActive: boolean) => {
     try {
       // Update the item's active status in the backend
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/put_redemption_item_status/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/put_redemption_item_is_active/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
