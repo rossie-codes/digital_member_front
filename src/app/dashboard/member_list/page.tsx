@@ -3,17 +3,13 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { Table, Input, Space, Button, Modal, Form, message } from 'antd';
-import { ColumnsType } from 'antd/es/table';
 import type { TableColumnsType, TableProps } from 'antd';
-import { red } from '@ant-design/colors';
 import { FormOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation'; // For Next.js 13 with app directory
-
 
 const { Search } = Input;
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
-
 
 interface DataType {
   key: string;
@@ -25,11 +21,16 @@ interface DataType {
 }
 
 interface NewMember {
-  member_name: string
-  member_phone: number
-  birthday: string | null
-  referrer_phone: number | null
-  point: number
+  member_name: string;
+  member_phone: number;
+  birthday: string | null;
+  referrer_phone: number | null;
+  point: number;
+}
+
+interface FetchParams {
+  page: number;
+  pageSize: number;
 }
 
 
@@ -44,6 +45,18 @@ const GetMemberListPage: React.FC = () => {
   const [addingMember, setAddingMember] = useState<boolean>(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const router = useRouter();
+
+  // Pagination state
+  const [pagination, setPagination] = useState<{
+    current: number;
+    pageSize: number;
+    total: number;
+  }>({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+  });
+
   const handleEdit = (record: DataType) => {
     router.push(`/dashboard/member_list/${record.member_phone}/edit`);
   };
@@ -51,16 +64,19 @@ const GetMemberListPage: React.FC = () => {
   const rowSelection: TableRowSelection<DataType> = {
     selectedRowKeys,
     onChange: (selectedKeys: React.Key[]) => {
-      console.log(selectedKeys)
       setSelectedRowKeys(selectedKeys);
     },
   };
   const hasSelected = selectedRowKeys.length > 0;
 
-  const fetchData = async () => {
+  const fetchData = async (params: FetchParams = { page: 1, pageSize: 10 }) => {
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list`);
+      const { page, pageSize } = params;
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list?page=${page}&pageSize=${pageSize}`
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -69,11 +85,13 @@ const GetMemberListPage: React.FC = () => {
       const jsonData = await response.json();
       console.log('Parsed JSON Data:', jsonData);
 
-      const members: any[] = jsonData;
+      const members: any[] = jsonData.data;
+      const total: number = jsonData.total;
 
       if (!Array.isArray(members)) {
         throw new Error("Invalid data format: 'members' should be an array.");
       }
+
 
       const formatDate = (isoString: string): string => {
         if (!isoString) return 'N/A';
@@ -86,15 +104,23 @@ const GetMemberListPage: React.FC = () => {
       };
 
       const formattedData: DataType[] = members.map((member: any) => ({
-        key: member.id ? member.id.toString() : Math.random().toString(),
+        key: member.member_id ? member.member_id.toString() : Math.random().toString(),
         member_name: member.member_name || 'N/A',
         member_phone: member.member_phone || 'N/A',
         point: member.point || 'N/A',
-        membership_tier: member.membership_tier.member_tier_name || 'N/A',
+        membership_tier: member.membership_tier
+          ? member.membership_tier.member_tier_name
+          : 'N/A',
         membership_expiry_date: formatDate(member.membership_expiry_date),
       }));
 
       setData(formattedData);
+
+      // Update total count in pagination state
+      setPagination((prevPagination) => ({
+        ...prevPagination,
+        total: total,
+      }));
     } catch (err: any) {
       console.error("Fetch error:", err);
       setError(err);
@@ -106,7 +132,10 @@ const GetMemberListPage: React.FC = () => {
   useEffect(() => {
     if (!hasFetched.current) {
       hasFetched.current = true;
-      fetchData();
+      fetchData({
+        page: pagination.current,
+        pageSize: pagination.pageSize,
+      });
     }
   }, []);
 
@@ -126,9 +155,7 @@ const GetMemberListPage: React.FC = () => {
         body: JSON.stringify(values),
       });
 
-
       let errorMessage = 'Failed to add member';
-
 
       if (!response.ok) {
         // Try to parse the error message from the response body
@@ -156,8 +183,10 @@ const GetMemberListPage: React.FC = () => {
       form.resetFields();
 
       // Refresh the member list
-      fetchData();
-
+      fetchData({
+        page: pagination.current,
+        pageSize: pagination.pageSize,
+      });
     } catch (error: any) {
       console.error('Error adding member:', error.message);
       message.error(error.message);
@@ -166,13 +195,13 @@ const GetMemberListPage: React.FC = () => {
     }
   };
 
-  const filteredData = data.filter(item =>
-    item.member_name.toLowerCase().includes(searchText) ||
-    String(item.member_phone).toLowerCase().includes(searchText)
+  const filteredData = data.filter(
+    (item) =>
+      item.member_name.toLowerCase().includes(searchText) ||
+      String(item.member_phone).toLowerCase().includes(searchText)
   );
 
   const columns: TableColumnsType<DataType> = [
-    // ... your existing column definitions ...
     {
       title: '',
       dataIndex: 'edit',
@@ -213,12 +242,22 @@ const GetMemberListPage: React.FC = () => {
       dataIndex: 'membership_expiry_date',
       key: 'membership_expiry_date',
       sorter: (a: DataType, b: DataType) =>
-        new Date(a.membership_expiry_date).getTime() - new Date(b.membership_expiry_date).getTime(),
+        new Date(a.membership_expiry_date).getTime() -
+        new Date(b.membership_expiry_date).getTime(),
       sortDirections: ['ascend', 'descend', 'ascend'],
     },
   ];
 
-  if (loading) return <p>Loading...</p>;
+  const handleTableChange = (pagination: any) => {
+    setPagination(pagination);
+
+    // Fetch data based on the new pagination
+    fetchData({
+      page: pagination.current,
+      pageSize: pagination.pageSize,
+    });
+  };
+
   if (error) return <p>Error: {error.message}</p>;
 
   return (
@@ -241,7 +280,16 @@ const GetMemberListPage: React.FC = () => {
         dataSource={filteredData}
         columns={columns}
         locale={{ emptyText: 'No members found.' }}
-        pagination={{ position: ['none', 'bottomRight'] }}
+        pagination={{
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: pagination.total,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          position: ['bottomRight'],
+        }}
+        loading={loading}
+        onChange={handleTableChange}
       />
 
       <Modal
@@ -250,11 +298,7 @@ const GetMemberListPage: React.FC = () => {
         onCancel={() => setIsModalVisible(false)}
         footer={null}
       >
-        <Form
-          form={form}
-          onFinish={onFinish}
-          layout="vertical"
-        >
+        <Form form={form} onFinish={onFinish} layout="vertical">
           <Form.Item
             name="member_name"
             label="會員姓名"
@@ -303,6 +347,6 @@ const GetMemberListPage: React.FC = () => {
       </Modal>
     </div>
   );
-}
+};
 
 export default GetMemberListPage;
