@@ -3,11 +3,8 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { Table, Input, Space, Button, Modal, Form, message } from 'antd';
-import type { TableColumnsType, TablePaginationConfig } from 'antd';
+import type { TableColumnsType, PaginationProps } from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
-import SorterResult from "antd/es/table/index.js";
-import FilterValue from "antd/es/table/index.js";
-import type { Key } from 'react';
 import { FormOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation'; // For Next.js 13 with app directory
 
@@ -41,6 +38,10 @@ interface FetchParams {
   searchText?: string;
 }
 
+
+
+
+
 const GetMemberListPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
@@ -56,6 +57,8 @@ const GetMemberListPage: React.FC = () => {
   const [tierFilterOptions, setTierFilterOptions] = useState<{ text: string; value: string }[]>([]);
   const [tableFilters, setTableFilters] = useState<any>({});
   const [searchText, setSearchText] = useState<string>('');
+  const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`;
+
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
@@ -342,6 +345,7 @@ const GetMemberListPage: React.FC = () => {
           current: currentPage,
           pageSize: pageSize,
           total: totalItems,
+          showTotal: showTotal,
           showSizeChanger: true,
           showQuickJumper: true,
           position: ['bottomRight'],
