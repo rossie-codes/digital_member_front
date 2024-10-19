@@ -3,7 +3,11 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import { Table, Input, Space, Button, Modal, Form, message } from 'antd';
-import type { TableColumnsType, TableProps } from 'antd';
+import type { TableColumnsType, TablePaginationConfig } from 'antd';
+import type { ColumnsType, TableProps } from 'antd/es/table';
+import SorterResult from "antd/es/table/index.js";
+import FilterValue from "antd/es/table/index.js";
+import type { Key } from 'react';
 import { FormOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation'; // For Next.js 13 with app directory
 
@@ -33,35 +37,34 @@ interface FetchParams {
   pageSize: number;
   sortField?: string;
   sortOrder?: string;
+  filters?: any;
+  searchText?: string;
 }
 
-
 const GetMemberListPage: React.FC = () => {
-  const [data, setData] = useState<DataType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const hasFetched = useRef(false);
-  const [searchText, setSearchText] = useState<string>('');
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [form] = Form.useForm();
-  const [addingMember, setAddingMember] = useState<boolean>(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
   const router = useRouter();
-
-  // Pagination state
-  const [pagination, setPagination] = useState<{
-    current: number;
-    pageSize: number;
-    total: number;
-  }>({
-    current: 1,
-    pageSize: 10,
-    total: 0,
-  });
-
   const handleEdit = (record: DataType) => {
     router.push(`/dashboard/member_list/${record.member_phone}/edit`);
   };
+
+  const [data, setData] = useState<DataType[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [tierFilterOptions, setTierFilterOptions] = useState<{ text: string; value: string }[]>([]);
+  const [tableFilters, setTableFilters] = useState<any>({});
+  const [searchText, setSearchText] = useState<string>('');
+
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [form] = Form.useForm();
+  const [addingMember, setAddingMember] = useState<boolean>(false);
+
+  // Separate pagination state
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [totalItems, setTotalItems] = useState<number>(0);
 
   const rowSelection: TableRowSelection<DataType> = {
     selectedRowKeys,
@@ -74,7 +77,7 @@ const GetMemberListPage: React.FC = () => {
   const fetchData = async (params: FetchParams = { page: 1, pageSize: 10 }) => {
     setLoading(true);
     try {
-      const { page, pageSize, sortField, sortOrder } = params;
+      const { page, pageSize, sortField, sortOrder, filters, searchText } = params;
 
       const queryParams = new URLSearchParams({
         page: page.toString(),
@@ -82,7 +85,19 @@ const GetMemberListPage: React.FC = () => {
       });
       if (sortField) queryParams.append('sortField', sortField);
       if (sortOrder) queryParams.append('sortOrder', sortOrder);
-      
+
+      // Include filters in the queryParams
+      if (filters && filters.membership_tier) {
+        filters.membership_tier.forEach((value: string) =>
+          queryParams.append('membership_tier', value)
+        );
+      }
+
+      // Include search text in the queryParams
+      if (searchText) {
+        queryParams.append('searchText', searchText);
+      }
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list?${queryParams.toString()}`
       );
@@ -96,11 +111,12 @@ const GetMemberListPage: React.FC = () => {
 
       const members: any[] = jsonData.data;
       const total: number = jsonData.total;
+      const membershipTiers: string[] = jsonData.membership_tiers || [];
+
 
       if (!Array.isArray(members)) {
         throw new Error("Invalid data format: 'members' should be an array.");
       }
-
 
       const formatDate = (isoString: string): string => {
         if (!isoString) return 'N/A';
@@ -125,31 +141,48 @@ const GetMemberListPage: React.FC = () => {
 
       setData(formattedData);
 
-      // Update total count in pagination state
-      setPagination((prevPagination) => ({
-        ...prevPagination,
-        total: total,
+      const tierFilters = membershipTiers.map((tier) => ({
+        text: tier,
+        value: tier,
       }));
+      setTierFilterOptions(tierFilters);
+
+      // Update total items
+      setTotalItems(total);
     } catch (err: any) {
-      console.error("Fetch error:", err);
+      console.error('Fetch error:', err);
       setError(err);
     } finally {
       setLoading(false);
     }
   };
 
+  // Adjusted useEffect
   useEffect(() => {
     if (!hasFetched.current) {
       hasFetched.current = true;
       fetchData({
-        page: pagination.current,
-        pageSize: pagination.pageSize,
+        page: currentPage,
+        pageSize: pageSize,
+        filters: tableFilters,
+        searchText: searchText,
       });
     }
-  }, [pagination]);
+  }, [currentPage, pageSize, tableFilters, searchText]);
 
   const onSearch = (value: string) => {
-    setSearchText(value.trim().toLowerCase());
+    const trimmedValue = value.trim().toLowerCase();
+    setSearchText(trimmedValue);
+
+    // Reset pagination to the first page when a new search is performed
+    setCurrentPage(1);
+
+    fetchData({
+      page: 1,
+      pageSize: pageSize,
+      filters: tableFilters,
+      searchText: trimmedValue,
+    });
   };
 
   const onFinish = async (values: NewMember) => {
@@ -193,8 +226,10 @@ const GetMemberListPage: React.FC = () => {
 
       // Refresh the member list
       fetchData({
-        page: pagination.current,
-        pageSize: pagination.pageSize,
+        page: currentPage,
+        pageSize: pageSize,
+        filters: tableFilters,
+        searchText: searchText,
       });
     } catch (error: any) {
       console.error('Error adding member:', error.message);
@@ -203,12 +238,6 @@ const GetMemberListPage: React.FC = () => {
       setAddingMember(false);
     }
   };
-
-  const filteredData = data.filter(
-    (item) =>
-      item.member_name.toLowerCase().includes(searchText) ||
-      String(item.member_phone).toLowerCase().includes(searchText)
-  );
 
   const columns: TableColumnsType<DataType> = [
     {
@@ -238,34 +267,51 @@ const GetMemberListPage: React.FC = () => {
       title: 'Point',
       dataIndex: 'point',
       key: 'point',
-      sorter: (a: DataType, b: DataType) => Number(a.point) - Number(b.point),
+      sorter: true, // Enable server-side sorting
       sortDirections: ['ascend', 'descend', 'ascend'],
     },
     {
       title: 'Membership Tier',
       dataIndex: 'membership_tier',
       key: 'membership_tier',
+      filters: tierFilterOptions,
+      filteredValue: tableFilters.membership_tier || null,
     },
     {
       title: 'Expiry Date',
       dataIndex: 'membership_expiry_date',
       key: 'membership_expiry_date',
-      sorter: (a: DataType, b: DataType) =>
-        new Date(a.membership_expiry_date).getTime() -
-        new Date(b.membership_expiry_date).getTime(),
+      sorter: true, // Enable server-side sorting
       sortDirections: ['ascend', 'descend', 'ascend'],
     },
   ];
 
-  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
-    setPagination(pagination);
-  
-    // Fetch data based on the new pagination and sorting
+  const handleTableChange = (
+    pagination: any,
+    filters: any,
+    // sorter: { field?: string; order?: string }
+    sorter: any
+  ) => {
+    setCurrentPage(pagination.current);
+    setPageSize(pagination.pageSize);
+    setTableFilters(filters);
+
+    // Prepare sort parameters
+    let sortField = sorter.field;
+    let sortOrder = sorter.order;
+    if (sortOrder) {
+      // Convert sortOrder to 'ascend' or 'descend'
+      sortOrder = sorter.order === 'ascend' ? 'ascend' : 'descend';
+    }
+
+    // Fetch data based on the new pagination, filters, and sorting
     fetchData({
       page: pagination.current,
       pageSize: pagination.pageSize,
-      sortField: sorter.field,
-      sortOrder: sorter.order,
+      sortField: sortField,
+      sortOrder: sortOrder,
+      filters: filters,
+      searchText: searchText, // Include search text if any
     });
   };
 
@@ -278,6 +324,7 @@ const GetMemberListPage: React.FC = () => {
           placeholder="Search members"
           allowClear
           onSearch={onSearch}
+          onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />
         <Button type="primary" onClick={() => setIsModalVisible(true)}>
@@ -288,13 +335,13 @@ const GetMemberListPage: React.FC = () => {
 
       <Table
         rowSelection={rowSelection}
-        dataSource={filteredData}
+        dataSource={data}
         columns={columns}
         locale={{ emptyText: 'No members found.' }}
         pagination={{
-          current: pagination.current,
-          pageSize: pagination.pageSize,
-          total: pagination.total,
+          current: currentPage,
+          pageSize: pageSize,
+          total: totalItems,
           showSizeChanger: true,
           showQuickJumper: true,
           position: ['bottomRight'],
