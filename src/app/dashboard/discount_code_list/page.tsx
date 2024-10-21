@@ -472,13 +472,13 @@ const DiscountCodeListPage: React.FC = () => {
                   parser={(value) => parseFloat(value!.replace('%', '') || '0')}
                 />
               </Form.Item>
-              <Form.Item
+              {/* <Form.Item
                 name="fixed_discount_cap"
                 label="最高折扣額"
                 rules={[{ required: true, message: 'Please enter the fixed discount cap' }]}
               >
                 <InputNumber min={0} style={{ width: '100%' }} />
-              </Form.Item>
+              </Form.Item> */}
             </>
           )}
 
