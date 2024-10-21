@@ -33,7 +33,7 @@ interface DiscountCode {
     discount_amount?: number;
     discount_percentage?: number;
     minimum_spending: number;
-    fixed_discount_cap?: number;
+    // fixed_discount_cap?: number;
     use_limit_type: 'single_use' | 'once_per_customer' | 'unlimited';
     valid_from?: string;
     valid_until?: string;
@@ -82,7 +82,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                     discount_type: data.discount_type,
                     discount_amount: data.discount_amount,
                     discount_percentage: data.discount_percentage,
-                    fixed_discount_cap: data.fixed_discount_cap,
+                    // fixed_discount_cap: data.fixed_discount_cap,
                     minimum_spending: data.minimum_spending,
                     use_limit_type: data.use_limit_type,
                     valid_from: data.valid_from ? dayjs(data.valid_from) : null,
@@ -106,7 +106,8 @@ const GetDiscountCodeDetailPage: React.FC = () => {
         setSelectedDiscountType(value);
         // Reset relevant fields
         if (value === 'fixed_amount') {
-            form.setFieldsValue({ discount_percentage: undefined, fixed_discount_cap: undefined });
+            // form.setFieldsValue({ discount_percentage: undefined, fixed_discount_cap: undefined });
+            form.setFieldsValue({ discount_percentage: undefined });
         } else {
             form.setFieldsValue({ discount_amount: undefined });
         }
@@ -119,7 +120,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
             discount_type: values.discount_type,
             discount_amount: values.discount_amount,
             discount_percentage: values.discount_percentage,
-            fixed_discount_cap: values.fixed_discount_cap,
+            // fixed_discount_cap: values.fixed_discount_cap,
             minimum_spending: values.minimum_spending,
             use_limit_type: values.use_limit_type,
             valid_from: values.valid_from ? values.valid_from.toISOString() : null,
@@ -260,13 +261,13 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                                     parser={(value) => parseFloat(value!.replace('%', '') || '0')}
                                 />
                             </Form.Item>
-                            <Form.Item
+                            {/* <Form.Item
                                 name="fixed_discount_cap"
                                 label="最高折扣限額"
                                 rules={[{ required: true, message: 'Please enter the fixed discount cap' }]}
                             >
                                 <InputNumber min={0} style={{ width: '100%' }} />
-                            </Form.Item>
+                            </Form.Item> */}
                         </>
                     )}
 

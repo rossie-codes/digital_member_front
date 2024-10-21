@@ -28,7 +28,7 @@ interface RedemptionItem {
   discount_type: 'fixed_amount' | 'percentage';
   discount_amount?: number;
   discount_percentage?: number;
-  fixed_discount_cap?: number;
+  // fixed_discount_cap?: number;
   minimum_spending: number;
   validity_period: number;
   is_active: boolean;
@@ -115,12 +115,12 @@ const DeletedRedemptionItemsPage: React.FC = () => {
       key: 'minimum_spending',
       render: (text) => `$${text}`,
     },
-    {
-      title: '最高折扣限額',
-      dataIndex: 'fixed_discount_cap',
-      key: 'fixed_discount_cap',
-      render: (text, record) => (record.discount_type === 'percentage' ? `$${text}` : '--'),
-    },
+    // {
+    //   title: '最高折扣限額',
+    //   dataIndex: 'fixed_discount_cap',
+    //   key: 'fixed_discount_cap',
+    //   render: (text, record) => (record.discount_type === 'percentage' ? `$${text}` : '--'),
+    // },
     {
       title: '折扣券有效期 (月)',
       dataIndex: 'validity_period',

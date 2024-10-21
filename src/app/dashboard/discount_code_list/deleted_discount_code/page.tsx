@@ -30,7 +30,7 @@ interface DiscountCode {
     discount_amount?: number;
     discount_percentage?: number;
     minimum_spending: number;
-    fixed_discount_cap?: number;
+    // fixed_discount_cap?: number;
     use_limit_type: 'single_use' | 'once_per_customer' | 'unlimited';
     valid_from?: string;
     valid_until?: string;
@@ -118,12 +118,12 @@ const DeletedDiscountCodePage: React.FC = () => {
       key: 'minimum_spending',
       render: (text) => `$${text}`,
     },
-    {
-      title: '最高折扣限額',
-      dataIndex: 'fixed_discount_cap',
-      key: 'fixed_discount_cap',
-      render: (text, record) => (record.discount_type === 'percentage' ? `$${text}` : '--'),
-    },
+    // {
+    //   title: '最高折扣限額',
+    //   dataIndex: 'fixed_discount_cap',
+    //   key: 'fixed_discount_cap',
+    //   render: (text, record) => (record.discount_type === 'percentage' ? `$${text}` : '--'),
+    // },
     {
       title: '有效期（開始）',
       dataIndex: 'valid_from',
