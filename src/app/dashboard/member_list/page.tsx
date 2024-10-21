@@ -277,6 +277,8 @@ const GetMemberListPage: React.FC = () => {
       title: 'Membership Tier',
       dataIndex: 'membership_tier',
       key: 'membership_tier',
+      sorter: true, // Enable server-side sorting
+      sortDirections: ['ascend', 'descend', 'ascend'],
       filters: tierFilterOptions,
       filteredValue: tableFilters.membership_tier || null,
     },
