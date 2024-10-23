@@ -19,6 +19,8 @@ import {
   Alert,
   DatePicker
 } from 'antd';
+import Link from 'next/link';
+
 import type { TableColumnsType, TableProps } from 'antd';
 import { PlusOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
@@ -62,10 +64,11 @@ const DiscountCodeListPage: React.FC = () => {
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
 
   const router = useRouter();
-  const handleEdit = (record: DiscountCode) => {
-    console.log(record.discount_code_id)
-    router.push(`/dashboard/discount_code_list/${record.discount_code_id}/edit`);
-  };
+  // const handleEdit = (record: DiscountCode) => {
+  //   console.log(record.discount_code_id)
+  //   router.push(`/dashboard/discount_code_list/${record.discount_code_id}/edit`);
+  // };
+
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   // Row selection configuration
@@ -139,15 +142,26 @@ const DiscountCodeListPage: React.FC = () => {
       title: '',
       dataIndex: 'edit',
       key: 'edit',
-      render: (_, record) => (
-        <Button
-          type="link"
-          icon={<FormOutlined style={{ color: '#ff4d4f' }} />}
-          onClick={() => handleEdit(record)}
-        />
+      render: (_: any, record: DiscountCode) => (
+        <Link href={`/dashboard/discount_code_list/${record.discount_code_id}/edit`}>
+          <Button type="link" icon={<FormOutlined style={{ color: '#ff4d4f' }} />} />
+        </Link>
       ),
       width: 50,
     },
+    // {
+    //   title: '',
+    //   dataIndex: 'edit',
+    //   key: 'edit',
+    //   render: (_, record) => (
+    //     <Button
+    //       type="link"
+    //       icon={<FormOutlined style={{ color: '#ff4d4f' }} />}
+    //       onClick={() => handleEdit(record)}
+    //     />
+    //   ),
+    //   width: 50,
+    // },
     {
       title: '折扣名稱',
       dataIndex: 'discount_code_name',
