@@ -7,6 +7,8 @@ import type { TableColumnsType, PaginationProps } from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
 import { FormOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation'; // For Next.js 13 with app directory
+// import { useContext } from 'react';
+// import { AuthContext } from '../../context/AuthContext';
 
 const { Search } = Input;
 
@@ -77,6 +79,9 @@ const GetMemberListPage: React.FC = () => {
   };
   const hasSelected = selectedRowKeys.length > 0;
 
+  // const { token } = useContext(AuthContext);
+
+
   const fetchData = async (params: FetchParams = { page: 1, pageSize: 10 }) => {
     setLoading(true);
     try {
@@ -102,7 +107,15 @@ const GetMemberListPage: React.FC = () => {
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list?${queryParams.toString()}`
+        `${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list?${queryParams.toString()}`,
+        // {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // }
+        {
+          credentials: 'include',
+        }
       );
 
       if (!response.ok) {

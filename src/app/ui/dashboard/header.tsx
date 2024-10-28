@@ -3,6 +3,7 @@
 import React from 'react';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import NavLinks from '@/app/ui/dashboard/nav-links';
+import LogoutButton from '../../components/LogoutButton';
 
 const { Header, Content, Footer } = Layout;
 
@@ -18,7 +19,9 @@ const DashboardHeader: React.FC = function DashboardHeader() {
       <Header style={{ display: 'flex', alignItems: 'center' }}>
         <div className="demo-logo" />
           <NavLinks />
+          <LogoutButton />
       </Header>
+      
     </Layout>
   );
 };

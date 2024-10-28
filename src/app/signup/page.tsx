@@ -1,14 +1,12 @@
-// src/app/login/page.tsx
 "use client";
 
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Form, Input, Checkbox, Typography, Anchor } from 'antd';
+import { Button, Form, Input, Typography, Anchor } from 'antd';
 import styled from 'styled-components';
 import Image from 'next/image';
-// import { AuthContext } from '../context/AuthContext';
-// const { Title } = Typography;
 
+const { Title } = Typography;
 
 const StyledContainer = styled.div`
   display: flex;
@@ -53,6 +51,9 @@ const StyledAnchor = styled(Anchor)`
   }
 `;
 
+
+
+
 const StyledInput = styled(Input)`
   &,
   &.ant-input-password {
@@ -88,54 +89,56 @@ const Copyright = styled.div`
   text-align: center;
   width: 100%;
 `;
-
-
-
-
-const LoginPage = () => {
+const SignupPage = () => {
   const router = useRouter();
-  // const { login } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [form] = Form.useForm();
 
   const onFinish = async (values: any) => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
         method: 'POST',
         body: JSON.stringify({
+          admin_name: values.admin_name,
           admin_phone: values.admin_phone,
           password: values.password,
         }),
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // Include cookies in the request
+        credentials: 'include',
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Login failed');
+        setError(data.error || 'Signup failed');
         setLoading(false);
         return;
       }
 
-      // No need to store the token manually
-      // The cookie is handled by the browser
 
-      console.log('going to dashboard')
+      if (!res.ok) {
+        if (res.status === 403) {
+          setError('Admin account already exists. Please log in.');
+          // Optionally redirect to login page
+          setTimeout(() => {
+            router.push('/login');
+          }, 2000);
+        } else {
+          setError(data.error || 'Signup failed');
+        }
+        setLoading(false);
+        return;
+      }
 
-      // Redirect to the dashboard
-      console.log('before router.push');
-      router.push('/dashboard');
-      console.log('after router.push');
-      
+
+      router.push('/login');
     } catch (err) {
-      console.error('Login error:', err);
-      setError('Login failed due to an unexpected error');
+      console.error('Signup error:', err);
+      setError('Signup failed due to an unexpected error');
     } finally {
       setLoading(false);
     }
@@ -143,72 +146,37 @@ const LoginPage = () => {
 
   return (
     <StyledContainer>
+      {/* Your styled form components */}
       <Image src="/WATI_logo_full.png" alt="logo" width={200} height={100} style={{ marginBottom: 20 }} />
-
-      <StyledAnchor
-        direction="horizontal"
-        items={[
-          {
-            key: 'Login',
-            href: '/login',
-            title: 'Login',
-          },
-          {
-            key: 'Sign_Up',
-            href: '/signup',
-            title: 'Sign Up',
-          }
-        ]}
-      />
-
-      <StyledForm
-        name="login"
-        form={form}
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-        autoComplete="off"
-      >
+      
+      <Form onFinish={onFinish}>
         {error && <div style={{ color: 'red', marginBottom: 16 }}>{error}</div>}
-
+        <Form.Item
+          name="admin_name"
+          rules={[{ required: true, message: 'Please input your name!' }]}
+        >
+          <StyledInput placeholder="Admin Name" />
+        </Form.Item>
         <Form.Item
           name="admin_phone"
-          rules={[{ required: true, message: 'Please input your phone number!' }]} // Updated message
-          style={{ marginBottom: '16px' }} // Add margin between form items
+          rules={[{ required: true, message: 'Please input your phone number!' }]}
         >
-          <StyledInput placeholder="請輸入您的手機號碼" />
-          {/* Updated placeholder, using styled component */}
+          <StyledInput placeholder="Phone Number" />
         </Form.Item>
-
         <Form.Item
           name="password"
-          rules={[{ required: true, message: 'Please input your password!' }]} // Updated message
-          style={{ marginBottom: '16px' }} // Add margin between form items
+          rules={[{ required: true, message: 'Please input your password!' }]}
         >
-          <StyledInput placeholder="輸入密碼" />
-          {/* Updated placeholder, using styled component */}
+          <StyledInput.Password placeholder="Password" />
         </Form.Item>
-
         <Form.Item>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Checkbox>記住我</Checkbox>
-            <a href='/forgotpassword'>忘記密碼</a>
-          </div>
-        </Form.Item>
-
-        <Form.Item>
-          {/* <Button type="primary" htmlType="submit" loading={loading} block style={{ background: '#4169E1', borderColor: '#4169E1' }}> */}
-          <StyledButton className="login_button" type="primary" htmlType="submit" loading={loading}>
-            登入
+          <StyledButton type="primary" htmlType="submit" loading={loading}>
+            建立帳戶
           </StyledButton>
         </Form.Item>
-
-      </StyledForm>
-
-      <Copyright>
-        Copyright ©2024 Produced by AKA Studio
-      </Copyright>
+      </Form>
     </StyledContainer>
   );
 };
 
-export default LoginPage;
+export default SignupPage;
