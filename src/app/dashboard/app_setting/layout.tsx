@@ -1,7 +1,7 @@
 // import Navbar from '@/app/ui/dashboard/sidenav';
 // import Footer from '@/app/ui/dashboard/footer';
 import Header from '@/app/ui/dashboard/app_setting/header';
-import '@/app/ui/dashboard/app_setting/app_setting.css';
+import '@/app/ui/dashboard/app_setting/app_setting_css.css';
 
 
 // export const experimental_ppr = true;

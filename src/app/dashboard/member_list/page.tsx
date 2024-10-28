@@ -270,37 +270,52 @@ const GetMemberListPage: React.FC = () => {
       width: 50,
     },
     {
-      title: 'Name',
+      title: '姓名',
       dataIndex: 'member_name',
       key: 'member_name',
     },
     {
-      title: 'Phone',
+      title: '電話號碼',
       dataIndex: 'member_phone',
       key: 'member_phone',
     },
     {
-      title: 'Point',
+      title: '積分',
       dataIndex: 'point',
       key: 'point',
       sorter: true, // Enable server-side sorting
       sortDirections: ['ascend', 'descend', 'ascend'],
     },
     {
-      title: 'Membership Tier',
+      title: '累計清費金額',
+      dataIndex: 'point',
+      key: 'point',
+      sorter: true, // Enable server-side sorting
+      sortDirections: ['ascend', 'descend', 'ascend'],
+    },
+    {
+      title: '生日',
+      dataIndex: 'membership_expiry_date',
+      key: 'membership_expiry_date',
+      sorter: true, // Enable server-side sorting
+      sortDirections: ['ascend', 'descend', 'ascend'],
+    },
+    
+    {
+      title: '到期日',
+      dataIndex: 'membership_expiry_date',
+      key: 'membership_expiry_date',
+      sorter: true, // Enable server-side sorting
+      sortDirections: ['ascend', 'descend', 'ascend'],
+    },
+    {
+      title: '級別',
       dataIndex: 'membership_tier',
       key: 'membership_tier',
       sorter: true, // Enable server-side sorting
       sortDirections: ['ascend', 'descend', 'ascend'],
       filters: tierFilterOptions,
       filteredValue: tableFilters.membership_tier || null,
-    },
-    {
-      title: 'Expiry Date',
-      dataIndex: 'membership_expiry_date',
-      key: 'membership_expiry_date',
-      sorter: true, // Enable server-side sorting
-      sortDirections: ['ascend', 'descend', 'ascend'],
     },
   ];
 
