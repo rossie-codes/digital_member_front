@@ -1,0 +1,45 @@
+/* Styling for the Header component */
+.ant-layout-header {
+    background-color: #fff; /* Example background color */
+    padding: 0 20px; /* Example padding */
+    border-bottom: 1px solid #eee; /* Example border */
+  }
+  
+  /* Styling for the Menu items */
+  .ant-menu-horizontal {
+    border-bottom: none; /* Remove default menu border */
+  }
+  
+  .ant-menu-item {
+    font-size: 16px; /* Example font size */
+    margin-right: 20px; /* Example spacing between items */
+  }
+  
+  .ant-menu-item-selected {
+    background-color: #f0f0f0; /* Example background color for selected item */
+    font-weight: bold; /* Example font weight for selected item */
+  }
+  
+  .ant-menu-item a {
+    color: #333; /* Example link color */
+    text-decoration: none; /* Remove underlines from links */
+  }
+  
+  .ant-menu-item-selected a {
+    color: #1890ff; /* Example link color for selected item */
+  }
+  
+  
+  /* Styling for the Logout Button (assuming it's a standard Ant Design button) */
+  .ant-btn-primary {
+    background-color: #1890ff; /* Example background color */
+    border-color: #1890ff; /* Example border color */
+  }
+  
+  /* Media query for responsiveness (adjust as needed) */
+  @media (max-width: 768px) {
+    .ant-menu-horizontal {
+      display: none;  /* Hide the horizontal menu on smaller screens */
+    }
+    /* Add styles for a mobile menu if needed */
+  }

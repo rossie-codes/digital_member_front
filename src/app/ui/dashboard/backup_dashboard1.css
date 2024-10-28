@@ -2,10 +2,12 @@
     display: grid;
     grid-template-rows: 50px 1fr 50px; /* 分配 header、content 和 footer 的高度 */
     height: 100vh; /* 占满整个视窗高度 */
+    
   }
   
   .header {
     grid-row: 1; /* 占第一行 */
+    height: 70px;
     background-color: #f0f0f0; /* 设置背景颜色 */
   }
   

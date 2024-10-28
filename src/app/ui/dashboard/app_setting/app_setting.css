@@ -1,31 +1,45 @@
-.container {
-  display: grid;
-  grid-template-rows: 50px 1fr 50px;
-  /* 分配 header、content 和 footer 的高度 */
-  height: 100vh;
-  /* 占满整个视窗高度 */
+/* Styling for the Header component */
+.ant-layout-header {
+  background-color: #fff; /* Example background color */
+  padding: 0 20px; /* Example padding */
+  border-bottom: 1px solid #eee; /* Example border */
 }
 
-.header {
-  grid-row: 1;
-  /* 占第一行 */
-  background-color: #f0f0f0;
-  /* 设置背景颜色 */
+/* Styling for the Menu items */
+.ant-menu-horizontal {
+  border-bottom: none; /* Remove default menu border */
 }
 
-.content {
-  grid-row: 2;
-  /* 占第二行 */
-  padding: 20px;
-  /* 设置内边距 */
+.ant-menu-item {
+  font-size: 16px; /* Example font size */
+  margin-right: 20px; /* Example spacing between items */
 }
 
-.footer {
-  grid-row: 3;
-  /* 占第三行 */
-  background-color: #eee;
-  /* 设置背景颜色 */
-  text-align: center;
-  /* 设置文字居中 */
+.ant-menu-item-selected {
+  background-color: #f0f0f0; /* Example background color for selected item */
+  font-weight: bold; /* Example font weight for selected item */
 }
 
+.ant-menu-item a {
+  color: #333; /* Example link color */
+  text-decoration: none; /* Remove underlines from links */
+}
+
+.ant-menu-item-selected a {
+  color: #1890ff; /* Example link color for selected item */
+}
+
+
+/* Styling for the Logout Button (assuming it's a standard Ant Design button) */
+.ant-btn-primary {
+  background-color: #1890ff; /* Example background color */
+  border-color: #1890ff; /* Example border color */
+}
+
+/* Media query for responsiveness (adjust as needed) */
+@media (max-width: 768px) {
+  .ant-menu-horizontal {
+    display: none;  /* Hide the horizontal menu on smaller screens */
+  }
+  /* Add styles for a mobile menu if needed */
+}

@@ -1,11 +1,10 @@
 // import Navbar from '@/app/ui/dashboard/sidenav';
 import Footer from '@/app/ui/dashboard/footer';
 import Header from '@/app/ui/dashboard/header';
-import '@/app/ui/dashboard/dashboard.css';
+// import '@/app/ui/dashboard/dashboard.css';
 import LogoutButton from '../components/LogoutButton';
 import ProtectedRoute from '../components/ProtextedRoute';
-
-
+import '@/app/ui/dashboard/dashboard_css.css';
 
 // export const experimental_ppr = true;
 
@@ -13,10 +12,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     return (
 
             <div className="container">
-                {/* Full-height container */}
                 <div className="header">
                     <Header />        
-
                 </div>
                 
                 <div className="content">
