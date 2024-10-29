@@ -455,7 +455,7 @@ const DiscountCodeListPage: React.FC = () => {
 
           <Form.Item
             name="discount_code"
-            label="折扣碼"
+            label="優惠碼"
             rules={[{ required: true, message: 'Please enter the discount code' }]}
           >
             <Input />
@@ -533,6 +533,23 @@ const DiscountCodeListPage: React.FC = () => {
             rules={[{ required: false, message: 'Please select the valid until date' }]}
           >
             <DatePicker style={{ width: '100%' }} />
+          </Form.Item>
+
+          <Form.Item
+            name="discount_content"
+            label="優惠詳情"
+            rules={[{ required: true, message: '輸入禮物詳情' }]}
+          >
+            <Input />
+          </Form.Item>
+
+
+          <Form.Item
+            name="term_and_condition"
+            label="條款及細則"
+            rules={[{ required: true, message: '輸入禮物的條款及細則' }]}
+          >
+            <Input />
           </Form.Item>
 
           <Form.Item>

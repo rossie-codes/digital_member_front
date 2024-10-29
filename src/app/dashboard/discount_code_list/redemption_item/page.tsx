@@ -17,6 +17,7 @@ import {
   message,
   Spin,
   Alert,
+  DatePicker
 } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
 import { PlusOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -39,6 +40,7 @@ interface RedemptionItem {
   validity_period: number;
   is_active: boolean;
   deleted_status?: boolean;
+  redeem_point: number;
 }
 
 const GetGiftSettingPage: React.FC = () => {
@@ -230,6 +232,7 @@ const GetGiftSettingPage: React.FC = () => {
       discount_type: selectedDiscountType,
       minimum_spending: values.minimum_spending,
       validity_period: values.validity_period,
+      redeem_point: values.redeem_point,
     };
 
     if (selectedDiscountType === 'fixed_amount') {
@@ -373,9 +376,9 @@ const GetGiftSettingPage: React.FC = () => {
         <Form form={form} onFinish={onFinish} layout="vertical">
           <Form.Item
             name="discount_type"
-            label="Discount Type"
+            label="折扣類型"
             initialValue={selectedDiscountType}
-            rules={[{ required: true, message: 'Please select a discount type' }]}
+            rules={[{ required: true, message: '選擇折扣類型' }]}
           >
             <Select onChange={handleDiscountTypeChange}>
               <Option value="fixed_amount">Fixed Amount Discount</Option>
@@ -385,17 +388,27 @@ const GetGiftSettingPage: React.FC = () => {
 
           <Form.Item
             name="redemption_name"
-            label="Redemption Name"
-            rules={[{ required: true, message: 'Please enter the redemption name' }]}
+            label="禮物名稱"
+            rules={[{ required: true, message: '輸入折扣名稱' }]}
           >
             <Input />
           </Form.Item>
 
+
+          <Form.Item
+            name="redeem_point"
+            label="所需積分"
+            rules={[{ required: true, message: '輸入換領所需要的積分' }]}
+          >
+            <InputNumber min={0} style={{ width: '100%' }} />
+          </Form.Item>
+
+
           {selectedDiscountType === 'fixed_amount' && (
             <Form.Item
               name="discount_amount"
-              label="Discount Amount"
-              rules={[{ required: true, message: 'Please enter the discount amount' }]}
+              label="折扣金額"
+              rules={[{ required: true, message: '輸入折扣金額' }]}
             >
               <InputNumber min={0} style={{ width: '100%' }} />
             </Form.Item>
@@ -405,8 +418,8 @@ const GetGiftSettingPage: React.FC = () => {
             <>
               <Form.Item
                 name="discount_percentage"
-                label="Discount Percentage"
-                rules={[{ required: true, message: 'Please enter the discount percentage' }]}
+                label="折扣額 % "
+                rules={[{ required: true, message: '輸入折扣額 % ' }]}
               >
                 <InputNumber<number>
                   min={1}
@@ -428,19 +441,63 @@ const GetGiftSettingPage: React.FC = () => {
 
           <Form.Item
             name="minimum_spending"
-            label="Minimum Spending"
-            rules={[{ required: true, message: 'Please enter the minimum spending' }]}
+            label="最低消費金額"
+            rules={[{ required: true, message: '最低消費金額' }]}
           >
             <InputNumber min={0} style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
             name="validity_period"
-            label="Validity Period (Months)"
-            rules={[{ required: true, message: 'Please enter the validity period' }]}
+            label="有效期(月)"
+            rules={[{ required: true, message: '有效期' }]}
           >
             <InputNumber min={1} style={{ width: '100%' }} />
           </Form.Item>
+
+          <Form.Item
+            name="quantity_available"
+            label="可兌換數目"
+            rules={[{ required: true, message: '輸入可供換領的數量' }]}
+          >
+            <InputNumber min={0} style={{ width: '100%' }} />
+          </Form.Item>
+
+
+          <Form.Item
+            name="valid_from"
+            label="換領開始日期"
+            rules={[{ required: false, message: '選擇日期' }]}
+          >
+            <DatePicker style={{ width: '100%' }} />
+          </Form.Item>
+
+          <Form.Item
+            name="valid_until"
+            label="換領結束日期"
+            rules={[{ required: false, message: '選擇日期' }]}
+          >
+            <DatePicker style={{ width: '100%' }} />
+          </Form.Item>
+
+
+          <Form.Item
+            name="redemption_content"
+            label="禮物詳情"
+            rules={[{ required: true, message: '輸入禮物詳情' }]}
+          >
+            <Input />
+          </Form.Item>
+
+
+          <Form.Item
+            name="term_and_condition"
+            label="條款及細則"
+            rules={[{ required: true, message: '輸入禮物的條款及細則' }]}
+          >
+            <Input />
+          </Form.Item>
+
 
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={addingItem}>

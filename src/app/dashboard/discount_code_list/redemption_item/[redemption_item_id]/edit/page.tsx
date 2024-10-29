@@ -69,7 +69,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                     minimum_spending: data.minimum_spending,
                     validity_period: data.validity_period,
                     quantity_available: data.quantity_available,
-                      validity_range: data.valid_from && data.valid_until ? [dayjs(data.valid_from), dayjs(data.valid_until)] : [],
+                    validity_range: data.valid_from && data.valid_until ? [dayjs(data.valid_from), dayjs(data.valid_until)] : [],
                 });
             } catch (error: any) {
                 console.error('Error fetching redemption item:', error);
@@ -214,7 +214,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                         label="禮遇名稱"
                         rules={[{ required: true, message: 'Please enter the redemption item name' }]}
                     >
-                        <Input />
+                        <Input disabled />
                     </Form.Item>
 
                     {/* Discount Fields */}
@@ -224,7 +224,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                             label="折扣額"
                             rules={[{ required: true, message: 'Please enter the discount amount' }]}
                         >
-                            <InputNumber min={0} style={{ width: '100%' }} />
+                            <InputNumber min={0} style={{ width: '100%' }} disabled />
                         </Form.Item>
                     )}
 
@@ -241,6 +241,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                                     style={{ width: '100%' }}
                                     formatter={(value) => `${value}%`}
                                     parser={(value) => parseFloat(value!.replace('%', '') || '0')}
+                                    disabled
                                 />
                             </Form.Item>
                             {/* <Form.Item
@@ -259,7 +260,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                         label="最低消費"
                         rules={[{ required: true, message: 'Please enter the minimum spending' }]}
                     >
-                        <InputNumber min={0} style={{ width: '100%' }} />
+                        <InputNumber min={0} style={{ width: '100%' }} disabled />
                     </Form.Item>
 
                     {/* Validity Period */}
@@ -268,7 +269,15 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                         label="折扣券有效期 (月)"
                         rules={[{ required: true, message: 'Please enter the validity period' }]}
                     >
-                        <InputNumber min={1} style={{ width: '100%' }} />
+                        <InputNumber min={1} style={{ width: '100%' }} disabled />
+                    </Form.Item>
+
+                    <Form.Item
+                        name="redeem_point"
+                        label="所需積分"
+                        rules={[{ required: true, message: '輸入換領所需要的積分' }]}
+                    >
+                        <InputNumber min={0} style={{ width: '100%' }} />
                     </Form.Item>
 
                     {/* Future Development Fields */}
@@ -285,8 +294,27 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                         label="Validity Range"
                         tooltip="These fields are for future development"
                     >
-                        <RangePicker style={{ width: '100%' }} disabled />
+                        <RangePicker style={{ width: '100%' }} />
                     </Form.Item>
+
+
+                    <Form.Item
+                        name="redemption_content"
+                        label="禮物詳情"
+                        rules={[{ required: true, message: '輸入禮物詳情' }]}
+                    >
+                        <Input />
+                    </Form.Item>
+
+
+                    <Form.Item
+                        name="term_and_condition"
+                        label="條款及細則"
+                        rules={[{ required: true, message: '輸入禮物的條款及細則' }]}
+                    >
+                        <Input />
+                    </Form.Item>
+
 
                     {/* Submit Button */}
                     <Form.Item>

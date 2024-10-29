@@ -447,13 +447,13 @@ const GetMemberListPage: React.FC = () => {
             <Input />
           </Form.Item>
 
-          <Form.Item
+          {/* <Form.Item
             name="point"
             label="會員積分"
             rules={[{ required: true, message: 'Please enter the initial point' }]}
           >
             <Input />
-          </Form.Item>
+          </Form.Item> */}
 
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={addingMember}>

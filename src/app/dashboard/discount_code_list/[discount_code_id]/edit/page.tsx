@@ -204,7 +204,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                     Back
                 </Button>
             </div>
-<Card style={{ marginTop: 16 }}>
+            <Card style={{ marginTop: 16 }}>
                 <Form form={form} onFinish={onFinish} layout="vertical">
                     {/* Discount Type */}
                     <Form.Item
@@ -232,7 +232,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                         label="折扣碼"
                         rules={[{ required: true, message: 'Please enter the discount code name' }]}
                     >
-                        <Input />
+                        <Input disabled />
                     </Form.Item>
 
                     {/* Discount Fields */}
@@ -301,10 +301,28 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                     <Form.Item
                         name="validity_range"
                         label="Validity Range"
-                        tooltip="These fields are for future development"
+                    // tooltip="These fields are for future development"
                     >
-                        <RangePicker style={{ width: '100%' }} disabled />
+                        <RangePicker style={{ width: '100%' }} />
                     </Form.Item>
+
+                    <Form.Item
+                        name="discount_content"
+                        label="優惠詳情"
+                        rules={[{ required: true, message: '輸入禮物詳情' }]}
+                    >
+                        <Input />
+                    </Form.Item>
+
+
+                    <Form.Item
+                        name="term_and_condition"
+                        label="條款及細則"
+                        rules={[{ required: true, message: '輸入禮物的條款及細則' }]}
+                    >
+                        <Input />
+                    </Form.Item>
+
 
                     {/* Submit Button */}
                     <Form.Item>
