@@ -57,7 +57,7 @@ const GetGiftSettingPage: React.FC = () => {
 
   const router = useRouter();
   const handleEdit = (record: RedemptionItem) => {
-    router.push(`/dashboard/app_setting/redemption_item/${record.redemption_item_id}/edit`);
+    router.push(`/dashboard/discount_code_list/redemption_item/${record.redemption_item_id}/edit`);
   };
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);

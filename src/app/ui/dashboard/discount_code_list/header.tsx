@@ -1,4 +1,4 @@
-// src/app/ui/dashboard/app_setting/header.tsx
+// src/app/ui/dashboard/discount_code_list/header.tsx
 
 "use client"
 
@@ -13,8 +13,8 @@ type MenuItem = Required<MenuProps>['items'][number];
 const items: MenuItem[] = [
   {
     label: (
-      <Link href="/dashboard/app_setting">
-         admin 設定 {/* The <a> tag is still needed for styling and accessibility */}
+      <Link href="/dashboard/discount_code_list/">
+        優惠管理
       </Link>
     ),
     key: 'app_setting',
@@ -22,17 +22,8 @@ const items: MenuItem[] = [
   },
   {
     label: (
-      <Link href="/dashboard/app_setting/customer_side">
-        會員頁面設定 {/* The <a> tag is still needed for styling and accessibility */}
-      </Link>
-    ),
-    key: 'gift_setting',
-    icon: <MailOutlined />,
-  },
-  {
-    label: (
-      <Link href="/dashboard/app_setting/wati">
-        WATI 設定 {/* The <a> tag is still needed for styling and accessibility */}
+      <Link href="/dashboard/discount_code_list/redemption_item">
+        禮物換領
       </Link>
     ),
     key: 'member_tier',
@@ -40,11 +31,20 @@ const items: MenuItem[] = [
   },
   {
     label: (
-      <Link href="/dashboard/app_setting/webstore">
-        網店設定 {/* The <a> tag is still needed for styling and accessibility */}
+      <Link href="/dashboard/discount_code_list/member_setting">
+        積分換領
       </Link>
     ),
     key: 'member_setting',
+    icon: <MailOutlined />,
+  },
+  {
+    label: (
+      <Link href="/dashboard/discount_code_list/member_tier">
+        會員制度
+      </Link>
+    ),
+    key: 'gift_setting',
     icon: <MailOutlined />,
   },
 ];
