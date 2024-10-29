@@ -21,6 +21,7 @@ interface DataType {
   point: string | number;
   membership_tier: string;
   membership_expiry_date: string;
+  is_active: string; // Add this line
 }
 
 interface NewMember {
@@ -66,6 +67,19 @@ const GetMemberListPage: React.FC = () => {
   const [form] = Form.useForm();
   const [addingMember, setAddingMember] = useState<boolean>(false);
 
+
+  const statusMapping: { [key: number]: string } = {
+    0: 'expired',
+    1: 'active',
+    2: 'suspended',
+  };
+  const statusOptions = [
+    { text: 'expired', value: 0 },
+    { text: 'active', value: 1 },
+    { text: 'suspended', value: 2 },
+  ];
+
+
   // Separate pagination state
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
@@ -94,12 +108,18 @@ const GetMemberListPage: React.FC = () => {
       if (sortField) queryParams.append('sortField', sortField);
       if (sortOrder) queryParams.append('sortOrder', sortOrder);
 
-      // Include filters in the queryParams
-      if (filters && filters.membership_tier) {
-        filters.membership_tier.forEach((value: string) =>
-          queryParams.append('membership_tier', value)
-        );
+      // Include filters dynamically
+      if (filters) {
+        Object.keys(filters).forEach((key) => {
+          const filterValues = filters[key];
+          if (filterValues && filterValues.length > 0) {
+            filterValues.forEach((value: string) => {
+              queryParams.append(key, value);
+            });
+          }
+        });
       }
+
 
       // Include search text in the queryParams
       if (searchText) {
@@ -108,11 +128,6 @@ const GetMemberListPage: React.FC = () => {
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list?${queryParams.toString()}`,
-        // {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`,
-        //   },
-        // }
         {
           credentials: 'include',
         }
@@ -153,6 +168,7 @@ const GetMemberListPage: React.FC = () => {
           ? member.membership_tier.member_tier_name
           : 'N/A',
         membership_expiry_date: formatDate(member.membership_expiry_date),
+        is_active: statusMapping[member.is_active] || 'Unknown',
       }));
 
       setData(formattedData);
@@ -300,7 +316,7 @@ const GetMemberListPage: React.FC = () => {
       sorter: true, // Enable server-side sorting
       sortDirections: ['ascend', 'descend', 'ascend'],
     },
-    
+
     {
       title: '到期日',
       dataIndex: 'membership_expiry_date',
@@ -316,6 +332,15 @@ const GetMemberListPage: React.FC = () => {
       sortDirections: ['ascend', 'descend', 'ascend'],
       filters: tierFilterOptions,
       filteredValue: tableFilters.membership_tier || null,
+    },
+    {
+      title: '狀態',
+      dataIndex: 'is_active',
+      key: 'is_active',
+      sorter: true,
+      sortDirections: ['ascend', 'descend', 'ascend'],
+      filters: statusOptions,
+      filteredValue: tableFilters.is_active || null,
     },
   ];
 
