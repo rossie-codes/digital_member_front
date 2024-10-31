@@ -86,6 +86,7 @@ const DiscountCodeListPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
       });
 
       if (response.status === 404) {
@@ -249,6 +250,7 @@ const DiscountCodeListPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ is_active: isActive }),
       });
 
@@ -315,6 +317,7 @@ const DiscountCodeListPage: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify(newItem),
         });
       } else {
@@ -324,6 +327,7 @@ const DiscountCodeListPage: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify({ ...newItem, is_active: true }),
         });
       }
@@ -367,6 +371,7 @@ const DiscountCodeListPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ deleted_status: true }),
       });
   

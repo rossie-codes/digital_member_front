@@ -63,6 +63,7 @@ const DeletedDiscountCodePage: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
         });
 
         if (response.status === 404) {
@@ -165,6 +166,7 @@ const DeletedDiscountCodePage: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ deleted_status: false }),
       });
 

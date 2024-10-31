@@ -59,6 +59,7 @@ const DeletedRedemptionItemsPage: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
         });
 
         if (response.status === 404) {
@@ -150,6 +151,7 @@ const DeletedRedemptionItemsPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ deleted_status: false }),
       });
 

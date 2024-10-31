@@ -26,7 +26,7 @@ const items: MenuItem[] = [
         禮物換領
       </Link>
     ),
-    key: 'member_tier',
+    key: 'membership_tier',
     icon: <MailOutlined />,
   },
   {
@@ -40,7 +40,7 @@ const items: MenuItem[] = [
   },
   {
     label: (
-      <Link href="/dashboard/discount_code_list/member_tier">
+      <Link href="/dashboard/discount_code_list/membership_tier">
         會員制度
       </Link>
     ),

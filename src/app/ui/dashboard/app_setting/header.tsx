@@ -35,7 +35,7 @@ const items: MenuItem[] = [
         WATI 設定 {/* The <a> tag is still needed for styling and accessibility */}
       </Link>
     ),
-    key: 'member_tier',
+    key: 'membership_tier',
     icon: <MailOutlined />,
   },
   {

@@ -137,6 +137,7 @@ const GetMemberSettingPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(dataToSend),
       });
   
@@ -171,6 +172,7 @@ const GetMemberSettingPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(dataToSend),
       });
   

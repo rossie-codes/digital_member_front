@@ -165,7 +165,7 @@ const GetMemberListPage: React.FC = () => {
         member_phone: member.member_phone || 'N/A',
         point: member.point || 'N/A',
         membership_tier: member.membership_tier
-          ? member.membership_tier.member_tier_name
+          ? member.membership_tier.membership_tier_name
           : 'N/A',
         membership_expiry_date: formatDate(member.membership_expiry_date),
         is_active: statusMapping[member.is_active] || 'Unknown',
@@ -226,6 +226,7 @@ const GetMemberListPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(values),
       });
 

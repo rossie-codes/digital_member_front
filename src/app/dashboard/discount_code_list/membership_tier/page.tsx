@@ -1,4 +1,4 @@
-// src/app/dashboard/app_setting/member_tier/page.tsx
+// src/app/dashboard/discount_code_list/membership_tier/page.tsx
 
 'use client';
 
@@ -16,7 +16,7 @@ import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 const { Title } = Typography;
 
 interface MemberTier {
-  member_tier_name: string;
+  membership_tier_name: string;
   require_point: number;
   extend_membership_point: number;
   point_multiplier: number;
@@ -87,7 +87,7 @@ const GetMemberTierPage: React.FC = () => {
       let tiers = data;
       while (tiers.length < MIN_TIERS) {
         tiers.push({
-          member_tier_name: `Level ${tiers.length + 1}`,
+          membership_tier_name: `Level ${tiers.length + 1}`,
           require_point: 0,
           extend_membership_point: 0,
           point_multiplier: 1.0,
@@ -104,7 +104,7 @@ const GetMemberTierPage: React.FC = () => {
       let tiers: MemberTier[] = [];
       while (tiers.length < MIN_TIERS) {
         tiers.push({
-          member_tier_name: `Level ${tiers.length + 1}`,
+          membership_tier_name: `Level ${tiers.length + 1}`,
           require_point: 0,
           extend_membership_point: 0,
           point_multiplier: 1.0,
@@ -140,7 +140,7 @@ const onFinish = async (values: MemberTierFormValues) => {
 
   const updatedMemberTiers = values.memberTiers.map((tier, index) => ({
     ...tier,
-    member_tier_sequence: index + 1, // Assign sequence number
+    membership_tier_sequence: index + 1, // Assign sequence number
     point_multiplier: tier.point_multiplier * 1000,
   }));
 
@@ -230,9 +230,9 @@ return (
                       會員名稱 {' '}
                     </span>
                   }
-                  name={[field.name, 'member_tier_name']}
+                  name={[field.name, 'membership_tier_name']}
                   rules={[{ required: true, message: '請輸入會員名稱' }]}
-                  extra={`當前設定：${currentTier.member_tier_name || '未設定'}`}
+                  extra={`當前設定：${currentTier.membership_tier_name || '未設定'}`}
                 >
                   <Input placeholder="例如：Level 1" />
 

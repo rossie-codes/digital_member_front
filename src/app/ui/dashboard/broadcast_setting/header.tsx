@@ -26,7 +26,7 @@ const items: MenuItem[] = [
         訊息範本
       </Link>
     ),
-    key: 'member_tier',
+    key: 'membership_tier',
     icon: <MailOutlined />,
   }
 ];

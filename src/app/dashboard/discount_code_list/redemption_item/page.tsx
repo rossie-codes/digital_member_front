@@ -78,6 +78,7 @@ const GetGiftSettingPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
       });
 
       if (response.status === 404) {
@@ -195,6 +196,7 @@ const GetGiftSettingPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ is_active: isActive }),
       });
 
@@ -257,6 +259,7 @@ const GetGiftSettingPage: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify(newItem),
         });
       } else {
@@ -266,6 +269,7 @@ const GetGiftSettingPage: React.FC = () => {
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: 'include',
           body: JSON.stringify({ ...newItem, is_active: false }),
         });
       }
@@ -311,6 +315,7 @@ const GetGiftSettingPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ deleted_status: true }),
       });
 
