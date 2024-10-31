@@ -14,8 +14,10 @@ import {
   message,
   Table,
   Tabs,
-  Space
+  Space,
+  DatePicker
 } from "antd";
+import dayjs, { Dayjs } from "dayjs"; // Import Dayjs and its type
 import { useParams, useRouter } from "next/navigation";
 import type { ColumnsType } from "antd/es/table";
 
@@ -23,6 +25,7 @@ interface MemberDataType {
   member_phone: string;
   member_name: string;
   birthday: string | null;
+  is_active: number;
   membership_tier?: {
     membership_tier_id: number;
     membership_tier_name: string;
@@ -75,6 +78,13 @@ interface DiscountCodeType {
   // Add other fields as needed
 }
 
+interface UpdateMemberValues {
+  member_name: string;
+  birthday: Dayjs | null; // Use Dayjs type
+  // Add other editable fields here with appropriate types
+}
+
+
 const { TabPane } = Tabs;
 
 const GetMemberDetailPage: React.FC = () => {
@@ -85,6 +95,8 @@ const GetMemberDetailPage: React.FC = () => {
   const [memberData, setMemberData] = useState<MemberDataType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [updating, setUpdating] = useState<boolean>(false); // Loading state for updating
+
 
   const [form] = Form.useForm();
 
@@ -107,10 +119,16 @@ const GetMemberDetailPage: React.FC = () => {
         }
         const data: MemberDataType = await response.json();
         setMemberData(data);
+
+        const formattedBirthday = data.birthday
+          ? dayjs(data.birthday, "YYYY-MM-DD")
+          : null;
+
+
         // Set form values for editing
         form.setFieldsValue({
           member_name: data.member_name,
-          birthday: data.birthday,
+          birthday: formattedBirthday,
           // Add other editable fields
         });
       } catch (err: any) {
@@ -126,17 +144,27 @@ const GetMemberDetailPage: React.FC = () => {
   }, [form, memberPhone]);
 
   const onFinish = async (values: any) => {
+
+    // Convert 'birthday' from dayjs to string
+    const formattedValues = {
+      ...values,
+      birthday: values.birthday
+        ? values.birthday.format("YYYY-MM-DD")
+        : null,
+    };
+
+
     // Handle the form submission to update member details
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/member/update_member/${memberPhone}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/member/put_change_member_detail/${memberPhone}`,
         {
-          method: "POST",
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           credentials: 'include',
-          body: JSON.stringify(values),
+          body: JSON.stringify(formattedValues),
         }
       );
       if (!response.ok) {
@@ -145,32 +173,69 @@ const GetMemberDetailPage: React.FC = () => {
       const result = await response.json();
       message.success("Member details updated successfully");
       // Update the member data
-      setMemberData({ ...memberData!, ...values });
+      setMemberData({ ...memberData!, ...formattedValues });
     } catch (err: any) {
       message.error(err.message || "Failed to update member details");
+    } finally {
+      setUpdating(false);
     }
   };
 
   const handleSuspendMembership = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/member/suspend_membership/${memberPhone}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: 'include',
-          // Include any additional data if needed
+    if (memberData?.is_active === 2) {
+      // Reactivate Membership
+      try {
+        console.log("put_reactivate_membership start")
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/member/put_reactivate_membership/${memberPhone}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: 'include', // Ensure cookies are included
+            body: JSON.stringify({ is_active: 1 }), // Payload to set as active
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || `Error: ${response.statusText}`);
         }
-      );
-      if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
+
+        message.success("Membership reactivated successfully");
+        // Update local state to reflect the change
+        setMemberData({ ...memberData!, is_active: 1 });
+      } catch (err: any) {
+        message.error(err.message || "Failed to reactivate membership");
       }
-      message.success("Membership suspended successfully");
-      // Update member data or state if necessary
-    } catch (err: any) {
-      message.error(err.message || "Failed to suspend membership");
+    } else {
+      // Suspend Membership
+      try {
+        console.log("put_suspend_membership start")
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/member/put_suspend_membership/${memberPhone}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: 'include',
+            body: JSON.stringify({ is_active: 2 }), // Payload to suspend
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || `Error: ${response.statusText}`);
+        }
+
+        message.success("Membership suspended successfully");
+        // Update local state to reflect the change
+        setMemberData({ ...memberData!, is_active: 2 });
+      } catch (err: any) {
+        message.error(err.message || "Failed to suspend membership");
+      }
     }
   };
 
@@ -244,8 +309,16 @@ const GetMemberDetailPage: React.FC = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item name="birthday" label="生日">
-            <Input />
+          <Form.Item
+            name="birthday"
+            label="生日"
+            rules={[{ required: true, message: "請選擇生日" }]}
+          >
+            <DatePicker
+              style={{ width: "100%" }}
+              format="YYYY-MM-DD"
+              placeholder="選擇生日"
+            />
           </Form.Item>
           {/* Add other editable fields */}
           <Form.Item>
@@ -253,11 +326,14 @@ const GetMemberDetailPage: React.FC = () => {
               <Button type="primary" htmlType="submit">
                 更新資訊
               </Button>
-              <Button type="primary" htmlType="submit">
+              <Button type="default" onClick={() => router.back()}>
                 取消
               </Button>
-              <Button type="primary" htmlType="submit">
+              {/* <Button type="primary" onClick={handleSuspendMembership}>
                 暫停會藉
+              </Button> */}
+              <Button type="primary" onClick={handleSuspendMembership}>
+                {memberData?.is_active === 2 ? "重啟會藉" : "暫停會藉"}
               </Button>
             </Space>
           </Form.Item>
@@ -267,7 +343,7 @@ const GetMemberDetailPage: React.FC = () => {
       {/* Referrer Information */}
       <Card style={{ marginTop: 16 }}>
         <Tabs defaultActiveKey="referees">
-          
+
 
           <TabPane tab="消費記錄" key="purchases">
             {/* Purchase Statistics */}
