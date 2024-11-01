@@ -24,6 +24,7 @@ import dayjs from 'dayjs';
 const { Title } = Typography;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
+const { TextArea } = Input;
 
 interface DiscountCode {
     discount_code_id: number;
@@ -313,7 +314,10 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                         label="優惠詳情"
                         rules={[{ required: true, message: '輸入禮物詳情' }]}
                     >
-                        <Input />
+                        <TextArea
+                            placeholder="輸入禮物詳情"
+                            autoSize={{ minRows: 3, maxRows: 5 }}
+                        />
                     </Form.Item>
 
 
@@ -322,7 +326,10 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                         label="條款及細則"
                         rules={[{ required: true, message: '輸入禮物的條款及細則' }]}
                     >
-                        <Input />
+                        <TextArea
+                            placeholder="輸入禮物的條款及細則"
+                            autoSize={{ minRows: 3, maxRows: 5 }}
+                        />
                     </Form.Item>
 
 

@@ -374,11 +374,11 @@ const DiscountCodeListPage: React.FC = () => {
         credentials: 'include',
         body: JSON.stringify({ deleted_status: true }),
       });
-  
+
       if (!response.ok) {
         throw new Error(`Failed to delete item: ${response.status}`);
       }
-  
+
       // Remove the item from the state
       setDiscountCodes((prevItems) => prevItems.filter((item) => item.discount_code_id !== id));
       message.success('Item deleted successfully!');
@@ -545,7 +545,10 @@ const DiscountCodeListPage: React.FC = () => {
             label="優惠詳情"
             rules={[{ required: true, message: '輸入禮物詳情' }]}
           >
-            <Input />
+            <TextArea
+              placeholder="輸入禮物詳情"
+              autoSize={{ minRows: 3, maxRows: 5 }}
+            />
           </Form.Item>
 
 
@@ -554,7 +557,10 @@ const DiscountCodeListPage: React.FC = () => {
             label="條款及細則"
             rules={[{ required: true, message: '輸入禮物的條款及細則' }]}
           >
-            <Input />
+            <TextArea
+              placeholder="輸入禮物的條款及細則"
+              autoSize={{ minRows: 3, maxRows: 5 }}
+            />
           </Form.Item>
 
           <Form.Item>
