@@ -1,9 +1,8 @@
 .cardContainer {
     text-align: left;
-    width: 100%;
+    width: 180px;
     border: 0px solid #ccc;
     border-radius: 8px;
-    display: flex;
     align-items: center;
     margin: 5px;
 }
@@ -38,7 +37,7 @@
 }
 
 .expiredCard, .birthdayCard {
-    padding: 16px;
+    padding: 2px;
     border-radius: 8px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
     width: 180px;
@@ -70,8 +69,4 @@
     margin-left: auto;
 }
 
-.custom-table-header .ant-table-thead > tr > th {
-    background-color: black;
-    color: white;
-  }
   

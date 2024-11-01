@@ -193,6 +193,36 @@ const GetMemberListPage: React.FC = () => {
     }
   };
 
+// Fetch membership statistics from the backend on component mount
+const [stats, setStats] = useState<StatsData | null>(null);
+
+interface StatsData {
+  new_members_count: number;
+  membership_tier_counts: {
+    [key: string]: number;
+  };
+  expiring_members_count: number;
+  birthday_members_count: number;
+}
+
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list`, {
+          credentials: 'include',
+        });
+        const data = await response.json();
+        console.log(data); // 查看後端數據結構
+        setStats(data);
+      } catch (error) {
+        console.error("Failed to fetch stats:", error);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   // Adjusted useEffect
   useEffect(() => {
     if (!hasFetched.current) {
@@ -333,11 +363,36 @@ const GetMemberListPage: React.FC = () => {
       title: '級別',
       dataIndex: 'membership_tier',
       key: 'membership_tier',
-      sorter: true, // Enable server-side sorting
+      sorter: true,
       sortDirections: ['ascend', 'descend', 'ascend'],
       filters: tierFilterOptions,
       filteredValue: tableFilters.membership_tier || null,
+      render: (text: string, record: DataType) => {
+        // 根據會員等級選擇圖標
+        let iconSrc;
+        switch (record.membership_tier) {
+          case 'new 銅會員':
+            iconSrc = '/blue.png';
+            break;
+          case 'new 銀會員':
+            iconSrc = '/pink.png';
+            break;
+          case 'new 金會員':
+            iconSrc = '/green.png';
+            break;
+          default:
+            iconSrc = '/purple.png';
+        }
+    
+        return (
+          <span style={{ display: 'flex', alignItems: 'center' }}>
+            <img src={iconSrc} alt={text} style={{ width: 25, height: 25, marginRight: 8 }} />
+            {text}
+          </span>
+        );
+      },
     },
+    
     {
       title: '狀態',
       dataIndex: 'is_active',
@@ -346,6 +401,35 @@ const GetMemberListPage: React.FC = () => {
       sortDirections: ['ascend', 'descend', 'ascend'],
       filters: statusOptions,
       filteredValue: tableFilters.is_active || null,
+      render: (text: string) => {
+        // 設定顏色
+        let color;
+        if (text === 'active') {
+          color = 'green';
+        } else if (text === 'suspended') {
+          color = 'orange';
+        } else if (text === 'expired') {
+          color = 'red';
+        } else {
+          color = 'gray'; // 如果有其他未知的狀態，可以設置為灰色
+        }
+    
+        return (
+          <span>
+            <span
+              style={{
+                display: 'inline-block',
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                backgroundColor: color,
+                marginRight: 8,
+              }}
+            />
+            {text}
+          </span>
+        );
+      },
     },
   ];
 
@@ -392,10 +476,10 @@ const GetMemberListPage: React.FC = () => {
     <Col>
     <Card className={styles.cardContainer}>
         <div className={styles.content}>
-          <img src="/Amount.png" alt="新會員數目" className={styles.icon} />
+          <img src="/Amount.png" alt="新會員" className={styles.icon} />
           <div className={styles.textContainer}>
-            <p className={styles.countText}>新會員數目</p>
-            <p className={styles.BigcountText}>1670</p>
+            <p className={styles.countText}>新會員</p>
+            <p className={styles.BigcountText}>{stats?.new_members_count}</p>
           </div>
         </div>
       </Card>
@@ -403,10 +487,10 @@ const GetMemberListPage: React.FC = () => {
     <Col>
     <Card className={styles.cardContainer}>
         <div className={styles.content}>
-          <img src="/expired.png" alt="第零級別新會員" className={styles.icon} />
+          <img src="/expired.png" alt="銅會員" className={styles.icon} />
           <div className={styles.textContainer}>
-            <p className={styles.countText}>第零級別新會員</p>
-            <p className={styles.BigcountText}>400</p>
+            <p className={styles.countText}>銅會員</p>
+            <p className={styles.BigcountText}>{stats?.membership_tier_counts["new 銅會員"] }</p>
           </div>
         </div>
       </Card>
@@ -414,10 +498,10 @@ const GetMemberListPage: React.FC = () => {
     <Col>
     <Card className={styles.cardContainer}>
             <div className={styles.content}>
-              <img src="/1st.png" alt="第一級別新會員" className={styles.icon} />
+              <img src="/1st.png" alt="銀會員" className={styles.icon} />
               <div className={styles.textContainer}>
-                <p className={styles.countText}>第一級別新會員</p>
-                <p className={styles.BigcountText}>487</p>
+                <p className={styles.countText}>銀會員</p>
+                <p className={styles.BigcountText}>{stats?.membership_tier_counts["new 銀會員"]}</p>
               </div>
             </div>
           </Card>
@@ -425,21 +509,10 @@ const GetMemberListPage: React.FC = () => {
         <Col>
         <Card className={styles.cardContainer}>
             <div className={styles.content}>
-              <img src="/2nd.png" alt="第二級別新會員" className={styles.icon} />
+              <img src="/2nd.png" alt="金會員" className={styles.icon} />
               <div className={styles.textContainer}>
-                <p className={styles.countText}>第二級別新會員</p>
-                <p className={styles.BigcountText}>152</p>
-              </div>
-            </div>
-          </Card>
-        </Col>
-        <Col>
-        <Card className={styles.cardContainer}>
-            <div className={styles.content}>
-              <img src="/3rd.png" alt="第三級別新會員" className={styles.icon} />
-              <div className={styles.textContainer}>
-                <p className={styles.countText}>第三級別新會員</p>
-                <p className={styles.BigcountText}>631</p>
+                <p className={styles.countText}>金會員</p>
+                <p className={styles.BigcountText}>{stats?.membership_tier_counts["new 金會員"]}</p>
               </div>
             </div>
           </Card>
@@ -451,7 +524,7 @@ const GetMemberListPage: React.FC = () => {
             <div className={styles.content}>
               <div className={styles.textContainer}>
                 <p className={styles.countText}>本月到期會籍</p>
-                <p className={styles.BigcountText}>88</p>
+                <p className={styles.BigcountText}>{stats?.expiring_members_count}</p>
                 
                 <p className={styles.sendLink}>
                 <NotificationOutlined />
@@ -469,7 +542,7 @@ const GetMemberListPage: React.FC = () => {
             <div className={styles.content}>
               <div className={styles.textContainer}>
                 <p className={styles.countText}>本月生日會員</p>
-                <p className={styles.BigcountText}>25</p>
+                <p className={styles.BigcountText}>{stats?.birthday_members_count}</p>
                 
                 <p className={styles.sendLink}>
                 <NotificationOutlined />

@@ -262,7 +262,7 @@ const GetMemberDetailPage: React.FC = () => {
             {memberData?.member_phone || "N/A"}
           </Descriptions.Item>
           <Descriptions.Item label="生日">
-            {memberData?.birthday || "N/A"}
+          {memberData?.birthday ? dayjs(memberData.birthday).format("YYYY-MM-DD") : "N/A"}
           </Descriptions.Item>
           {/* Add more fields as needed */}
         </Descriptions>
@@ -275,11 +275,11 @@ const GetMemberDetailPage: React.FC = () => {
             {memberData?.membership_tier?.membership_tier_name || "N/A"}
           </Descriptions.Item>
           <Descriptions.Item label="會員有效期">
-            {memberData?.membership_start_date || "N/A"} 至{" "}
-            {memberData?.membership_end_date || "N/A"}
+          {memberData?.membership_start_date ? dayjs(memberData.membership_start_date).format("YYYY-MM-DD") : "N/A"} 至{" "}
+          {memberData?.membership_end_date ? dayjs(memberData.membership_end_date).format("YYYY-MM-DD") : "N/A"}
           </Descriptions.Item>
           <Descriptions.Item label="會籍建立日期">
-            {memberData?.membership_creation_date || "N/A"}
+              {memberData?.membership_creation_date ? dayjs(memberData.membership_creation_date).format("YYYY-MM-DD") : "N/A"}
           </Descriptions.Item>
         </Descriptions>
       </Card>

@@ -45,7 +45,34 @@
   }
 
   .custom-table-header .ant-table-thead > tr > th {
-    background-color: black;
-    color: white;
-  }
+    background-color: black !important;
+    color: white !important;
+}
+
+.custom-table-header .ant-table-thead > tr > th:hover {
+    background-color: black !important; /* 滑鼠懸停時背景保持黑色 */
+    color: white !important; /* 滑鼠懸停時文字保持白色 */
+}
+
+/* 設定 icon 為白色，避免在懸停時變色 */
+.custom-table-header .ant-table-thead > tr > th .anticon {
+    color: white !important;
+}
+
+.ant-card .ant-card-body {
+  padding: 8px; /* 根據實際需求調整 */
+  border-radius: 0 0 8px 8px;
+  text-align: center; /* 水平置中 */
+  flex-direction: column;
+  justify-content: center; /* 垂直置中 */
+  align-items: center; /* 水平置中 */
+  height: 100%; /* 確保卡片內部充滿父容器 */
+  box-sizing: border-box;
+}
+
+.Card_expiredCard, .Card_birthdayCard {
+  padding: 0 !important; /* 將 padding 設置為 0 */
+  text-align: center !important; /* 改為置中 */
+}
+
   
