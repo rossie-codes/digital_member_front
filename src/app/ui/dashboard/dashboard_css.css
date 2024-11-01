@@ -43,3 +43,9 @@
     }
     /* Add styles for a mobile menu if needed */
   }
+
+  .custom-table-header .ant-table-thead > tr > th {
+    background-color: black;
+    color: white;
+  }
+  

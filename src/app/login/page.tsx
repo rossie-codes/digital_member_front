@@ -17,6 +17,7 @@ const StyledContainer = styled.div`
   justify-content: center;
   min-height: 100vh;
   padding: 20px;
+  background-color: #ffffff;
 `;
 
 const StyledForm = styled(Form)`
@@ -26,15 +27,18 @@ const StyledForm = styled(Form)`
 
 const StyledButton = styled(Button)`
   &.login_button {  // Target the className
-    background-color: #10239e; // Example: Blue background
-    border-color: #10239e;    // Example: Blue border
+    background-color: #0044cc; // Example: Blue background
+    border-color: #0044cc;    // Example: Blue border
     color: #fff;             // Example: White text
-    width: 40%;
+    width: 100%;
+    height: 50px;
+    font-size: 16px;
+    font-weight: bold;
     
 
     &:hover {
-      background-color: #0069d9; // Darker blue on hover
-      border-color: #0062cc;
+      background-color: #003bb5; // Darker blue on hover
+      border-color: #003bb5;
     }
   }
 `;
@@ -144,7 +148,10 @@ const LoginPage = () => {
   return (
     <StyledContainer>
       <Image src="/WATI_logo_full.png" alt="logo" width={200} height={100} style={{ marginBottom: 20 }} />
-
+      <div style={{ width: '100%', maxWidth: '400px', backgroundColor: '#131313', padding: '10px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between' }}>
+        <a href="/login" style={{ color: '#D74D03', fontWeight: 'bold', textDecoration: 'none' }}>Login</a>
+        <a href="/signup" style={{ color: '#FFFFFF', textDecoration: 'none' }}>Sign Up</a>
+      </div>
       <StyledAnchor
         direction="horizontal"
         items={[
@@ -172,20 +179,18 @@ const LoginPage = () => {
 
         <Form.Item
           name="admin_phone"
-          rules={[{ required: true, message: 'Please input your phone number!' }]} // Updated message
-          style={{ marginBottom: '16px' }} // Add margin between form items
+          rules={[{ required: true, message: '請輸入您的帳戶!' }]}
+          style={{ marginBottom: '16px' }}
         >
-          <StyledInput placeholder="請輸入您的手機號碼" />
-          {/* Updated placeholder, using styled component */}
+          <StyledInput placeholder="輸入帳戶" />
         </Form.Item>
 
         <Form.Item
           name="password"
-          rules={[{ required: true, message: 'Please input your password!' }]} // Updated message
-          style={{ marginBottom: '16px' }} // Add margin between form items
+          rules={[{ required: true, message: '請輸入您的密碼!' }]}
+          style={{ marginBottom: '16px' }}
         >
           <StyledInput placeholder="輸入密碼" />
-          {/* Updated placeholder, using styled component */}
         </Form.Item>
 
         <Form.Item>

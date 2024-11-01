@@ -7,6 +7,10 @@ import type { TableColumnsType, PaginationProps } from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
 import { FormOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation'; // For Next.js 13 with app directory
+import { Row, Col, Card } from 'antd';
+import styles from './Card.module.css';
+import { NotificationOutlined } from '@ant-design/icons';
+import { PlusCircleOutlined } from '@ant-design/icons';
 // import { useContext } from 'react';
 // import { AuthContext } from '../../context/AuthContext';
 
@@ -378,21 +382,138 @@ const GetMemberListPage: React.FC = () => {
 
   return (
     <div>
+
+
+
+
+<div style={{ marginBottom: '20px' }}>
+  <Row gutter={0} justify="start" align="middle">
+    {/* 會員數統計 */}
+    <Col>
+    <Card className={styles.cardContainer}>
+        <div className={styles.content}>
+          <img src="/Amount.png" alt="新會員數目" className={styles.icon} />
+          <div className={styles.textContainer}>
+            <p className={styles.countText}>新會員數目</p>
+            <p className={styles.BigcountText}>1670</p>
+          </div>
+        </div>
+      </Card>
+    </Col>
+    <Col>
+    <Card className={styles.cardContainer}>
+        <div className={styles.content}>
+          <img src="/expired.png" alt="第零級別新會員" className={styles.icon} />
+          <div className={styles.textContainer}>
+            <p className={styles.countText}>第零級別新會員</p>
+            <p className={styles.BigcountText}>400</p>
+          </div>
+        </div>
+      </Card>
+    </Col>
+    <Col>
+    <Card className={styles.cardContainer}>
+            <div className={styles.content}>
+              <img src="/1st.png" alt="第一級別新會員" className={styles.icon} />
+              <div className={styles.textContainer}>
+                <p className={styles.countText}>第一級別新會員</p>
+                <p className={styles.BigcountText}>487</p>
+              </div>
+            </div>
+          </Card>
+        </Col>
+        <Col>
+        <Card className={styles.cardContainer}>
+            <div className={styles.content}>
+              <img src="/2nd.png" alt="第二級別新會員" className={styles.icon} />
+              <div className={styles.textContainer}>
+                <p className={styles.countText}>第二級別新會員</p>
+                <p className={styles.BigcountText}>152</p>
+              </div>
+            </div>
+          </Card>
+        </Col>
+        <Col>
+        <Card className={styles.cardContainer}>
+            <div className={styles.content}>
+              <img src="/3rd.png" alt="第三級別新會員" className={styles.icon} />
+              <div className={styles.textContainer}>
+                <p className={styles.countText}>第三級別新會員</p>
+                <p className={styles.BigcountText}>631</p>
+              </div>
+            </div>
+          </Card>
+        </Col>
+    
+    {/* 本月到期會員 */}
+    <Col>
+          <Card className={`${styles.cardContainer} ${styles.expiredCard}`}>
+            <div className={styles.content}>
+              <div className={styles.textContainer}>
+                <p className={styles.countText}>本月到期會籍</p>
+                <p className={styles.BigcountText}>88</p>
+                
+                <p className={styles.sendLink}>
+                <NotificationOutlined />
+                <a href="#">傳送廣播</a>
+                </p>
+              </div>
+            </div>
+          </Card>
+          <p className={styles.additionalInfo}>最後廣播：2024-08-30 11:49:27</p>
+        </Col>
+
+        {/* 本月生日會員 */}
+        <Col>
+          <Card className={`${styles.cardContainer} ${styles.birthdayCard}`}>
+            <div className={styles.content}>
+              <div className={styles.textContainer}>
+                <p className={styles.countText}>本月生日會員</p>
+                <p className={styles.BigcountText}>25</p>
+                
+                <p className={styles.sendLink}>
+                <NotificationOutlined />
+                <a href="#">傳送廣播</a>
+                </p>
+              </div>
+            </div>
+          </Card>
+          <p className={styles.additionalInfo}>最後廣播：2024-08-30 11:49:27</p>
+        </Col>
+
+  </Row>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       <Space direction="horizontal" style={{ marginBottom: '20px' }}>
         <Search
-          placeholder="Search members"
+          placeholder="輸入關鍵字"
           allowClear
           onSearch={onSearch}
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />
         <Button type="primary" onClick={() => setIsModalVisible(true)}>
-          Add New Member
+        <PlusCircleOutlined style={{ fontSize: '16px', marginRight: '5px' }} /> 新增會員
         </Button>
         {hasSelected ? `Selected ${selectedRowKeys.length} items` : null}
       </Space>
 
       <Table
+        className="custom-table-header"
         rowSelection={rowSelection}
         dataSource={data}
         columns={columns}
@@ -408,6 +529,7 @@ const GetMemberListPage: React.FC = () => {
         }}
         loading={loading}
         onChange={handleTableChange}
+        
       />
 
       <Modal
