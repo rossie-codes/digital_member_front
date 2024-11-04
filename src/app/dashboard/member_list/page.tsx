@@ -7,10 +7,10 @@ import type { TableColumnsType, PaginationProps } from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
 import { FormOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation'; // For Next.js 13 with app directory
-import { Row, Col, Card } from 'antd';
-import styles from './Card.module.css';
+import { Row, Col, Card, Tooltip} from 'antd';
 import { NotificationOutlined } from '@ant-design/icons';
 import { PlusCircleOutlined } from '@ant-design/icons';
+import styles from './Card.module.css';
 // import { useContext } from 'react';
 // import { AuthContext } from '../../context/AuthContext';
 
@@ -83,6 +83,9 @@ const GetMemberListPage: React.FC = () => {
     { text: 'suspended', value: 2 },
   ];
 
+  const [membershipTiers, setMembershipTiers] = useState<string[]>([]);
+  const icons = ['/blue.png', '/pink.png', '/purple.png', '/green.png']; 
+  const dynamicIcons = ['/1st.png', '/2nd.png', '/3rd.png', '/Amount.png'];
 
   // Separate pagination state
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -223,6 +226,29 @@ interface StatsData {
     fetchStats();
   }, []);
 
+  // Fetch membership tier data from the backend and set filter options
+    
+  useEffect(() => {
+    const fetchMembershipTiers = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list`);
+        const data = await response.json();
+        setMembershipTiers(data.membership_tiers || []);
+        
+        const tierFilters = data.membership_tiers.map((tier: string) => ({
+          text: tier,
+          value: tier,
+        }));
+        setTierFilterOptions(tierFilters);
+      } catch (error) {
+        console.error("Failed to fetch membership tiers:", error);
+      }
+    };
+    
+    fetchMembershipTiers();
+  }, []);
+  
+
   // Adjusted useEffect
   useEffect(() => {
     if (!hasFetched.current) {
@@ -324,6 +350,13 @@ interface StatsData {
       title: '姓名',
       dataIndex: 'member_name',
       key: 'member_name',
+      ellipsis: true,
+      width: 150,
+      render: (text) => (
+        <Tooltip title={text} placement="topLeft">
+          {text}
+        </Tooltip>
+      ),
     },
     {
       title: '電話號碼',
@@ -368,22 +401,11 @@ interface StatsData {
       filters: tierFilterOptions,
       filteredValue: tableFilters.membership_tier || null,
       render: (text: string, record: DataType) => {
-        // 根據會員等級選擇圖標
-        let iconSrc;
-        switch (record.membership_tier) {
-          case 'new 銅會員':
-            iconSrc = '/blue.png';
-            break;
-          case 'new 銀會員':
-            iconSrc = '/pink.png';
-            break;
-          case 'new 金會員':
-            iconSrc = '/green.png';
-            break;
-          default:
-            iconSrc = '/purple.png';
-        }
-    
+        // 根據等級名稱在 membershipTiers 中的索引選擇圖標
+        const tierIndex = membershipTiers.indexOf(record.membership_tier);
+        // 如果索引是 0、1、2，就使用對應的圖標；否則使用第四個圖標
+        const iconSrc = tierIndex >= 0 && tierIndex < 3 ? icons[tierIndex] : icons[3];
+        
         return (
           <span style={{ display: 'flex', alignItems: 'center' }}>
             <img src={iconSrc} alt={text} style={{ width: 25, height: 25, marginRight: 8 }} />
@@ -470,65 +492,62 @@ interface StatsData {
 
 
 
+
+
+
 <div style={{ marginBottom: '20px' }}>
-  <Row gutter={0} justify="start" align="middle">
-    {/* 會員數統計 */}
+  <Row gutter={0} justify="space-between" align="middle">
+    {/* 左邊的會員卡片區域 */}
     <Col>
-    <Card className={styles.cardContainer}>
-        <div className={styles.content}>
-          <img src="/Amount.png" alt="新會員" className={styles.icon} />
-          <div className={styles.textContainer}>
-            <p className={styles.countText}>新會員</p>
-            <p className={styles.BigcountText}>{stats?.new_members_count}</p>
-          </div>
-        </div>
-      </Card>
-    </Col>
-    <Col>
-    <Card className={styles.cardContainer}>
-        <div className={styles.content}>
-          <img src="/expired.png" alt="銅會員" className={styles.icon} />
-          <div className={styles.textContainer}>
-            <p className={styles.countText}>銅會員</p>
-            <p className={styles.BigcountText}>{stats?.membership_tier_counts["new 銅會員"] }</p>
-          </div>
-        </div>
-      </Card>
-    </Col>
-    <Col>
-    <Card className={styles.cardContainer}>
-            <div className={styles.content}>
-              <img src="/1st.png" alt="銀會員" className={styles.icon} />
-              <div className={styles.textContainer}>
-                <p className={styles.countText}>銀會員</p>
-                <p className={styles.BigcountText}>{stats?.membership_tier_counts["new 銀會員"]}</p>
-              </div>
-            </div>
-          </Card>
-        </Col>
+      <Row gutter={0} align="middle">
+        {/* 固定顯示「新會員」卡片 */}
         <Col>
-        <Card className={styles.cardContainer}>
+          <Card className={styles.cardContainer}>
             <div className={styles.content}>
-              <img src="/2nd.png" alt="金會員" className={styles.icon} />
+              <img src="/Amount.png" alt="新會員" className={styles.icon} />
               <div className={styles.textContainer}>
-                <p className={styles.countText}>金會員</p>
-                <p className={styles.BigcountText}>{stats?.membership_tier_counts["new 金會員"]}</p>
+                <p className={styles.countText}>新會員</p>
+                <p className={styles.BigcountText}>{stats?.new_members_count}</p>
               </div>
             </div>
           </Card>
         </Col>
-    
-    {/* 本月到期會員 */}
+
+        {/* 動態渲染其他會員等級卡片 */}
+        {Object.entries(stats?.membership_tier_counts || {}).map(([tierName, count], index) => {
+          // 根據 index 使用對應的 dynamic icon 圖片，如果 index 超過三個就使用第四個預設 icon
+          const iconSrc = index < 3 ? dynamicIcons[index] : dynamicIcons[3];
+          
+          return (
+            <Col key={tierName}>
+              <Card className={styles.cardContainer}>
+                <div className={styles.content}>
+                  <img src={iconSrc} alt={tierName} className={styles.icon} />
+                  <div className={styles.textContainer}>
+                    <p className={styles.countText}>{tierName}</p>
+                    <p className={styles.BigcountText}>{count}</p>
+                  </div>
+                </div>
+              </Card>
+            </Col>
+          );
+        })}
+      </Row>
+    </Col>
+
+    {/* 右邊的「本月到期會員」和「本月生日會員」卡片 */}
     <Col>
+      <Row gutter={0} justify="end" align="middle">
+        {/* 本月到期會員 */}
+        <Col>
           <Card className={`${styles.cardContainer} ${styles.expiredCard}`}>
             <div className={styles.content}>
               <div className={styles.textContainer}>
                 <p className={styles.countText}>本月到期會籍</p>
                 <p className={styles.BigcountText}>{stats?.expiring_members_count}</p>
-                
                 <p className={styles.sendLink}>
-                <NotificationOutlined />
-                <a href="#">傳送廣播</a>
+                  <NotificationOutlined />
+                  <a href="#">傳送廣播</a>
                 </p>
               </div>
             </div>
@@ -543,17 +562,17 @@ interface StatsData {
               <div className={styles.textContainer}>
                 <p className={styles.countText}>本月生日會員</p>
                 <p className={styles.BigcountText}>{stats?.birthday_members_count}</p>
-                
                 <p className={styles.sendLink}>
-                <NotificationOutlined />
-                <a href="#">傳送廣播</a>
+                  <NotificationOutlined />
+                  <a href="#">傳送廣播</a>
                 </p>
               </div>
             </div>
           </Card>
           <p className={styles.additionalInfo}>最後廣播：2024-08-30 11:49:27</p>
         </Col>
-
+      </Row>
+    </Col>
   </Row>
 </div>
 
@@ -606,12 +625,19 @@ interface StatsData {
       />
 
       <Modal
-        title="Add New Member"
+        title={
+          <div className={styles.modalTitle}>
+            <img src={icons[3]} alt="Icon" style={{ width: '24px' }} /> {/* 使用 green.png 作為標題圖示 */}
+            <span className={styles.BigcountText}>新增會員</span>
+          </div>
+        }
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
       >
+        
         <Form form={form} onFinish={onFinish} layout="vertical">
+        <div className={styles.modalContainer}>
           <Form.Item
             name="member_name"
             label="會員姓名"
@@ -634,11 +660,13 @@ interface StatsData {
           >
             <Input />
           </Form.Item>
-
+          </div>
+          
           <Form.Item
             name="referrer_phone"
             label="推薦人電話號碼 (選填)"
             rules={[{ required: false, message: 'Please enter the referrer phone number' }]}
+            className={styles.referrerField}
           >
             <Input />
           </Form.Item>
@@ -652,8 +680,8 @@ interface StatsData {
           </Form.Item> */}
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={addingMember}>
-              Add Member
+            <Button type="primary" htmlType="submit" loading={addingMember} className={styles.addButton}>
+              新增
             </Button>
           </Form.Item>
         </Form>

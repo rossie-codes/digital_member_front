@@ -1,65 +1,65 @@
 .cardContainer {
     text-align: left;
-    width: 180px;
+    width: 200px;
     border: 0px solid #ccc;
     border-radius: 8px;
     align-items: center;
     margin: 5px;
-}
-
-.content {
+  }
+  
+  .content {
     display: flex;
     align-items: center;
-}
-
-.icon {
+  }
+  
+  .icon {
     width: 50px;
     margin-right: 10px;
-}
-
-.textContainer {
+  }
+  
+  .textContainer {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-}
-
-.countText {
+  }
+  
+  .countText {
     font-size: 15px;
     font-weight: bold;
     margin: 0;
-}
-
-.BigcountText {
+  }
+  
+  .BigcountText {
     font-size: 20px;
     font-weight: bold;
     margin: 0;
-}
-
-.expiredCard, .birthdayCard {
+  }
+  
+  .expiredCard, .birthdayCard {
     padding: 2px;
     border-radius: 8px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
     width: 180px;
-}
-
-.expiredCard {
+  }
+  
+  .expiredCard {
     background-color: #f5f5f5;
     border: 2px solid #ccc;
-}
-
-.birthdayCard {
+  }
+  
+  .birthdayCard {
     background-color: #fff5e5;
     border: 2px solid #f0c674;
-}
-
-.additionalInfo {
+  }
+  
+  .additionalInfo {
     font-size: 12px;
     color: #888;
     margin-top: 8px;
-}
-
-.sendLink {
+  }
+  
+  .sendLink {
     color: #3b82f6;
     text-decoration: underline;
     font-size: 12px;
@@ -67,6 +67,39 @@
     align-items: center;
     gap: 4px;
     margin-left: auto;
+  }
+
+  /* 卡片容器背景和邊框 */
+.modalContainer {
+  padding: 16px 16px 0px 16px;;
+  background-color: #FFF4D9;
+  border-radius: 8px;
+  border: 1px solid #FFD700;
 }
 
-  
+/* 標題樣式 */
+.modalTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+
+/* 按鈕樣式 */
+.addButton {
+  background-color: #FF4500 !important;
+  border: none !important;
+  color: #FFFFFF !important;
+}
+
+.addButton:hover {
+  background-color: #FF4500 !important;
+  color: #FFFFFF !important;
+}
+
+
+.referrerField {
+  margin-top: 16px; /* 調整這裡的值來控制空間大小 */
+  width: 100%;
+}

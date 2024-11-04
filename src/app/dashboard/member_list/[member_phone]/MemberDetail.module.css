@@ -1,0 +1,50 @@
+/* MemberDetail.module.css */
+
+/* 卡片背景與邊框樣式 */
+.infoCard {
+    background-color: #FFF4D9;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .pointsCard {
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+  }
+  
+  /* 表單標題的樣式 */
+  .headerTitle {
+    font-size: 24px;
+    color: #FFB74D;
+  }
+  
+  /* 按鈕樣式 */
+  .cancelButton {
+    width: 100%;
+    background-color: #9E9E9E;
+    color: #fff;
+    border: none;
+  }
+  
+  .saveButton {
+    width: 100%;
+    background-color: #FF5722; /* 橘色儲存按鈕 */
+    color: #fff;
+    border: none;
+  }
+  
+  /* 積分文字顯示樣式 */
+  .pointsText {
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  /* 說明文字和框框樣式 */
+  .descriptionsCard {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+  }
+  

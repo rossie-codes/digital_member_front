@@ -2,17 +2,15 @@
 
 "use client";
 
-import React, { useState } from 'react';
-import { Layout, Menu, Dropdown } from 'antd';
-import { MailOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { Layout, Menu, Dropdown, Drawer, Button } from 'antd';
+import {  MailOutlined, MenuOutlined  } from '@ant-design/icons';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import LogoutButton from '../../components/LogoutButton';
 import styled from 'styled-components';
 import Image from 'next/image';
 import { GlobalOutlined, UserOutlined } from '@ant-design/icons';
-
-
 
 const { Header } = Layout;
 // 新增自訂的 Logo 樣式，並引用圖片
@@ -34,6 +32,10 @@ const CustomHeader = styled(Header)`
 const MenuContainer = styled.div`
   display: flex;
   align-items: center;
+
+  @media (max-width: 768px) {
+    display: none; /* 在小螢幕上隱藏 */
+  }
 `;
 
 const MenuStyle = styled(Menu)`
@@ -44,16 +46,49 @@ const MenuStyle = styled(Menu)`
 
 const IconWrapper = styled.div`
   display: flex;
-  gap: 16px; /* 設置圖標之間的距離 */
-  margin-left: 20px; /* 與選單之間的間距 */
+  gap: 16px;
+  margin-left: 20px;
+
+  @media (max-width: 768px) {
+    display: none; /* 在小螢幕上隱藏 */
+  }
 `;
+
+const MobileMenuButton = styled(Button)`
+  display: none;
+
+  @media (max-width: 768px) {
+    display: block; /* 只在小螢幕上顯示 */
+    font-size: 18px;
+  }
+`;
+
 const DashboardHeader: React.FC = () => {
   const pathname = usePathname();
   const [current, setCurrent] = useState(pathname);
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
 
   const onClick = (e: any) => {
     setCurrent(e.key);
+    setDrawerVisible(false);
   };
+
+  // Handle window resize to close drawer on larger screens
+  useEffect(() => {
+    // 檢查瀏覽器窗口大小
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= 768);
+    };
+
+    checkScreenSize(); // 初始化時執行一次
+
+    // 設置事件監聽器來監控窗口大小變化
+    window.addEventListener('resize', checkScreenSize);
+
+    // 清理事件監聽器
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   const items = [
     {
@@ -89,43 +124,31 @@ const DashboardHeader: React.FC = () => {
   const userMenu = (
     <Menu items={userMenuItems} />
   );
-
+  
   return (
     <CustomHeader>
-      {/* Logo 區塊 */}
       <LogoContainer>
-      <Image
-          src="/WATI_logo_full.png"
-          alt="logo"
-          width={100}
-          height={50}
-          style={{ objectFit: 'contain' }} 
-        />
-
+        <Image src="/WATI_logo_full.png" alt="logo" width={100} height={41} style={{ objectFit: 'contain' }} />
       </LogoContainer>
 
-      {/* 主選單 */}
+    {isLargeScreen && (
       <MenuContainer>
-        <MenuStyle
-          onClick={onClick}
-          selectedKeys={[current]}
-          mode="horizontal"
-          items={items}
-        />
-
-        {/* Icon 區塊 */}
+        <MenuStyle onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
         <IconWrapper>
-
-          {/* 切換語言圖標 */}
           <GlobalOutlined style={{ fontSize: '24px', cursor: 'pointer' }} />
-
-          {/* 會員圖標，點擊後顯示設定和登出 */}
           <Dropdown menu={{ items: userMenuItems }} trigger={['click']}>
             <UserOutlined style={{ fontSize: '24px', cursor: 'pointer' }} />
           </Dropdown>
-          
         </IconWrapper>
       </MenuContainer>
+    )}
+    
+      <MobileMenuButton icon={<MenuOutlined />} onClick={() => setDrawerVisible(true)} type="text" />
+
+      <Drawer title="Menu" placement="right" onClose={() => setDrawerVisible(false)} open={drawerVisible} forceRender>
+        <Menu onClick={onClick} selectedKeys={[current]} mode="vertical" items={items} />
+        <Menu items={userMenuItems} mode="vertical" selectable={false} style={{ marginTop: '20px' }} />
+      </Drawer>
     </CustomHeader>
   );
 };

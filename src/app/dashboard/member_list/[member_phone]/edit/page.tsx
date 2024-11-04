@@ -20,6 +20,7 @@ import {
 import dayjs, { Dayjs } from "dayjs"; // Import Dayjs and its type
 import { useParams, useRouter } from "next/navigation";
 import type { ColumnsType } from "antd/es/table";
+import styles from './MemberDetail.module.css';
 
 interface MemberDataType {
   member_phone: string;
