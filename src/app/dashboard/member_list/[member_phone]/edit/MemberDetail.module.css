@@ -1,0 +1,103 @@
+/* MemberDetail.module.css */
+
+/* 主容器 */
+.container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* 左側區塊（橘色背景） */
+.leftSection {
+  background-color: #fff7e6;
+  border: 2px solid #f0c674;
+  border-radius: 8px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 右側主要區塊 */
+.rightSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 卡片樣式 */
+.card {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  min-width: 250px;
+}
+
+/* 積分區塊樣式 */
+.pointsContainer {
+  display: flex;
+  gap: 10px;
+}
+
+.pointCard {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.pointAvailable {
+  background-color: #d9f7be;
+}
+
+.pointUsed {
+  background-color: #e8e8e8;
+}
+
+.pointEarned {
+  background-color: #bae7ff;
+}
+
+/* 表單欄位 */
+.formField {
+  margin-bottom: 16px;
+}
+
+.saveButton {
+  background-color: #0044cc;
+  border-color: #0044cc;
+}
+
+/* 確保 .ant-card-body 背景為透明 */
+.noBackgroundCard {
+  background-color: transparent !important;
+  border: none !important; /* 可選：移除邊框 */
+  box-shadow: none !important; /* 可選：移除陰影 */
+  padding:0px !important;
+}
+
+.noBackgroundCard > .ant-card-body {
+  background-color: transparent !important; /* 覆蓋 body 的背景 */
+}
+
+.ant-descriptions-bordered .ant-descriptions-item {
+  border: 1px solid #ddd; /* 調整邊框顏色 */
+}
+
+.ant-descriptions-item-label, .ant-descriptions-item-content {
+  text-align: center;
+}
+
+.ant-descriptions-item-content {
+  font-weight: bold;
+  font-size: 1.2em;
+  padding: 12px 0; /* 增加內距來調整視覺效果 */
+}
+
+.ant-descriptions-bordered {
+  border: 2px solid #777; /* 外圍邊框，接近圖片中的灰色 */
+  border-radius: 8px; /* 加上圓角效果 */
+}
+
+

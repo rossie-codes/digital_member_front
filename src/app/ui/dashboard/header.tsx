@@ -68,6 +68,11 @@ const DashboardHeader: React.FC = () => {
   const [current, setCurrent] = useState(pathname);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true); // 確保這些組件僅在客戶端渲染
+  }, []);
 
   const onClick = (e: any) => {
     setCurrent(e.key);
@@ -128,10 +133,12 @@ const DashboardHeader: React.FC = () => {
   return (
     <CustomHeader>
       <LogoContainer>
-        <Image src="/WATI_logo_full.png" alt="logo" width={100} height={41} style={{ objectFit: 'contain' }} />
-      </LogoContainer>
-
-    {isLargeScreen && (
+        {isClient && (
+          <Image src="/WATI_logo_full.png" alt="logo" width={100} height={41} style={{ objectFit: 'contain' }} />
+        )}
+        </LogoContainer>
+    
+    {isLargeScreen && isClient && (
       <MenuContainer>
         <MenuStyle onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
         <IconWrapper>
@@ -142,13 +149,16 @@ const DashboardHeader: React.FC = () => {
         </IconWrapper>
       </MenuContainer>
     )}
-    
+    {isClient && (
+      <>
       <MobileMenuButton icon={<MenuOutlined />} onClick={() => setDrawerVisible(true)} type="text" />
 
       <Drawer title="Menu" placement="right" onClose={() => setDrawerVisible(false)} open={drawerVisible} forceRender>
         <Menu onClick={onClick} selectedKeys={[current]} mode="vertical" items={items} />
         <Menu items={userMenuItems} mode="vertical" selectable={false} style={{ marginTop: '20px' }} />
       </Drawer>
+      </>
+      )}
     </CustomHeader>
   );
 };

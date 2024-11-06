@@ -576,20 +576,6 @@ interface StatsData {
   </Row>
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       <Space direction="horizontal" style={{ marginBottom: '20px' }}>
         <Search
           placeholder="輸入關鍵字"
