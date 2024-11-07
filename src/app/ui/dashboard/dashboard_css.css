@@ -44,18 +44,18 @@
     /* Add styles for a mobile menu if needed */
   }
 
-  .custom-table-header .ant-table-thead .ant-table-cell > tr > th {
+.custom-table-header .ant-table-thead> tr > th {
     background-color: black !important;
     color: white !important;
 }
 
-.custom-table-header .ant-table-thead .ant-table-cell > tr > th:hover {
+.custom-table-header .ant-table-thead> tr > th:hover {
     background-color: black !important; /* 滑鼠懸停時背景保持黑色 */
     color: white !important; /* 滑鼠懸停時文字保持白色 */
 }
 
 /* 設定 icon 為白色，避免在懸停時變色 */
-.custom-table-header .ant-table-thead .ant-table-cell > tr > th .anticon {
+.custom-table-header .ant-table-thead> tr > th .anticon {
     color: white !important;
 }
 
@@ -75,8 +75,13 @@
   text-align: center !important; /* 改為置中 */
 }
 
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: black !important; /* 選中時的文字顏色 */
+}
 
-
+.ant-tabs-tab .ant-tabs-tab-btn {
+  color: gray !important; /* 未選中時的文字顏色 */
+}
 
 
  
