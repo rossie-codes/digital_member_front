@@ -69,7 +69,6 @@
     margin-left: auto;
   }
 
-  /* 卡片容器背景和邊框 */
 .modalContainer {
   padding: 16px 16px 0px 16px;;
   background-color: #FFF4D9;
@@ -77,16 +76,12 @@
   border: 1px solid #FFD700;
 }
 
-/* 標題樣式 */
 .modalTitle {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-
-
-/* 按鈕樣式 */
 .addButton {
   background-color: #FF4500 !important;
   border: none !important;
@@ -98,8 +93,7 @@
   color: #FFFFFF !important;
 }
 
-
 .referrerField {
-  margin-top: 16px; /* 調整這裡的值來控制空間大小 */
+  margin-top: 16px;
   width: 100%;
 }

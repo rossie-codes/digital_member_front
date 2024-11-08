@@ -21,19 +21,21 @@ import dayjs, { Dayjs } from "dayjs"; // Import Dayjs and its type
 import { useParams, useRouter } from "next/navigation";
 import type { ColumnsType } from "antd/es/table";
 import styles from './MemberDetail.module.css';
-
+import { UserDeleteOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 const icons = ['/blue.png', '/pink.png', '/purple.png', '/green.png']; 
 const dynamicIcons = ['/1st.png', '/2nd.png', '/3rd.png', '/Amount.png'];
-// 根據 membership_tier_sequence 或 membership_tier_id 選擇圖示
-const getIconByTierSequence = (sequence: number | undefined): string => {
-  if (typeof sequence !== 'number') {
+const getIcon = (id: number | undefined): string => {
+  if (typeof id !== 'number') {
+    return icons[0]; // 預設圖示
+  }
+  return icons[(id - 1) % icons.length];
+};
+const getIconByTierId = (id: number | undefined): string => {
+  if (typeof id !== 'number') {
     return dynamicIcons[0]; // 預設圖示
   }
-  return dynamicIcons[(sequence - 1) % dynamicIcons.length];
+  return dynamicIcons[(id - 1) % dynamicIcons.length];
 };
-
-
-
 
 interface MemberDataType {
   member_phone: string;
@@ -98,7 +100,6 @@ interface UpdateMemberValues {
   // Add other editable fields here with appropriate types
 }
 
-
 const { TabPane } = Tabs;
 
 const GetMemberDetailPage: React.FC = () => {
@@ -116,7 +117,36 @@ const GetMemberDetailPage: React.FC = () => {
     setActiveTab(key);
   };
 
-  const [form] = Form.useForm();
+  const [leftForm] = Form.useForm();
+  const [rightForm] = Form.useForm();
+
+  const BackButton = () => (
+    <Button
+      type="text"
+      icon={<ArrowLeftOutlined />}
+      onClick={() => router.back()}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        fontWeight: 'bold',
+        fontSize: '16px',
+      }}
+    >
+      <img
+            src={getIcon(memberData?.membership_tier?.membership_tier_id)}
+            alt="會員層級小圖示"
+            style={{ width: 30, height: 30, marginRight: 8 }}
+          />
+          <span style={{
+            maxWidth: '250px', 
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+          {memberData?.member_name}
+          </span>
+    </Button>
+  );
 
   useEffect(() => {
     const fetchMemberData = async () => {
@@ -132,22 +162,29 @@ const GetMemberDetailPage: React.FC = () => {
             credentials: 'include',
           }
         );
+    
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
         const data: MemberDataType = await response.json();
         setMemberData(data);
+        
         const formattedBirthday = data.birthday
           ? dayjs(data.birthday, "YYYY-MM-DD")
           : null;
 
-
-        // Set form values for editing
-        form.setFieldsValue({
+        // 設定左右表單的初始值
+        leftForm.setFieldsValue({
           member_name: data.member_name,
           birthday: formattedBirthday,
-          // Add other editable fields
         });
+
+        rightForm.setFieldsValue({
+          unused_points: data.unused_points,
+          used_points: data.used_points,
+        });
+
+        
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -158,7 +195,23 @@ const GetMemberDetailPage: React.FC = () => {
     if (memberPhone) {
       fetchMemberData();
     }
-  }, [form, memberPhone]);
+  }, [leftForm, rightForm, memberPhone]);
+
+  const handleSave = async () => {
+    try {
+      // 驗證並取得左右表單的資料
+      const leftValues = await leftForm.validateFields();
+      const rightValues = await rightForm.validateFields();
+
+      // 合併兩邊的資料
+      const allValues = { ...leftValues, ...rightValues };
+
+      // 呼叫 API 更新資料
+      await onFinish(allValues);
+    } catch (error) {
+      console.error("Validation failed:", error);
+    }
+  };
 
   const onFinish = async (values: any) => {
 
@@ -256,7 +309,15 @@ const GetMemberDetailPage: React.FC = () => {
     }
   };
 
-  if (loading) return <Spin tip="Loading..." />;
+  if (loading) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <Spin />
+        <div style={{ marginTop: 20, fontSize: "16px", color: "#999" }}>Loading...</div>
+      </div>
+    );
+  }
+  
   if (error)
     return (
       <Alert
@@ -269,14 +330,17 @@ const GetMemberDetailPage: React.FC = () => {
 
   return (
     <>
+    <BackButton />
+    
   <div className={styles.container}>
+  
     {/* left block */}
     <div className={styles.leftSection}>
     {/* Edit Member Information */}
     <Card title={
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <img
-            src={getIconByTierSequence(memberData?.membership_tier?.membership_tier_sequence)}
+            src={getIconByTierId(memberData?.membership_tier?.membership_tier_id)}
             alt="會員層級圖示"
             style={{ width: 50, height: 50, display: 'block', margin: '0 auto' }}
           />
@@ -284,7 +348,7 @@ const GetMemberDetailPage: React.FC = () => {
       }
       className={`${styles.card} ${styles.noBackgroundCard}`}
     >
-        <Form form={form} onFinish={onFinish} layout="vertical">
+        <Form form={leftForm} onFinish={onFinish} layout="vertical">
           <Form.Item
             name="member_name"
             label="會員姓名"
@@ -310,16 +374,16 @@ const GetMemberDetailPage: React.FC = () => {
     {/* 右側區塊 */}
     <div className={styles.rightSection}>
     {/* save button */}
-          <Form form={form} onFinish={onFinish} style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
+    <Form form={rightForm} style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
         <Space>
           <Button type="default" onClick={() => router.back()}>
             取消
           </Button>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" onClick={handleSave}>
             儲存
           </Button>
         </Space>
-      </Form>
+        </Form>
 
     {/* Points Statistics */}
       <div className={styles.pointsContainer}>
@@ -365,11 +429,13 @@ const GetMemberDetailPage: React.FC = () => {
       
       {/* 暫停會藉 */}
       <div style={{ marginTop: 3, display: 'flex', justifyContent: 'flex-end' }}>
-        <Button type="primary" onClick={handleSuspendMembership}>
+        <Button type="primary" onClick={handleSuspendMembership} >
+        <UserDeleteOutlined />
           {memberData?.is_active === 2 ? "重啟會藉" : "終止會藉"}
         </Button>
       </div>
     </div>
+    
 </div>
 
       {/* Referrer Information */}
@@ -457,14 +523,6 @@ const GetMemberDetailPage: React.FC = () => {
             }
             key="referees"
           >
-            {/* Referees Information */}
-            <Descriptions column={1}>
-              <Descriptions.Item label="被推薦人數量">
-                {memberData?.referees?.length || 0}
-              </Descriptions.Item>
-              {/* Add other statistics if needed */}
-            </Descriptions>
-
             {/* List of Referees */}
             <Table<RefereeDataType>
               className="custom-table-header"

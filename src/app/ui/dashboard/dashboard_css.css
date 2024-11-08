@@ -1,47 +1,41 @@
 /* Styling for the Header component */
 .ant-layout-header {
-    background-color: #fff; /* Example background color */
-    padding: 0 20px; /* Example padding */
-    border-bottom: 1px solid #eee; /* Example border */
+    background-color: #fff;
+    padding: 0 20px;
+    border-bottom: 1px solid #eee;
   }
-  
-  /* Styling for the Menu items */
   .ant-menu-horizontal {
-    border-bottom: none; /* Remove default menu border */
+    border-bottom: none;
   }
   
   .ant-menu-item {
-    font-size: 16px; /* Example font size */
-    margin-right: 20px; /* Example spacing between items */
+    font-size: 16px;
+    margin-right: 20px;
   }
   
   .ant-menu-item-selected {
-    background-color: #f0f0f0; /* Example background color for selected item */
-    font-weight: bold; /* Example font weight for selected item */
+    background-color: #f0f0f0;
+    font-weight: bold;
   }
   
   .ant-menu-item a {
-    color: #333; /* Example link color */
-    text-decoration: none; /* Remove underlines from links */
+    color: #333;
+    text-decoration: none;
   }
   
   .ant-menu-item-selected a {
-    color: #1890ff; /* Example link color for selected item */
+    color: #1890ff;
   }
   
-  
-  /* Styling for the Logout Button (assuming it's a standard Ant Design button) */
   .ant-btn-primary {
-    background-color: #1890ff; /* Example background color */
-    border-color: #1890ff; /* Example border color */
+    background-color: #1890ff;
+    border-color: #1890ff;
   }
   
-  /* Media query for responsiveness (adjust as needed) */
   @media (max-width: 768px) {
     .ant-menu-horizontal {
-      display: none;  /* Hide the horizontal menu on smaller screens */
+      display: none;
     }
-    /* Add styles for a mobile menu if needed */
   }
 
 .custom-table-header .ant-table-thead> tr > th {
@@ -50,38 +44,40 @@
 }
 
 .custom-table-header .ant-table-thead> tr > th:hover {
-    background-color: black !important; /* 滑鼠懸停時背景保持黑色 */
-    color: white !important; /* 滑鼠懸停時文字保持白色 */
+    background-color: black !important;
+    color: white !important;
 }
 
-/* 設定 icon 為白色，避免在懸停時變色 */
 .custom-table-header .ant-table-thead> tr > th .anticon {
     color: white !important;
 }
 
 .ant-card .ant-card-body {
-  padding: 8px; /* 根據實際需求調整 */
+  padding: 8px;
   border-radius: 0 0 8px 8px;
-  text-align: center; /* 水平置中 */
+  text-align: center;
   flex-direction: column;
-  justify-content: center; /* 垂直置中 */
-  align-items: center; /* 水平置中 */
-  height: 100%; /* 確保卡片內部充滿父容器 */
+  justify-content: center;
+  align-items: center;
+  height: 100%;
   box-sizing: border-box;
 }
 
 .Card_expiredCard, .Card_birthdayCard {
-  padding: 0 !important; /* 將 padding 設置為 0 */
-  text-align: center !important; /* 改為置中 */
+  padding: 0 !important;
+  text-align: center !important;
 }
 
+/* 設定未選中時的文字顏色 */
+.ant-tabs-tab:not(.ant-tabs-tab-active) .ant-tabs-tab-btn {
+  color: gray !important; /* 未選中時的文字顏色 */
+}
+
+/* 設定選中時的文字顏色 */
 .ant-tabs-tab-active .ant-tabs-tab-btn {
   color: black !important; /* 選中時的文字顏色 */
 }
 
-.ant-tabs-tab .ant-tabs-tab-btn {
-  color: gray !important; /* 未選中時的文字顏色 */
-}
 
 
  

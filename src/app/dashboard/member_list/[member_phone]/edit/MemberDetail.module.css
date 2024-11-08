@@ -1,6 +1,5 @@
 /* MemberDetail.module.css */
 
-/* 主容器 */
 .container {
   display: flex;
   gap: 20px;
@@ -9,18 +8,17 @@
 
 @media (max-width: 768px) {
   .container {
-    flex-direction: column; /* 改成垂直堆疊 */
+    flex-direction: column;
     align-items: center;
   }
 }
 
-/* 左側區塊（橘色背景） */
 .leftSection {
   background-color: #fff7e6;
   border: 3px solid #f0c674;
   border-radius: 8px;
   padding: 20px;
-  width: 300px;
+  width: 500px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-top: 65px;
 }
@@ -31,7 +29,6 @@
   }
 }
 
-/* 右側主要區塊 */
 .rightSection {
   flex: 1;
   display: flex;
@@ -45,7 +42,6 @@
   }
 }
 
-/* 卡片樣式 */
 .card {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -53,7 +49,6 @@
   min-width: 250px;
 }
 
-/* 積分區塊樣式 */
 .pointsContainer {
   display: flex;
   gap: 10px;
@@ -67,12 +62,12 @@
   border-radius: 8px;
   text-align: center;
   font-weight: bold;
-  max-width: 33%; /* 最大寬度 */
+  max-width: 33%;
 }
 
 @media (max-width: 768px) {
   .pointCard {
-    max-width: 100%; /* 小螢幕下全寬 */
+    max-width: 100%;
   }
 }
 
@@ -91,7 +86,7 @@
   text-align: center;
   border-right: 1px solid #a3a3a3;
   padding: 10px;
-  max-width: 33%; /* 最大寬度 */
+  max-width: 33%;
 }
 
 .customItem:last-child {
@@ -100,7 +95,7 @@
 
 @media (max-width: 768px) {
   .customItem {
-    max-width: 100%; /* 小螢幕下全寬 */
+    max-width: 100%;
   }
   .customItem:last-child {
     border-right: none;
@@ -122,7 +117,6 @@
   border: 3px solid #80c5f6;
 }
 
-/* 表單欄位 */
 .formField {
   margin-bottom: 16px;
 }
@@ -132,20 +126,19 @@
   border-color: #0044cc;
 }
 
-/* 確保 .ant-card-body 背景為透明 */
 .noBackgroundCard {
   background-color: transparent !important;
-  border: none !important; /* 可選：移除邊框 */
-  box-shadow: none !important; /* 可選：移除陰影 */
+  border: none !important;
+  box-shadow: none !important;
   padding:0px !important;
 }
 
 .noBackgroundCard > .ant-card-body {
-  background-color: transparent !important; /* 覆蓋 body 的背景 */
+  background-color: transparent !important;
 }
 
 .ant-descriptions-bordered .ant-descriptions-item {
-  border: 1px solid #ddd; /* 調整邊框顏色 */
+  border: 1px solid #ddd;
 }
 
 .ant-descriptions-item-label, .ant-descriptions-item-content {
@@ -155,18 +148,18 @@
 .ant-descriptions-item-content {
   font-weight: bold;
   font-size: 1.2em;
-  padding: 12px 0; /* 增加內距來調整視覺效果 */
+  padding: 12px 0;
 }
 
 .ant-descriptions-bordered {
-  border: 2px solid #777; /* 外圍邊框，接近圖片中的灰色 */
-  border-radius: 8px; /* 加上圓角效果 */
+  border: 2px solid #777;
+  border-radius: 8px;
 }
 
 .input-container {
   border: 2px solid #ccc !important;
   border-radius: 4px;
-  padding: 4px; /* 為內部元素提供一點間距 */
+  padding: 4px;
 }
 
 .disabledInput {
@@ -184,14 +177,14 @@
 .pointValue {
   font-size: 24px;
   font-weight: bold;
-  display: block; /* 強制換行 */
-  margin-top: 4px; /* 與上方文字保持間距 */
+  display: block;
+  margin-top: 4px;
 }
 
 .membershipInfoContainer {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* 控制每項之間的距離 */
+  gap: 10px;
 }
 
 .infoItem {
@@ -201,7 +194,7 @@
 
 .label {
   font-weight: bold;
-  margin-bottom: 4px; /* 標籤與內容之間的距離 */
+  margin-bottom: 4px;
 }
 
 .value {

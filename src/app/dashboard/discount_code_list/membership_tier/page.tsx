@@ -10,6 +10,7 @@ import {
   InputNumber,
   Typography,
   message,
+  Spin,
 } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 
@@ -177,11 +178,14 @@ const onFinishFailed = (errorInfo: any) => {
 // Handle loading state
 if (loading) {
   return (
-    <div style={{ textAlign: 'center', padding: '50px' }}>
-      <Title level={3}>Loading membership tiers...</Title>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Spin>
+        <Title level={3} style={{ marginTop: 20 }}>Loading membership tiers...</Title>
+      </Spin>
     </div>
   );
 }
+
 
 return (
   <Form

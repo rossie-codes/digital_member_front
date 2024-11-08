@@ -2,14 +2,11 @@
 
 'use client';
 import { useEffect, useState, useRef } from 'react';
-import { Table, Input, Space, Button, Modal, Form, message } from 'antd';
+import { Table, Input, Space, Button, Modal, Form, message ,Row, Col, Card, Tooltip} from 'antd';
 import type { TableColumnsType, PaginationProps } from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
-import { FormOutlined } from '@ant-design/icons';
+import { FormOutlined,NotificationOutlined,PlusCircleOutlined,WhatsAppOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation'; // For Next.js 13 with app directory
-import { Row, Col, Card, Tooltip} from 'antd';
-import { NotificationOutlined } from '@ant-design/icons';
-import { PlusCircleOutlined } from '@ant-design/icons';
 import styles from './Card.module.css';
 // import { useContext } from 'react';
 // import { AuthContext } from '../../context/AuthContext';
@@ -359,7 +356,12 @@ interface StatsData {
       ),
     },
     {
-      title: '電話號碼',
+      title: (
+        <span>
+          電話號碼
+          <WhatsAppOutlined style={{ marginLeft: 8, color: '#25D366'}} />
+        </span>
+      ),
       dataIndex: 'member_phone',
       key: 'member_phone',
     },
