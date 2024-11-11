@@ -2,76 +2,189 @@
 
 import React from "react";
 import { Row, Col, Card, Typography, List } from "antd";
-import { GiftOutlined,CaretUpOutlined,TagOutlined,NotificationOutlined} from "@ant-design/icons";
+import { GiftOutlined,CaretUpOutlined,TagOutlined,NotificationOutlined,CaretDownOutlined} from "@ant-design/icons";
 import "./DashboardPage.css"; // 引入 CSS 文件
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+
 
 const { Title, Text } = Typography;
 
 // Dynamic icons array
 const dynamicIcons = ['/1st.png', '/2nd.png', '/3rd.png', '/renew.png', '/Amount.png', '/expired.png'];
 
+const memberData = {
+  totalMembers: 1270,
+  levels: [
+    { type: "第一级別會員", value: 487, expiringSoon: 33, color: "#4c8bf5" },
+    { type: "第二級別會員", value: 152, expiringSoon: 28, color: "#ec6f8b" },
+    { type: "第三级別會員", value: 631, expiringSoon: 53, color: "#9966cc" },
+  ],
+};
+
+const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, index }: any) => {
+  const RADIAN = Math.PI / 180;
+  const radius = outerRadius + 30; // 增加距離以保持標籤位置
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  const { type, value, expiringSoon } = memberData.levels[index];
+  return (
+    <g>
+      <line x1={cx + (outerRadius - 10) * Math.cos(-midAngle * RADIAN)}
+            y1={cy + (outerRadius - 10) * Math.sin(-midAngle * RADIAN)}
+            x2={x} y2={y} stroke="#ccc" strokeWidth={1} />
+      
+      <text x={x} y={y - 10} textAnchor={x > cx ? "start" : "end"} fill="#333" fontSize="14">
+        {type} ({value})
+      </text>
+      <text x={x} y={y + 10} textAnchor={x > cx ? "start" : "end"} fill="red" fontSize="12">
+        即將到期 <CaretDownOutlined /> {expiringSoon}
+      </text>
+    </g>
+  );
+};
+
+const DonutChart = () => (
+  <ResponsiveContainer width="100%" height={400}>
+    <PieChart>
+      <Pie
+        data={memberData.levels}
+        dataKey="value"
+        nameKey="type"
+        cx="50%"
+        cy="50%"
+        innerRadius={80}
+        outerRadius={100}
+        labelLine={false}
+        label={renderCustomizedLabel} // 使用自定義標籤
+      >
+        {memberData.levels.map((entry, index) => (
+          <Cell key={`cell-${index}`} fill={entry.color} />
+        ))}
+      </Pie>
+      <Tooltip />
+    </PieChart>
+  </ResponsiveContainer>
+);
+
+
+
+
 export default function DashboardPage() {
+ 
   return (
     <div className="dashboard-container">
-
+      <div className="custom-title-width">
       <Row gutter={[16, 16]}>
         {/* 各級新會員數目區塊 */}
         <Col span={24}>
-          <Card title="各級新會員數目">
-            <List
-              dataSource={[
-                { level: "第一级別新會員", count: 11, growth: "18.7%", icon: dynamicIcons[0] },
-                { level: "第二級別新會員", count: 52, growth: "22.8%", icon: dynamicIcons[1] },
-                { level: "第三級別新會員", count: 34, growth: "29.4%", icon: dynamicIcons[2] },
-              ]}
-              renderItem={(item) => (
-                <List.Item>
-                  <img src={item.icon} alt={item.level}/>
-                  <Text>{item.level}</Text>
-                  <Text>{item.count}人</Text>
-                  <Text><span><CaretUpOutlined />{item.growth}</span></Text>
-                </List.Item>
-              )}
-            />
+        <Card title={<span className="custom-title-center">各級新會員數目</span>}>
+
+            <div className="member-level-item">
+              <div className="icon-container"><img src={dynamicIcons[0]} alt="第一级別新會員" /></div>
+              <div className="text-container">
+              <Title className="level-text">第一级別新會員</Title>
+              <Text className="count-text">11</Text>
+              <Text className="growth-text"><CaretUpOutlined className="growth-icon"/>18.7%</Text>
+              </div>
+            </div>
+            <div className="member-level-item">
+              <div className="icon-container"><img src={dynamicIcons[1]} alt="第二級別新會員" /></div>
+              <div className="text-container">
+              <Title className="level-text">第二级別新會員</Title>
+              <Text className="count-text">52</Text>
+              <Text className="growth-text"><CaretUpOutlined className="growth-icon"/>22.8%</Text>
+              </div>
+            </div>
+            <div className="member-level-item">
+              <div className="icon-container"><img src={dynamicIcons[2]} alt="第三級別新會員" /></div>
+              <div className="text-container">
+              <Title className="level-text">第三级別新會員</Title>
+              <Text className="count-text">34</Text>
+              <Text className="growth-text"><CaretUpOutlined className="growth-icon"/>29.4%</Text>
+            </div>
+            
+            </div>
           </Card>
         </Col>
             
       </Row>
-
+      </div>
       <Row gutter={[16, 16]}>
           
         {/* 新會員數目、到期會籍、總會員數量等卡片 */}
         <Col span={8}>
           <Card>
-            <Title level={4}>新會員數目</Title>
-            <img src={dynamicIcons[4]} alt="新會員數目"/>
-            <Text>178</Text>
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card className="custom-card summary-card">
-            <Title level={4}>到期會籍</Title>
-            <img src={dynamicIcons[5]} alt="到期會籍"/>
-            <Text>114</Text>
+          <div className="content-container">
+          <div className="icon-container"><img src={dynamicIcons[4]} alt="新會員數目"className="member-icon"/></div>
+            <div className="text-container">
+            <Title className="level-text">新會員數目</Title>
+            <div className="count-growth-container">
+            <Text className="count-text">178</Text>
+            <Text className="growth-text"><CaretUpOutlined className="growth-icon"/>22.8%</Text>
+            </div>
+            </div>
+          </div>
           </Card>
         </Col>
         <Col span={8}>
           <Card>
-            <Title level={4}>總會員人數</Title>
-            <img src={dynamicIcons[3]} alt="總會員人數" />
-            <Text>88</Text>
+          <div className="content-container">
+          <div className="icon-container"><img src={dynamicIcons[5]} alt="到期會籍"/></div>
+          <div className="text-container">
+            <Title className="level-text">到期會籍</Title>
+            <Text className="count-text">114</Text>
+            </div>
+          </div>
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card>
+          <div className="content-container">
+          <div className="icon-container"><img src={dynamicIcons[3]} alt="總會員人數" /></div>
+          <div className="text-container">
+            <Title className="level-text">總會員人數</Title>
+            <Text className="count-text">88</Text>
+            </div>
+          </div>
           </Card>
         </Col>
         {/* 會員總數圖表 */}
         <Col span={12}>
-          <Card title="會員總數">
-            {/* 放置實際的圖表 */}
+          <Card title={<span className="custom-title-center">會員總數</span>}>
+          
+            <DonutChart />
+            <div
+              style={{
+                textAlign: "center",
+                fontSize: "24px",
+                fontWeight: "bold",
+                marginTop: "-170px",
+                color: "#000",
+              }}
+            >
+              {memberData.totalMembers}
+            </div>
+            <div className="legend-container">
+              {memberData.levels.map((level, index) => (
+                <div key={index} className="legend-item">
+                  <span
+                    className="legend-color"
+                    style={{ backgroundColor: level.color }}
+                  ></span>
+                  <span className="legend-text">{level.type}</span>
+                </div>
+              ))}
+            </div>
           </Card>
         </Col>
+            {/* 放置實際的圖表 */}
+          
+        
 
         {/* 會員加入渠道圖表 */}
         <Col span={12}>
-          <Card title="會員加入渠道">
+          <Card title={<span className="custom-title-center">會員加入渠道</span>}>
             {/* 放置實際的圖表 */}
           </Card>
         </Col>
@@ -82,7 +195,7 @@ export default function DashboardPage() {
         <Col span={24}>
         
           <Card title={
-            <span>
+            <span className="custom-title-left">
               <GiftOutlined style={{ marginRight: 8 }} />
               現正進行推廣
             </span>
@@ -102,8 +215,8 @@ export default function DashboardPage() {
         {/* 即將送傳廣播 */}
         <Col span={24}>
           <Card title={
-              <span style={{ marginRight: 8 }} >
-              <NotificationOutlined />即將送傳廣播
+              <span  className="custom-title-left">
+              <NotificationOutlined style={{ marginRight: 8 }} />即將送傳廣播
               </span>
             }>
             <List
