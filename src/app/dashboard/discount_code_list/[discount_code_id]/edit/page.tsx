@@ -352,7 +352,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                         {discountCode?.updated_at ? new Date(discountCode.updated_at).toLocaleString() : 'N/A'}
                     </Descriptions.Item>
                     <Descriptions.Item label="Active">
-                        {discountCode?.discount_code_status ? 'Yes' : 'No'}
+                        {discountCode?.discount_code_status || 'N/A' }
                     </Descriptions.Item>
                 </Descriptions>
             </Card>
