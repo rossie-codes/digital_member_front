@@ -1,0 +1,211 @@
+/* MemberDetail.module.css */
+
+.container {
+  display: flex;
+  gap: 20px;
+  padding: 0px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.leftSection {
+  background-color: #fff7e6;
+  border: 3px solid #f0c674;
+  border-radius: 8px;
+  padding: 20px;
+  width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 65px;
+}
+
+@media (max-width: 768px) {
+  .leftSection {
+    width: 90%;
+  }
+}
+
+.rightSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .rightSection {
+    width: 90%;
+  }
+}
+
+.card {
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  min-width: 250px;
+}
+
+.pointsContainer {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.pointCard {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  max-width: 33%;
+}
+
+@media (max-width: 768px) {
+  .pointCard {
+    max-width: 100%;
+  }
+}
+
+.customDescriptions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  border: 3px solid #a3a3a3;
+  border-radius: 8px;
+  padding: 10px;
+  flex-wrap: wrap;
+}
+
+.customItem {
+  flex: 1;
+  text-align: center;
+  border-right: 1px solid #a3a3a3;
+  padding: 10px;
+  max-width: 33%;
+}
+
+.customItem:last-child {
+  border-right: none;
+}
+
+@media (max-width: 768px) {
+  .customItem {
+    max-width: 100%;
+  }
+  .customItem:last-child {
+    border-right: none;
+  }
+}
+
+.pointAvailable {
+  background-color: #d9f7be;
+  border: 3px solid #a3d69c;
+}
+
+.pointUsed {
+  background-color: #e8e8e8;
+  border: 3px solid #bfbfbf;
+}
+
+.pointEarned {
+  background-color: #bae7ff;
+  border: 3px solid #80c5f6;
+}
+
+.formField {
+  margin-bottom: 16px;
+}
+
+.saveButton {
+  background-color: #0044cc;
+  border-color: #0044cc;
+}
+
+.noBackgroundCard {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding:0px !important;
+}
+
+.noBackgroundCard > .ant-card-body {
+  background-color: transparent !important;
+}
+
+.ant-descriptions-bordered .ant-descriptions-item {
+  border: 1px solid #ddd;
+}
+
+.ant-descriptions-item-label, .ant-descriptions-item-content {
+  text-align: center;
+}
+
+.ant-descriptions-item-content {
+  font-weight: bold;
+  font-size: 1.2em;
+  padding: 12px 0;
+}
+
+.ant-descriptions-bordered {
+  border: 2px solid #777;
+  border-radius: 8px;
+}
+
+.input-container {
+  border: 2px solid #ccc !important;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.disabledInput {
+  background-color: #e5e5e5 !important;
+  color: #000;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  word-break: break-word;
+  white-space: normal;
+  height: auto;
+  line-height: 1.5;
+}
+
+.pointValue {
+  font-size: 24px;
+  font-weight: bold;
+  display: block;
+  margin-top: 4px;
+}
+
+.membershipInfoContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.value {
+  background-color: #E5E5E5;
+  padding: 5px;
+  border-radius: 4px;
+  border: 3px solid #ccc;
+}
+
+
+
+
+
+

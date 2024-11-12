@@ -20,6 +20,22 @@ import {
 import dayjs, { Dayjs } from "dayjs"; // Import Dayjs and its type
 import { useParams, useRouter } from "next/navigation";
 import type { ColumnsType } from "antd/es/table";
+import styles from './MemberDetail.module.css';
+import { UserDeleteOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+const icons = ['/blue.png', '/pink.png', '/purple.png', '/green.png']; 
+const dynamicIcons = ['/1st.png', '/2nd.png', '/3rd.png', '/Amount.png'];
+const getIcon = (id: number | undefined): string => {
+  if (typeof id !== 'number') {
+    return icons[0]; // 預設圖示
+  }
+  return icons[(id - 1) % icons.length];
+};
+const getIconByTierId = (id: number | undefined): string => {
+  if (typeof id !== 'number') {
+    return dynamicIcons[0]; // 預設圖示
+  }
+  return dynamicIcons[(id - 1) % dynamicIcons.length];
+};
 
 interface MemberDataType {
   member_phone: string;
@@ -84,7 +100,6 @@ interface UpdateMemberValues {
   // Add other editable fields here with appropriate types
 }
 
-
 const { TabPane } = Tabs;
 
 const GetMemberDetailPage: React.FC = () => {
@@ -96,9 +111,42 @@ const GetMemberDetailPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [updating, setUpdating] = useState<boolean>(false); // Loading state for updating
+  const [activeTab, setActiveTab] = useState("purchases");
 
+  const handleTabChange = (key: string) => {
+    setActiveTab(key);
+  };
 
-  const [form] = Form.useForm();
+  const [leftForm] = Form.useForm();
+  const [rightForm] = Form.useForm();
+
+  const BackButton = () => (
+    <Button
+      type="text"
+      icon={<ArrowLeftOutlined />}
+      onClick={() => router.back()}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        fontWeight: 'bold',
+        fontSize: '16px',
+      }}
+    >
+      <img
+            src={getIcon(memberData?.membership_tier?.membership_tier_id)}
+            alt="會員層級小圖示"
+            style={{ width: 30, height: 30, marginRight: 8 }}
+          />
+          <span style={{
+            maxWidth: '250px', 
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}>
+          {memberData?.member_name}
+          </span>
+    </Button>
+  );
 
   useEffect(() => {
     const fetchMemberData = async () => {
@@ -114,23 +162,29 @@ const GetMemberDetailPage: React.FC = () => {
             credentials: 'include',
           }
         );
+    
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
         const data: MemberDataType = await response.json();
         setMemberData(data);
-
+        
         const formattedBirthday = data.birthday
           ? dayjs(data.birthday, "YYYY-MM-DD")
           : null;
 
-
-        // Set form values for editing
-        form.setFieldsValue({
+        // 設定左右表單的初始值
+        leftForm.setFieldsValue({
           member_name: data.member_name,
           birthday: formattedBirthday,
-          // Add other editable fields
         });
+
+        rightForm.setFieldsValue({
+          unused_points: data.unused_points,
+          used_points: data.used_points,
+        });
+
+        
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -141,7 +195,23 @@ const GetMemberDetailPage: React.FC = () => {
     if (memberPhone) {
       fetchMemberData();
     }
-  }, [form, memberPhone]);
+  }, [leftForm, rightForm, memberPhone]);
+
+  const handleSave = async () => {
+    try {
+      // 驗證並取得左右表單的資料
+      const leftValues = await leftForm.validateFields();
+      const rightValues = await rightForm.validateFields();
+
+      // 合併兩邊的資料
+      const allValues = { ...leftValues, ...rightValues };
+
+      // 呼叫 API 更新資料
+      await onFinish(allValues);
+    } catch (error) {
+      console.error("Validation failed:", error);
+    }
+  };
 
   const onFinish = async (values: any) => {
 
@@ -239,7 +309,15 @@ const GetMemberDetailPage: React.FC = () => {
     }
   };
 
-  if (loading) return <Spin tip="Loading..." />;
+  if (loading) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <Spin />
+        <div style={{ marginTop: 20, fontSize: "16px", color: "#999" }}>Loading...</div>
+      </div>
+    );
+  }
+  
   if (error)
     return (
       <Alert
@@ -252,56 +330,25 @@ const GetMemberDetailPage: React.FC = () => {
 
   return (
     <>
-      {/* Member Details */}
-      <Card title="會員詳細資訊">
-        <Descriptions column={1}>
-          <Descriptions.Item label="會員姓名">
-            {memberData?.member_name || "N/A"}
-          </Descriptions.Item>
-          <Descriptions.Item label="會員電話">
-            {memberData?.member_phone || "N/A"}
-          </Descriptions.Item>
-          <Descriptions.Item label="生日">
-            {memberData?.birthday || "N/A"}
-          </Descriptions.Item>
-          {/* Add more fields as needed */}
-        </Descriptions>
-      </Card>
-
-      {/* Membership Information */}
-      <Card title="會員會籍資訊" style={{ marginTop: 16 }}>
-        <Descriptions column={1}>
-          <Descriptions.Item label="會員層級">
-            {memberData?.membership_tier?.membership_tier_name || "N/A"}
-          </Descriptions.Item>
-          <Descriptions.Item label="會員有效期">
-            {memberData?.membership_start_date || "N/A"} 至{" "}
-            {memberData?.membership_end_date || "N/A"}
-          </Descriptions.Item>
-          <Descriptions.Item label="會籍建立日期">
-            {memberData?.membership_creation_date || "N/A"}
-          </Descriptions.Item>
-        </Descriptions>
-      </Card>
-
-      {/* Points Statistics */}
-      <Card title="積分統計" style={{ marginTop: 16 }}>
-        <Descriptions column={1}>
-          <Descriptions.Item label="會員期內獲得的積分">
-            {memberData?.total_points_earned || 0}
-          </Descriptions.Item>
-          <Descriptions.Item label="未使用積分">
-            {memberData?.unused_points || 0}
-          </Descriptions.Item>
-          <Descriptions.Item label="已使用積分">
-            {memberData?.used_points || 0}
-          </Descriptions.Item>
-        </Descriptions>
-      </Card>
-
-      {/* Edit Member Information */}
-      <Card title="編輯會員資訊" style={{ marginTop: 16 }}>
-        <Form form={form} onFinish={onFinish} layout="vertical">
+    <BackButton />
+    
+  <div className={styles.container}>
+  
+    {/* left block */}
+    <div className={styles.leftSection}>
+    {/* Edit Member Information */}
+    <Card title={
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <img
+            src={getIconByTierId(memberData?.membership_tier?.membership_tier_id)}
+            alt="會員層級圖示"
+            style={{ width: 50, height: 50, display: 'block', margin: '0 auto' }}
+          />
+        </div>
+      }
+      className={`${styles.card} ${styles.noBackgroundCard}`}
+    >
+        <Form form={leftForm} onFinish={onFinish} layout="vertical">
           <Form.Item
             name="member_name"
             label="會員姓名"
@@ -321,50 +368,96 @@ const GetMemberDetailPage: React.FC = () => {
             />
           </Form.Item>
           {/* Add other editable fields */}
-          <Form.Item>
-            <Space>
-              <Button type="primary" htmlType="submit">
-                更新資訊
-              </Button>
-              <Button type="default" onClick={() => router.back()}>
-                取消
-              </Button>
-              {/* <Button type="primary" onClick={handleSuspendMembership}>
-                暫停會藉
-              </Button> */}
-              <Button type="primary" onClick={handleSuspendMembership}>
-                {memberData?.is_active === 2 ? "重啟會藉" : "暫停會藉"}
-              </Button>
-            </Space>
-          </Form.Item>
         </Form>
       </Card>
+    </div>
+    {/* 右側區塊 */}
+    <div className={styles.rightSection}>
+    {/* save button */}
+    <Form form={rightForm} style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
+        <Space>
+          <Button type="default" onClick={() => router.back()}>
+            取消
+          </Button>
+          <Button type="primary" onClick={handleSave}>
+            儲存
+          </Button>
+        </Space>
+        </Form>
+
+    {/* Points Statistics */}
+      <div className={styles.pointsContainer}>
+            <div className={`${styles.pointCard} ${styles.pointAvailable}`}>可使用積分
+            <span className={styles.pointValue}>{memberData?.unused_points}</span></div>
+            <div className={`${styles.pointCard} ${styles.pointUsed}`}>已使用積分
+            <span className={styles.pointValue}>{memberData?.used_points}</span></div>
+            <div className={`${styles.pointCard} ${styles.pointEarned}`}>獲得積分
+            <span className={styles.pointValue}>{memberData?.total_points_earned}</span></div>
+      </div>
+        {/* 消費資訊 */}
+        <div className={styles.customDescriptions}>
+          <div className={styles.customItem}>累積消費次數
+          <span className={styles.pointValue}>{memberData?.purchase_count}</span></div>
+          <div className={styles.customItem}>累積總消費額
+          <span className={styles.pointValue}>{memberData?.total_purchase_amount}</span></div>
+          <div className={styles.customItem}>本次會員期的累積消費額
+          <span className={styles.pointValue}>{memberData?.current_membership_purchase_amount}</span></div>
+        </div>
+        
+      
+      {/* Membership Information */}
+      <div className={styles.membershipInfoContainer}>
+        <div className={styles.infoItem}>
+          <span className={styles.label}>會籍建立日期</span>
+          <span className={styles.value}>
+            {memberData?.membership_creation_date ? dayjs(memberData.membership_creation_date).format("YYYY-MM-DD") : "N/A"}
+          </span>
+        </div>
+        <div className={styles.infoItem}>
+          <span className={styles.label}>會籍到期日期</span>
+          <span className={styles.value}>
+            {memberData?.membership_end_date ? dayjs(memberData.membership_end_date).format("YYYY-MM-DD") : "N/A"}
+          </span>
+        </div>
+        <div className={styles.infoItem}>
+          <span className={styles.label}>登記推薦人</span>
+          <span className={styles.value}>
+            {memberData?.referrer || "N/A"}
+          </span>
+        </div>
+      </div>
+      
+      {/* 暫停會藉 */}
+      <div style={{ marginTop: 3, display: 'flex', justifyContent: 'flex-end' }}>
+        <Button type="primary" onClick={handleSuspendMembership} >
+        <UserDeleteOutlined />
+          {memberData?.is_active === 2 ? "重啟會藉" : "終止會藉"}
+        </Button>
+      </div>
+    </div>
+    
+</div>
 
       {/* Referrer Information */}
       <Card style={{ marginTop: 16 }}>
-        <Tabs defaultActiveKey="referees">
-
-
-          <TabPane tab="消費記錄" key="purchases">
-            {/* Purchase Statistics */}
-            <Descriptions column={1}>
-              <Descriptions.Item label="累積消費次數">
-                {memberData?.purchase_count || 0}
-              </Descriptions.Item>
-              <Descriptions.Item label="累積總消費額">
-                {memberData?.total_purchase_amount || 0}
-              </Descriptions.Item>
-              <Descriptions.Item label="本次會員期的累積消費額">
-                {memberData?.current_membership_purchase_amount || 0}
-              </Descriptions.Item>
-            </Descriptions>
-
+      <Tabs activeKey={activeTab} onChange={handleTabChange}>
+        <TabPane
+          tab={
+            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+              <img src={activeTab === 'purchases' ? "/coin.png" : "/coin_BW.png"} alt="消費記錄圖示" style={{ width: 20, height: 20, marginRight: 8 }} />
+              消費記錄
+            </span>
+          }
+          key="purchases"
+        >
+            
             {/* Purchase List */}
             <Table<PurchaseDataType>
+              className="custom-table-header"
               dataSource={memberData?.purchases || []}
               columns={[
                 {
-                  title: '消費日期',
+                  title: '日期',
                   dataIndex: 'purchase_date',
                   key: 'purchase_date',
                 },
@@ -374,7 +467,7 @@ const GetMemberDetailPage: React.FC = () => {
                   key: 'invoice_number',
                 },
                 {
-                  title: '消費金額',
+                  title: '消費總額',
                   dataIndex: 'amount',
                   key: 'amount',
                 },
@@ -395,34 +488,44 @@ const GetMemberDetailPage: React.FC = () => {
             />
           </TabPane>
 
-          <TabPane tab="禮遇接收" key="discount_codes">
+          <TabPane
+            tab={
+              <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <img src={activeTab === 'discount_codes' ? "/gift.png" : "/gift_BW.png"} alt="禮遇接收圖示" style={{ width: 20, height: 20, marginRight: 8 }} />
+                禮遇接收
+              </span>
+            }
+            key="discount_codes"
+          >
             {/* Discount Codes */}
             <Table<DiscountCodeType>
+              className="custom-table-header"
               dataSource={memberData?.discount_codes || []}
               columns={[
-                { title: '接收日期', dataIndex: 'received_date', key: 'received_date' },
-                { title: '優惠券名稱', dataIndex: 'code_name', key: 'code_name' },
-                { title: '優惠碼', dataIndex: 'code', key: 'code' },
-                { title: '折扣類型', dataIndex: 'type', key: 'type' },
+                { title: '接收日期', dataIndex: 'received_date', key: 'received_date'},
+                { title: '優惠券名稱', dataIndex: 'code_name', key: 'code_name'},
+                { title: '優惠碼', dataIndex: 'code', key: 'code'},
+                { title: '折扣類型', dataIndex: 'type', key: 'type'},
                 { title: '使用次數', dataIndex: 'usage_count', key: 'usage_count' },
-                { title: '狀態', dataIndex: 'status', key: 'status' },
+                { title: '狀態', dataIndex: 'status', key: 'status'},
                 // Add more columns if needed
               ]}
               rowKey="code_id"
             />
           </TabPane>
 
-          <TabPane tab="推薦記錄" key="referees">
-            {/* Referees Information */}
-            <Descriptions column={1}>
-              <Descriptions.Item label="被推薦人數量">
-                {memberData?.referees?.length || 0}
-              </Descriptions.Item>
-              {/* Add other statistics if needed */}
-            </Descriptions>
-
+          <TabPane
+            tab={
+              <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                <img src={activeTab === 'referees' ? "/recommand.png" : "/recommand_BW.png"} alt="推薦記錄圖示" style={{ width: 20, height: 20, marginRight: 8 }} />
+                推薦記錄
+              </span>
+            }
+            key="referees"
+          >
             {/* List of Referees */}
             <Table<RefereeDataType>
+              className="custom-table-header"
               dataSource={memberData?.referees || []}
               columns={[
                 {
@@ -447,7 +550,7 @@ const GetMemberDetailPage: React.FC = () => {
                   key: 'purchase_count',
                 },
                 {
-                  title: '總消費額',
+                  title: '消費總額',
                   dataIndex: 'total_purchase_amount',
                   key: 'total_purchase_amount',
                 },
@@ -457,8 +560,9 @@ const GetMemberDetailPage: React.FC = () => {
             />
           </TabPane>
         </Tabs>
+      
       </Card>
-    </>
+      </>
   );
 };
 
