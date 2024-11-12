@@ -40,7 +40,7 @@ interface DiscountCode {
     valid_until?: string;
     created_at: string;
     updated_at: string;
-    is_active: boolean;
+    discount_code_status: 'expired' | 'active' | 'suspended' | 'scheduled';
 }
 
 const GetDiscountCodeDetailPage: React.FC = () => {
@@ -352,7 +352,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                         {discountCode?.updated_at ? new Date(discountCode.updated_at).toLocaleString() : 'N/A'}
                     </Descriptions.Item>
                     <Descriptions.Item label="Active">
-                        {discountCode?.is_active ? 'Yes' : 'No'}
+                        {discountCode?.discount_code_status ? 'Yes' : 'No'}
                     </Descriptions.Item>
                 </Descriptions>
             </Card>
