@@ -9,8 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/charts": "^2.2.3",
     "@ant-design/colors": "^7.1.0",
     "@ant-design/icons": "^5.5.1",
+    "@ant-design/plots": "^2.0.0",
+    "@antv/g2": "4.0.14",
+    "@antv/g6-extension-react": "^0.1.7",
+    "@antv/react-g": "^2.0.23",
     "@heroicons/react": "^2.1.5",
     "antd": "^5.21.5",
     "clsx": "^2.1.1",
@@ -20,11 +25,13 @@
     "pg": "^8.13.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-reconciler": "^0.29.2",
+    "recharts": "^2.13.3",
     "sharp": "^0.33.5",
     "styled-components": "^6.1.13"
   },
   "devDependencies": {
-    "@types/node": "^20.16.13",
+    "@types/node": "^20.16.14",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "@types/styled-components": "^5.1.34",

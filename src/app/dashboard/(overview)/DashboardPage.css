@@ -3,4 +3,110 @@
     gap: 20px;
     padding: 20px;
   }
- 
+
+  .member-levels-card {
+    width: 100%;
+  }
+  
+  .custom-title-center{
+    font-size: 20px;
+    font-weight: bold;
+    display: block;
+    text-align: center;
+  }
+
+  .custom-title-width{
+    width: 350px;
+  }
+
+  .custom-title-left{
+    font-size: 20px;
+    font-weight: bold;
+    display: block;
+    text-align: left;
+  }
+
+  .member-level-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .icon-container {
+    flex: 3;
+    width: 120px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  
+  .member-icon {
+    width: 80px;
+    height: 80px;
+    height: auto;
+    width: auto;
+  }
+  .content-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* 使兩欄靠兩側 */
+  }
+  .text-container {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .level-text {
+    font-weight: bold;
+    font-size: 15px !important;
+  }
+  
+  .count-text {
+    color: #333;
+    font-weight: bold;
+    font-size: 20px;
+    margin-right:10px;
+  }
+  
+  .growth-text {
+    color: #52c41a; /* 綠色 */
+    display: flex;
+    align-items: center;
+  }
+  
+  .growth-icon {
+    margin-right: 4px;
+  }
+  
+  .count-growth-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .legend-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 150px;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    margin-right: 15px;
+  }
+  
+  .legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: 5px;
+  }
+  
+  .legend-text {
+    font-size: 12px;
+  }
+
+  
