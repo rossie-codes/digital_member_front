@@ -47,8 +47,12 @@ interface DiscountCode {
   valid_until?: string;
   created_at: string;
   updated_at: string;
-  is_active: boolean;
+  discount_code_status: 'expired' | 'active' | 'suspended' | 'scheduled';
+  discount_code_content: string;
+  discount_code_term: string;
 }
+
+
 
 const DiscountCodeListPage: React.FC = () => {
   const [discountCodes, setDiscountCodes] = useState<DiscountCode[]>([]);
@@ -62,6 +66,10 @@ const DiscountCodeListPage: React.FC = () => {
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
+
+  const [discountTypes, setDiscountTypes] = useState<string[]>([]);
+  const [useLimitTypes, setUseLimitTypes] = useState<string[]>([]);
+  const [discountCodeStatuses, setDiscountCodeStatuses] = useState<string[]>([]);
 
   const router = useRouter();
   // const handleEdit = (record: DiscountCode) => {
@@ -95,10 +103,17 @@ const DiscountCodeListPage: React.FC = () => {
       } else if (!response.ok) {
         throw new Error(`Failed to fetch discount codes: ${response.status}`);
       } else {
-        const data: DiscountCode[] = await response.json();
+        const responseData = await response.json();
+        const discountCodesArray: DiscountCode[] = responseData.discount_codes;
+
         // Map data to include 'key' property required by Ant Design Table
-        const formattedData = data.map((item) => ({ ...item, key: item.discount_code_id }));
+        const formattedData = discountCodesArray.map((item) => ({ ...item, key: item.discount_code_id }));
         setDiscountCodes(formattedData);
+
+        // Set filter data
+        setDiscountTypes(responseData.discount_types || []);
+        setUseLimitTypes(responseData.use_limit_types || []);
+        setDiscountCodeStatuses(responseData.discount_code_status || []);
       }
     } catch (error: any) {
       console.error('Error fetching discount codes:', error);
@@ -114,6 +129,14 @@ const DiscountCodeListPage: React.FC = () => {
     fetchDiscountCodes();
   }, []);
 
+  // For Discount Type Filters
+  const discountTypeFilters = discountTypes.map((type) => ({ text: type, value: type }));
+
+  // For Use Limit Type Filters
+  const useLimitTypeFilters = useLimitTypes.map((type) => ({ text: type, value: type }));
+
+  // For Discount Code Status Filters
+  const discountCodeStatusFilters = discountCodeStatuses.map((status) => ({ text: status, value: status }));
 
 
   // // Handle edit icon click
@@ -150,38 +173,32 @@ const DiscountCodeListPage: React.FC = () => {
       ),
       width: 50,
     },
-    // {
-    //   title: '',
-    //   dataIndex: 'edit',
-    //   key: 'edit',
-    //   render: (_, record) => (
-    //     <Button
-    //       type="link"
-    //       icon={<FormOutlined style={{ color: '#ff4d4f' }} />}
-    //       onClick={() => handleEdit(record)}
-    //     />
-    //   ),
-    //   width: 50,
-    // },
     {
-      title: '折扣名稱',
+      title: '優惠名稱',
       dataIndex: 'discount_code_name',
       key: 'discount_code_name',
     },
     {
-      title: '折扣碼',
+      title: '優惠碼',
       dataIndex: 'discount_code',
       key: 'discount_code',
+      sorter: true, // Enable server-side sorting
+      sortDirections: ['ascend', 'descend', 'ascend'],
     },
     {
-      title: '折扣類別',
+      title: '類別',
       dataIndex: 'discount_type',
       key: 'discount_type',
+      sorter: true,
+      filters: discountTypeFilters,
+      onFilter: (value, record) => record.discount_type === value,
       render: (text) => (text === 'fixed_amount' ? 'Fixed Amount' : 'Percentage'),
     },
     {
       title: '折扣額',
       key: 'discount_amount',
+      sorter: true, // Enable server-side sorting
+      sortDirections: ['ascend', 'descend', 'ascend'],
       render: (_, record) =>
         record.discount_type === 'fixed_amount'
           ? `$${record.discount_amount}`
@@ -191,6 +208,8 @@ const DiscountCodeListPage: React.FC = () => {
       title: '最低消費',
       dataIndex: 'minimum_spending',
       key: 'minimum_spending',
+      sorter: true, // Enable server-side sorting
+      sortDirections: ['ascend', 'descend', 'ascend'],
       render: (text) => `$${text}`,
     },
     // {
@@ -200,74 +219,95 @@ const DiscountCodeListPage: React.FC = () => {
     //   render: (text, record) => (record.discount_type === 'percentage' ? `$${text}` : '--'),
     // },
     {
-      title: '有效期（開始）',
+      title: '開始日期',
       dataIndex: 'valid_from',
       key: 'valid_from',
+      sorter: true, // Enable server-side sorting
+      sortDirections: ['ascend', 'descend', 'ascend'],
       render: (text) => (text ? new Date(text).toLocaleDateString() : '--'),
     },
     {
-      title: '有效期（結束）',
+      title: '到期日',
       dataIndex: 'valid_until',
       key: 'valid_until',
+      sorter: true, // Enable server-side sorting
+      sortDirections: ['ascend', 'descend', 'ascend'],
       render: (text) => (text ? new Date(text).toLocaleDateString() : '--'),
     },
     {
       title: '使用限制',
       dataIndex: 'use_limit_type',
       key: 'use_limit_type',
+      sorter: true,
+      filters: useLimitTypeFilters,
+      onFilter: (value, record) => record.use_limit_type === value,
     },
     {
-      title: '啟用',
-      dataIndex: 'is_active',
-      key: 'is_active',
-      render: (is_active, record) => (
-        <Switch
-          checked={is_active}
-          onChange={(checked) => handleToggleActive(record.discount_code_id, checked)}
-        />
-      ),
+      title: '狀態',
+      dataIndex: 'discount_code_status',
+      key: 'discount_code_status',
+      sorter: true,
+      filters: discountCodeStatusFilters,
+      onFilter: (value, record) => record.discount_code_status === value,
     },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <Space>
-          <Button type="link" danger onClick={() => handleDeleteItem(record.discount_code_id)}>
-            Delete
-          </Button>
-        </Space>
-      ),
-    },
+
+
+
+    // filters: statusOptions,
+    // filteredValue: tableFilters.is_active || null,
+    // },
+    // {
+    //   title: '啟用',
+    //   dataIndex: 'is_active',
+    //   key: 'is_active',
+    //   render: (is_active, record) => (
+    //     <Switch
+    //       checked={is_active}
+    //       onChange={(checked) => handleToggleActive(record.discount_code_id, checked)}
+    //     />
+    //   ),
+    // },
+    // {
+    //   title: 'Actions',
+    //   key: 'actions',
+    //   render: (_, record) => (
+    //     <Space>
+    //       <Button type="link" danger onClick={() => handleDeleteItem(record.discount_code_id)}>
+    //         Delete
+    //       </Button>
+    //     </Space>
+    //   ),
+    // },
     // Optionally, you can add more columns like 'Created At', 'Updated At', etc.
   ];
 
   // Function to handle activation toggle
-  const handleToggleActive = async (id: number, isActive: boolean) => {
-    try {
-      // Update the discount code's active status in the backend
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/put_discount_code_is_active/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ is_active: isActive }),
-      });
+  // const handleToggleActive = async (id: number, isActive: boolean) => {
+  //   try {
+  //     // Update the discount code's active status in the backend
+  //     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/put_discount_code_is_active/${id}`, {
+  //       method: 'PUT',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       credentials: 'include',
+  //       body: JSON.stringify({ is_active: isActive }),
+  //     });
 
-      if (!response.ok) {
-        throw new Error(`Failed to update discount code: ${response.status}`);
-      }
+  //     if (!response.ok) {
+  //       throw new Error(`Failed to update discount code: ${response.status}`);
+  //     }
 
-      // Update the state
-      setDiscountCodes((prevItems) =>
-        prevItems.map((item) => (item.discount_code_id === id ? { ...item, is_active: isActive } : item))
-      );
-      message.success('Discount code updated successfully!');
-    } catch (error: any) {
-      console.error('Error updating discount code:', error);
-      message.error(`Failed to update discount code: ${error.message}`);
-    }
-  };
+  //     // Update the state
+  //     setDiscountCodes((prevItems) =>
+  //       prevItems.map((item) => (item.discount_code_id === id ? { ...item, is_active: isActive } : item))
+  //     );
+  //     message.success('Discount code updated successfully!');
+  //   } catch (error: any) {
+  //     console.error('Error updating discount code:', error);
+  //     message.error(`Failed to update discount code: ${error.message}`);
+  //   }
+  // };
 
   const showModal = () => {
     setSelectedDiscountType('fixed_amount'); // Default type
@@ -293,6 +333,8 @@ const DiscountCodeListPage: React.FC = () => {
       use_limit_type: values.use_limit_type,
       valid_from: values.valid_from ? values.valid_from.toISOString() : null,
       valid_until: values.valid_until ? values.valid_until.toISOString() : null,
+      discount_code_content: values.discount_code_content,
+      discount_code_term: values.discount_code_term,
     };
 
     if (selectedDiscountType === 'fixed_amount') {
@@ -410,7 +452,7 @@ const DiscountCodeListPage: React.FC = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Title level={2}>折扣券列表</Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-          新增折扣方式
+          新增優惠
         </Button>
         <Button icon={<DeleteOutlined />} onClick={() => router.push('/dashboard/discount_code_list/deleted_discount_code')}>
           檢視垃圾桶
@@ -428,7 +470,8 @@ const DiscountCodeListPage: React.FC = () => {
 
       {/* Modal Form */}
       <Modal
-        title={`${isEditing ? 'Edit' : 'Add New'} Discount Code`}
+        // title={`${isEditing ? 'Edit' : 'Add New'} Discount Code`}
+        title='新增優惠'
         open={isModalVisible}
         onCancel={() => {
           setIsModalVisible(false);
@@ -529,7 +572,10 @@ const DiscountCodeListPage: React.FC = () => {
             label="折扣有效期（開始）"
             rules={[{ required: false, message: 'Please select the valid from date' }]}
           >
-            <DatePicker style={{ width: '100%' }} />
+            <DatePicker
+              showTime
+              format="YYYY-MM-DD HH:mm"
+              style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
@@ -537,11 +583,14 @@ const DiscountCodeListPage: React.FC = () => {
             label="折扣有效期（結束）"
             rules={[{ required: false, message: 'Please select the valid until date' }]}
           >
-            <DatePicker style={{ width: '100%' }} />
+            <DatePicker
+              showTime
+              format="YYYY-MM-DD HH:mm"
+              style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
-            name="discount_content"
+            name="discount_code_content"
             label="優惠詳情"
             rules={[{ required: true, message: '輸入禮物詳情' }]}
           >
@@ -553,7 +602,7 @@ const DiscountCodeListPage: React.FC = () => {
 
 
           <Form.Item
-            name="term_and_condition"
+            name="discount_code_term"
             label="條款及細則"
             rules={[{ required: true, message: '輸入禮物的條款及細則' }]}
           >
