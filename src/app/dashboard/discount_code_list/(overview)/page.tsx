@@ -48,6 +48,8 @@ interface DiscountCode {
   created_at: string;
   updated_at: string;
   discount_code_status: 'expired' | 'active' | 'suspended' | 'scheduled';
+  discount_code_content: string;
+  discount_code_term: string;
 }
 
 
@@ -251,30 +253,30 @@ const DiscountCodeListPage: React.FC = () => {
 
 
 
-      // filters: statusOptions,
-      // filteredValue: tableFilters.is_active || null,
-      // },
-      // {
-      //   title: '啟用',
-      //   dataIndex: 'is_active',
-      //   key: 'is_active',
-      //   render: (is_active, record) => (
-      //     <Switch
-      //       checked={is_active}
-      //       onChange={(checked) => handleToggleActive(record.discount_code_id, checked)}
-      //     />
-      //   ),
-      // },
-      // {
-      //   title: 'Actions',
-      //   key: 'actions',
-      //   render: (_, record) => (
-      //     <Space>
-      //       <Button type="link" danger onClick={() => handleDeleteItem(record.discount_code_id)}>
-      //         Delete
-      //       </Button>
-      //     </Space>
-      //   ),
+    // filters: statusOptions,
+    // filteredValue: tableFilters.is_active || null,
+    // },
+    // {
+    //   title: '啟用',
+    //   dataIndex: 'is_active',
+    //   key: 'is_active',
+    //   render: (is_active, record) => (
+    //     <Switch
+    //       checked={is_active}
+    //       onChange={(checked) => handleToggleActive(record.discount_code_id, checked)}
+    //     />
+    //   ),
+    // },
+    // {
+    //   title: 'Actions',
+    //   key: 'actions',
+    //   render: (_, record) => (
+    //     <Space>
+    //       <Button type="link" danger onClick={() => handleDeleteItem(record.discount_code_id)}>
+    //         Delete
+    //       </Button>
+    //     </Space>
+    //   ),
     // },
     // Optionally, you can add more columns like 'Created At', 'Updated At', etc.
   ];
@@ -331,6 +333,8 @@ const DiscountCodeListPage: React.FC = () => {
       use_limit_type: values.use_limit_type,
       valid_from: values.valid_from ? values.valid_from.toISOString() : null,
       valid_until: values.valid_until ? values.valid_until.toISOString() : null,
+      discount_code_content: values.discount_code_content,
+      discount_code_term: values.discount_code_term,
     };
 
     if (selectedDiscountType === 'fixed_amount') {
@@ -568,7 +572,10 @@ const DiscountCodeListPage: React.FC = () => {
             label="折扣有效期（開始）"
             rules={[{ required: false, message: 'Please select the valid from date' }]}
           >
-            <DatePicker style={{ width: '100%' }} />
+            <DatePicker
+              showTime
+              format="YYYY-MM-DD HH:mm"
+              style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
@@ -576,11 +583,14 @@ const DiscountCodeListPage: React.FC = () => {
             label="折扣有效期（結束）"
             rules={[{ required: false, message: 'Please select the valid until date' }]}
           >
-            <DatePicker style={{ width: '100%' }} />
+            <DatePicker
+              showTime
+              format="YYYY-MM-DD HH:mm"
+              style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
-            name="discount_content"
+            name="discount_code_content"
             label="優惠詳情"
             rules={[{ required: true, message: '輸入禮物詳情' }]}
           >
@@ -592,7 +602,7 @@ const DiscountCodeListPage: React.FC = () => {
 
 
           <Form.Item
-            name="term_and_condition"
+            name="discount_code_term"
             label="條款及細則"
             rules={[{ required: true, message: '輸入禮物的條款及細則' }]}
           >
