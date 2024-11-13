@@ -17,6 +17,7 @@ import {
     DatePicker,
     Modal,
     Descriptions,
+    Switch
 } from 'antd';
 import { useParams, useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
@@ -41,6 +42,8 @@ interface DiscountCode {
     created_at: string;
     updated_at: string;
     discount_code_status: 'expired' | 'active' | 'suspended' | 'scheduled';
+    discount_code_content: string;
+    discount_code_term: string;
 }
 
 const GetDiscountCodeDetailPage: React.FC = () => {
@@ -49,6 +52,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
     const discount_code_id = params.discount_code_id;
     console.log(discount_code_id)
 
+    const [isActive, setIsActive] = useState<boolean>(false);
     const [discountCode, setDiscountCode] = useState<DiscountCode | null>(null);
     const [selectedDiscountType, setSelectedDiscountType] = useState<'fixed_amount' | 'percentage'>('fixed_amount');
     const [loading, setLoading] = useState<boolean>(true);
@@ -77,6 +81,12 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                 setDiscountCode(data);
                 setSelectedDiscountType(data.discount_type);
 
+                if (data.discount_code_status === 'suspended') {
+                    setIsActive(false);
+                } else {
+                    setIsActive(true);
+                }
+
                 // Set form fields
                 form.setFieldsValue({
                     discount_code_name: data.discount_code_name,
@@ -89,7 +99,11 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                     use_limit_type: data.use_limit_type,
                     valid_from: data.valid_from ? dayjs(data.valid_from) : null,
                     valid_until: data.valid_until ? dayjs(data.valid_until) : null,
+                    discount_code_content: data.discount_code_content,
+                    discount_code_term: data.discount_code_term,
                 });
+
+
             } catch (error: any) {
                 console.error('Error fetching discount code:', error);
                 setError(error.message);
@@ -116,6 +130,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
     };
 
     const onFinish = async (values: any) => {
+
         const updatedCode = {
             discount_code_name: values.discount_code_name,
             discount_code: values.discount_code,
@@ -127,6 +142,8 @@ const GetDiscountCodeDetailPage: React.FC = () => {
             use_limit_type: values.use_limit_type,
             valid_from: values.valid_from ? values.valid_from.toISOString() : null,
             valid_until: values.valid_until ? values.valid_until.toISOString() : null,
+            discount_code_content: values.discount_code_content,
+            discount_code_term: values.discount_code_term,
         };
 
         try {
@@ -166,7 +183,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                 cancelText: 'No',
                 onOk: async () => {
                     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/delete_discount_code/${discount_code_id}`, {
-                        method: 'DELETE',
+                        method: 'PUT',
                     });
 
                     if (!response.ok) {
@@ -180,6 +197,40 @@ const GetDiscountCodeDetailPage: React.FC = () => {
         } catch (error: any) {
             console.error('Error deleting discount code:', error);
             message.error(`Failed to delete discount code: ${error.message}`);
+        }
+    };
+
+    const handleToggleActive = async (checked: boolean) => {
+        try {
+            setUpdating(true);
+
+            const status = checked ? 'enable' : 'suspended';
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/put_discount_code_is_active/${discount_code_id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ action: status }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to update status: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            // Update local state
+            setDiscountCode(result);
+            setIsActive(checked); // Update state directly based on switch value
+            message.success('Discount code status updated successfully!');
+        } catch (error: any) {
+            console.error('Error updating status:', error);
+            setIsActive(!checked); // Revert the state
+            message.error(`Failed to update status: ${error.message}`);
+        } finally {
+            setUpdating(false);
         }
     };
 
@@ -207,6 +258,15 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                     Back
                 </Button>
             </div>
+            <Form.Item label="狀態">
+                <Switch
+                    checkedChildren="已啟用"
+                    unCheckedChildren="已停用"
+                    checked={isActive}
+                    onChange={(checked) => handleToggleActive(checked)}
+                />
+            </Form.Item>
+
             <Card style={{ marginTop: 16 }}>
                 <Form form={form} onFinish={onFinish} layout="vertical">
                     {/* Discount Type */}
@@ -232,7 +292,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
 
                     <Form.Item
                         name="discount_code"
-                        label="折扣碼"
+                        label="優惠碼"
                         rules={[{ required: true, message: 'Please enter the discount code name' }]}
                     >
                         <Input disabled />
@@ -274,10 +334,23 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                         </>
                     )}
 
+                    <Form.Item
+                        name="use_limit_type"
+                        label="使用限制"
+                        rules={[{ required: true, message: 'Please select a use limit type' }]}
+                    >
+                        <Select>
+                            <Option value="single_use">優惠碼只能使用一次</Option>
+                            <Option value="once_per_customer">優惠碼每人可以使用一次</Option>
+                            <Option value="unlimited">優惠碼使用沒有限制</Option>
+                        </Select>
+                    </Form.Item>
+
+
                     {/* Minimum Spending */}
                     <Form.Item
                         name="minimum_spending"
-                        label="最低消費"
+                        label="最低消費金額"
                         rules={[{ required: true, message: 'Please enter the minimum spending' }]}
                     >
                         <InputNumber min={0} style={{ width: '100%' }} />
@@ -293,24 +366,63 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                     </Form.Item> */}
 
                     {/* Future Development Fields */}
-                    <Form.Item
+                    {/* <Form.Item
                         name="quantity_available"
                         label="可兌換總數（未開放）"
                         tooltip="This field is for future development"
                     >
                         <InputNumber min={0} style={{ width: '100%' }} disabled />
-                    </Form.Item>
+                    </Form.Item> */}
 
-                    <Form.Item
+                    {/* <Form.Item
                         name="validity_range"
                         label="Validity Range"
                     // tooltip="These fields are for future development"
                     >
                         <RangePicker style={{ width: '100%' }} />
-                    </Form.Item>
+                    </Form.Item> */}
 
                     <Form.Item
-                        name="discount_content"
+                        name="valid_from"
+                        label="生效日期"
+                        rules={[{ required: true, message: '請選擇生效日期' }]}
+                    >
+                        <DatePicker
+                            showTime
+                            format="YYYY-MM-DD HH:mm"
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+
+                    <Form.Item shouldUpdate noStyle>
+                        {() => (
+                            <Form.Item
+                                name="valid_until"
+                                label="到期日期"
+                                rules={[
+                                    { required: true, message: '請選擇到期日期' },
+                                    ({ getFieldValue }) => ({
+                                        validator(_, value) {
+                                            if (!value || !getFieldValue('valid_from') || value.isAfter(getFieldValue('valid_from'))) {
+                                                return Promise.resolve();
+                                            }
+                                            return Promise.reject(new Error('到期日期必須在生效日期之後'));
+                                        },
+                                    }),
+                                ]}
+                            >
+                                <DatePicker
+                                    showTime
+                                    format="YYYY-MM-DD HH:mm"
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+                        )}
+                    </Form.Item>
+
+
+                    <Form.Item
+                        name="discount_code_content"
                         label="優惠詳情"
                         rules={[{ required: true, message: '輸入禮物詳情' }]}
                     >
@@ -322,7 +434,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
 
 
                     <Form.Item
-                        name="term_and_condition"
+                        name="discount_code_term"
                         label="條款及細則"
                         rules={[{ required: true, message: '輸入禮物的條款及細則' }]}
                     >
@@ -343,7 +455,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
             </Card>
 
             {/* Non-Editable Fields */}
-            <Card title="Additional Information" style={{ marginTop: 16 }}>
+            {/* <Card title="Additional Information" style={{ marginTop: 16 }}>
                 <Descriptions bordered column={1}>
                     <Descriptions.Item label="Created At">
                         {discountCode?.created_at ? new Date(discountCode.created_at).toLocaleString() : 'N/A'}
@@ -351,11 +463,11 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                     <Descriptions.Item label="Updated At">
                         {discountCode?.updated_at ? new Date(discountCode.updated_at).toLocaleString() : 'N/A'}
                     </Descriptions.Item>
-                    <Descriptions.Item label="Active">
-                        {discountCode?.discount_code_status || 'N/A' }
+                    <Descriptions.Item label="Status">
+                        {discountCode?.discount_code_status || 'N/A'}
                     </Descriptions.Item>
                 </Descriptions>
-            </Card>
+            </Card> */}
 
             {/* Delete Button */}
             <Button type="primary" danger onClick={handleDelete} style={{ marginTop: 16 }}>
