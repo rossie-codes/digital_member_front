@@ -17,12 +17,16 @@ import {
   message,
   Spin,
   Alert,
-  DatePicker
+  DatePicker,
+  Menu,
+  Dropdown
 } from 'antd';
+
+const { Search } = Input;
 import Link from 'next/link';
 
-import type { TableColumnsType, TableProps } from 'antd';
-import { PlusOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons';
+import type { TableColumnsType, TableProps, MenuProps } from 'antd';
+import { PlusOutlined, FormOutlined, DeleteOutlined, DownOutlined, UserOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 
 
@@ -71,6 +75,8 @@ const DiscountCodeListPage: React.FC = () => {
   const [useLimitTypes, setUseLimitTypes] = useState<string[]>([]);
   const [discountCodeStatuses, setDiscountCodeStatuses] = useState<string[]>([]);
 
+  const [searchText, setSearchText] = useState<string>(''); // State for search text
+
   const router = useRouter();
   // const handleEdit = (record: DiscountCode) => {
   //   console.log(record.discount_code_id)
@@ -86,6 +92,101 @@ const DiscountCodeListPage: React.FC = () => {
       setSelectedRowKeys(selectedKeys);
     },
   };
+
+
+
+  const handleBulkMenuClick = async (e: { key: string }) => {
+    const action = e.key; // 'enable', 'suspend', or 'delete'
+    const selectedDiscountCodes = discountCodes.filter((item) => selectedRowKeys.includes(item.key));
+
+    if (selectedDiscountCodes.length === 0) {
+      message.warning('Please select at least one discount code.');
+      return;
+    }
+
+    Modal.confirm({
+      title: `Are you sure you want to ${action} the selected discount codes?`,
+      okText: 'Yes',
+      cancelText: 'No',
+      onOk: async () => {
+        try {
+          if (action === 'delete') {
+            // Perform delete action
+            await Promise.all(
+              selectedDiscountCodes.map(async (discountCode) => {
+                const response = await fetch(
+                  `${process.env.NEXT_PUBLIC_API_URL}/discount_code/delete_discount_code/${discountCode.discount_code_id}`,
+                  {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ deleted_status: true }),
+                  }
+                );
+                if (!response.ok) {
+                  throw new Error(`Failed to delete discount code: ${response.status}`);
+                }
+              })
+            );
+            // Remove deleted items from the state
+            setDiscountCodes((prevDiscountCodes) =>
+              prevDiscountCodes.filter((item) => !selectedRowKeys.includes(item.key))
+            );
+            message.success('Selected discount codes deleted successfully.');
+          } else {
+            // For 'enable' and 'suspend' actions
+            const actionVerb = action === 'enable' ? 'enable' : 'suspend';
+            await Promise.all(
+              selectedDiscountCodes.map(async (discountCode) => {
+                const response = await fetch(
+                  `${process.env.NEXT_PUBLIC_API_URL}/discount_code/put_discount_code_is_active/${discountCode.discount_code_id}`,
+                  {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ action: actionVerb }),
+                  }
+                );
+                if (!response.ok) {
+                  throw new Error(`Failed to ${actionVerb} discount code: ${response.status}`);
+                }
+              })
+            );
+            // Update the status in the state
+            setDiscountCodes((prevDiscountCodes) =>
+              prevDiscountCodes.map((item) => {
+                if (selectedRowKeys.includes(item.key)) {
+                  // Update discount_code_status
+                  let newStatus = item.discount_code_status;
+                  if (action === 'suspend') {
+                    newStatus = 'suspended';
+                  } else if (action === 'enable') {
+                    newStatus = 'active';
+                  }
+                  return {
+                    ...item,
+                    discount_code_status: newStatus,
+                  };
+                }
+                return item;
+              })
+            );
+            message.success(`Selected discount codes ${actionVerb}d successfully.`);
+          }
+          // Clear selection
+          setSelectedRowKeys([]);
+        } catch (error: any) {
+          console.error(`Error performing bulk ${action}:`, error);
+          message.error(`Failed to perform bulk ${action}: ${error.message}`);
+        }
+      },
+    });
+  };
+
 
   const fetchDiscountCodes = async () => {
     try {
@@ -138,27 +239,19 @@ const DiscountCodeListPage: React.FC = () => {
   // For Discount Code Status Filters
   const discountCodeStatusFilters = discountCodeStatuses.map((status) => ({ text: status, value: status }));
 
+  // Search function
+  const onSearch = (
+    value: string,
+  ) => {
+    setSearchText(value.trim().toLowerCase());
+  };
 
-  // // Handle edit icon click
-  // const handleEditIconClick = (record: DiscountCode) => {
-  //   // Pre-fill the form with the selected discount code's data
-  //   setSelectedDiscountType(record.discount_type);
-  //   form.setFieldsValue({
-  //     discount_code_name: record.discount_code_name,
-  //     discount_code: record.discount_code,
-  //     discount_type: record.discount_type,
-  //     discount_amount: record.discount_amount,
-  //     discount_percentage: record.discount_percentage,
-  //     minimum_spending: record.minimum_spending,
-  //     fixed_discount_cap: record.fixed_discount_cap,
-  //     use_limit_type: record.use_limit_type,
-  //     valid_from: record.valid_from ? new Date(record.valid_from) : null,
-  //     valid_until: record.valid_until ? new Date(record.valid_until) : null,
-  //   });
-  //   setIsEditing(true);
-  //   setEditingItemId(record.discount_code_id);
-  //   setIsModalVisible(true);
-  // };
+  // Filtered data based on searchText
+  const filteredDiscountCodes = discountCodes.filter(item =>
+    item.discount_code_name.toLowerCase().includes(searchText) ||
+    String(item.discount_code).toLowerCase().includes(searchText)
+  );
+
 
   // Table columns
   const columns: TableColumnsType<DiscountCode> = [
@@ -212,12 +305,6 @@ const DiscountCodeListPage: React.FC = () => {
       sortDirections: ['ascend', 'descend', 'ascend'],
       render: (text) => `$${text}`,
     },
-    // {
-    //   title: '最高折扣限額',
-    //   dataIndex: 'fixed_discount_cap',
-    //   key: 'fixed_discount_cap',
-    //   render: (text, record) => (record.discount_type === 'percentage' ? `$${text}` : '--'),
-    // },
     {
       title: '開始日期',
       dataIndex: 'valid_from',
@@ -251,63 +338,7 @@ const DiscountCodeListPage: React.FC = () => {
       onFilter: (value, record) => record.discount_code_status === value,
     },
 
-
-
-    // filters: statusOptions,
-    // filteredValue: tableFilters.is_active || null,
-    // },
-    // {
-    //   title: '啟用',
-    //   dataIndex: 'is_active',
-    //   key: 'is_active',
-    //   render: (is_active, record) => (
-    //     <Switch
-    //       checked={is_active}
-    //       onChange={(checked) => handleToggleActive(record.discount_code_id, checked)}
-    //     />
-    //   ),
-    // },
-    // {
-    //   title: 'Actions',
-    //   key: 'actions',
-    //   render: (_, record) => (
-    //     <Space>
-    //       <Button type="link" danger onClick={() => handleDeleteItem(record.discount_code_id)}>
-    //         Delete
-    //       </Button>
-    //     </Space>
-    //   ),
-    // },
-    // Optionally, you can add more columns like 'Created At', 'Updated At', etc.
   ];
-
-  // Function to handle activation toggle
-  // const handleToggleActive = async (id: number, isActive: boolean) => {
-  //   try {
-  //     // Update the discount code's active status in the backend
-  //     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/discount_code/put_discount_code_is_active/${id}`, {
-  //       method: 'PUT',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       credentials: 'include',
-  //       body: JSON.stringify({ is_active: isActive }),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error(`Failed to update discount code: ${response.status}`);
-  //     }
-
-  //     // Update the state
-  //     setDiscountCodes((prevItems) =>
-  //       prevItems.map((item) => (item.discount_code_id === id ? { ...item, is_active: isActive } : item))
-  //     );
-  //     message.success('Discount code updated successfully!');
-  //   } catch (error: any) {
-  //     console.error('Error updating discount code:', error);
-  //     message.error(`Failed to update discount code: ${error.message}`);
-  //   }
-  // };
 
   const showModal = () => {
     setSelectedDiscountType('fixed_amount'); // Default type
@@ -447,22 +478,74 @@ const DiscountCodeListPage: React.FC = () => {
     );
   }
 
+
+
+
+
+  const items: MenuProps['items'] = [
+    {
+      label: 'Delete',
+      key: '1',
+      icon: <UserOutlined />,
+    },
+    {
+      label: 'Enable',
+      key: '2',
+      icon: <UserOutlined />,
+    },
+    {
+      label: 'Suspend',
+      key: '3',
+      icon: <UserOutlined />,
+      danger: true,
+    }
+  ];
+
+  const menuProps = {
+    items,
+    // onClick: handleMenuClick,
+  };
+
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Title level={2}>折扣券列表</Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-          新增優惠
-        </Button>
-        <Button icon={<DeleteOutlined />} onClick={() => router.push('/dashboard/discount_code_list/deleted_discount_code')}>
-          檢視垃圾桶
-        </Button>
+        <div>
+          <Space>
+            <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
+              新增優惠
+            </Button>
+            <Button
+              icon={<DeleteOutlined />}
+              onClick={() => router.push('/dashboard/discount_code_list/deleted_discount_code')}
+            >
+              檢視垃圾桶
+            </Button>
+            <Dropdown menu={menuProps} disabled={selectedRowKeys.length === 0}>
+              <Button>
+                Bulk Actions <DownOutlined />
+              </Button>
+            </Dropdown>
+          </Space>
+        </div>
       </div>
+
+
+      <Space direction="vertical" style={{ marginBottom: '50px' }}>
+        <Search
+          placeholder="Search members"
+          allowClear
+          onSearch={onSearch}
+          style={{ width: 300 }}
+        />
+      </Space>
+
 
       <Table
         rowSelection={rowSelection}
         columns={columns}
-        dataSource={discountCodes}
+        dataSource={filteredDiscountCodes}
         rowKey="discount_code_id"
         style={{ marginTop: 16 }}
         locale={{ emptyText: 'No discount codes found.' }}
@@ -534,13 +617,6 @@ const DiscountCodeListPage: React.FC = () => {
                   parser={(value) => parseFloat(value!.replace('%', '') || '0')}
                 />
               </Form.Item>
-              {/* <Form.Item
-                name="fixed_discount_cap"
-                label="最高折扣額"
-                rules={[{ required: true, message: 'Please enter the fixed discount cap' }]}
-              >
-                <InputNumber min={0} style={{ width: '100%' }} />
-              </Form.Item> */}
             </>
           )}
 
@@ -561,9 +637,6 @@ const DiscountCodeListPage: React.FC = () => {
               <Option value="single_use">此編號使用一次後失效</Option>
               <Option value="once_per_customer">每位客戶可使用一次</Option>
               <Option value="unlimited">沒有限制</Option>
-              {/* <Option value="single_use">Single Use</Option>
-              <Option value="once_per_customer">Once Per Customer</Option>
-              <Option value="unlimited">Unlimited</Option> */}
             </Select>
           </Form.Item>
 

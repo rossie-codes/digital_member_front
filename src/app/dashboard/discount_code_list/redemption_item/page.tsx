@@ -474,7 +474,10 @@ const GetGiftSettingPage: React.FC = () => {
             label="換領開始日期"
             rules={[{ required: false, message: '選擇日期' }]}
           >
-            <DatePicker style={{ width: '100%' }} />
+            <DatePicker 
+            showTime
+            format="YYYY-MM-DD HH:mm"
+            style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
@@ -482,7 +485,10 @@ const GetGiftSettingPage: React.FC = () => {
             label="換領結束日期"
             rules={[{ required: false, message: '選擇日期' }]}
           >
-            <DatePicker style={{ width: '100%' }} />
+            <DatePicker 
+            showTime
+            format="YYYY-MM-DD HH:mm"
+            style={{ width: '100%' }} />
           </Form.Item>
 
 
