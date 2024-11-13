@@ -17,7 +17,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </div>
                 
                 <div className="content">
-                    <div className="flex-grow p-6 overflow-y-auto">{children}</div>
+                <div className="flex-grow overflow-y-auto" style={{ padding: '35px' }}>{children}</div>
                 </div>
                 <div className="footer">
                     <Footer />

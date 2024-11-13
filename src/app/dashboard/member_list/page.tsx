@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Table, Input, Space, Button, Modal, Form, message ,Row, Col, Card, Tooltip} from 'antd';
 import type { TableColumnsType, PaginationProps } from 'antd';
 import type { ColumnsType, TableProps } from 'antd/es/table';
-import { FormOutlined,NotificationOutlined,PlusCircleOutlined,WhatsAppOutlined } from '@ant-design/icons';
+import { FormOutlined,PlusCircleOutlined,WhatsAppOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation'; // For Next.js 13 with app directory
 import styles from './Card.module.css';
 // import { useContext } from 'react';
@@ -489,21 +489,14 @@ interface StatsData {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div>
-
-
-
-
-
-
-
-<div style={{ marginBottom: '20px' }}>
-  <Row gutter={0} justify="space-between" align="middle">
+<div>
+<div>
+  <Row gutter={0} justify="space-between" align="middle"style={{ marginBottom: '35px' }}>
     {/* 左邊的會員卡片區域 */}
     <Col>
       <Row gutter={0} align="middle">
         {/* 固定顯示「新會員」卡片 */}
-        <Col>
+        <Col style={{ marginRight: '25px' }}>
           <Card className={styles.cardContainer}>
             <div className={styles.content}>
               <img src="/Amount.png" alt="新會員" className={styles.icon} />
@@ -521,7 +514,7 @@ interface StatsData {
           const iconSrc = index < 3 ? dynamicIcons[index] : dynamicIcons[3];
           
           return (
-            <Col key={tierName}>
+            <Col key={tierName} style={{ marginRight: '25px' }}>
               <Card className={styles.cardContainer}>
                 <div className={styles.content}>
                   <img src={iconSrc} alt={tierName} className={styles.icon} />
@@ -541,14 +534,16 @@ interface StatsData {
     <Col>
       <Row gutter={0} justify="end" align="middle">
         {/* 本月到期會員 */}
-        <Col>
+        <Col style={{ marginRight: '25px' }}>
           <Card className={`${styles.cardContainer} ${styles.expiredCard}`}>
             <div className={styles.content}>
-              <div className={styles.textContainer}>
+              <div className={styles.textContainer2}>
                 <p className={styles.countText}>本月到期會籍</p>
                 <p className={styles.BigcountText}>{stats?.expiring_members_count}</p>
                 <p className={styles.sendLink}>
-                  <NotificationOutlined />
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M19.375 9.37503C19.374 8.38078 18.9785 7.42755 18.2755 6.72452C17.5725 6.02148 16.6192 5.62606 15.625 5.62503H12.5156C12.2883 5.61174 8.32656 5.33284 4.55391 2.16878C4.37172 2.01577 4.14966 1.91793 3.9138 1.88676C3.67794 1.85558 3.43809 1.89236 3.22241 1.99278C3.00673 2.09319 2.82418 2.25307 2.69622 2.45363C2.56825 2.6542 2.50018 2.88712 2.5 3.12503V15.625C2.50003 15.863 2.568 16.096 2.6959 16.2967C2.82381 16.4974 3.00635 16.6574 3.22205 16.7579C3.43776 16.8584 3.67768 16.8953 3.91361 16.8641C4.14954 16.833 4.37167 16.7351 4.55391 16.5821C7.50469 14.1071 10.5695 13.3977 11.875 13.1992V15.6774C11.8747 15.8833 11.9254 16.0862 12.0224 16.2679C12.1195 16.4496 12.2599 16.6045 12.4312 16.7188L13.2906 17.2914C13.4567 17.4023 13.647 17.4718 13.8454 17.494C14.0439 17.5162 14.2448 17.4906 14.4313 17.4192C14.6178 17.3478 14.7845 17.2328 14.9175 17.0837C15.0504 16.9347 15.1457 16.756 15.1953 16.5625L16.1148 13.0969C17.017 12.9769 17.8448 12.5333 18.4445 11.8487C19.0441 11.1642 19.3748 10.2851 19.375 9.37503ZM3.75 15.6196V3.12503C7.09453 5.93049 10.518 6.64065 11.875 6.81565V11.9313C10.5195 12.1094 7.09688 12.818 3.75 15.6196ZM13.9844 16.2446V16.2531L13.125 15.6805V13.125H14.8125L13.9844 16.2446ZM15.625 11.875H13.125V6.87503H15.625C16.288 6.87503 16.9239 7.13842 17.3928 7.60726C17.8616 8.0761 18.125 8.71198 18.125 9.37503C18.125 10.0381 17.8616 10.674 17.3928 11.1428C16.9239 11.6116 16.288 11.875 15.625 11.875Z" fill="#2989C5"/>
+                </svg>
                   <a href="#">傳送廣播</a>
                 </p>
               </div>
@@ -561,11 +556,13 @@ interface StatsData {
         <Col>
           <Card className={`${styles.cardContainer} ${styles.birthdayCard}`}>
             <div className={styles.content}>
-              <div className={styles.textContainer}>
+              <div className={styles.textContainer2}>
                 <p className={styles.countText}>本月生日會員</p>
                 <p className={styles.BigcountText}>{stats?.birthday_members_count}</p>
                 <p className={styles.sendLink}>
-                  <NotificationOutlined />
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M19.375 9.37503C19.374 8.38078 18.9785 7.42755 18.2755 6.72452C17.5725 6.02148 16.6192 5.62606 15.625 5.62503H12.5156C12.2883 5.61174 8.32656 5.33284 4.55391 2.16878C4.37172 2.01577 4.14966 1.91793 3.9138 1.88676C3.67794 1.85558 3.43809 1.89236 3.22241 1.99278C3.00673 2.09319 2.82418 2.25307 2.69622 2.45363C2.56825 2.6542 2.50018 2.88712 2.5 3.12503V15.625C2.50003 15.863 2.568 16.096 2.6959 16.2967C2.82381 16.4974 3.00635 16.6574 3.22205 16.7579C3.43776 16.8584 3.67768 16.8953 3.91361 16.8641C4.14954 16.833 4.37167 16.7351 4.55391 16.5821C7.50469 14.1071 10.5695 13.3977 11.875 13.1992V15.6774C11.8747 15.8833 11.9254 16.0862 12.0224 16.2679C12.1195 16.4496 12.2599 16.6045 12.4312 16.7188L13.2906 17.2914C13.4567 17.4023 13.647 17.4718 13.8454 17.494C14.0439 17.5162 14.2448 17.4906 14.4313 17.4192C14.6178 17.3478 14.7845 17.2328 14.9175 17.0837C15.0504 16.9347 15.1457 16.756 15.1953 16.5625L16.1148 13.0969C17.017 12.9769 17.8448 12.5333 18.4445 11.8487C19.0441 11.1642 19.3748 10.2851 19.375 9.37503ZM3.75 15.6196V3.12503C7.09453 5.93049 10.518 6.64065 11.875 6.81565V11.9313C10.5195 12.1094 7.09688 12.818 3.75 15.6196ZM13.9844 16.2446V16.2531L13.125 15.6805V13.125H14.8125L13.9844 16.2446ZM15.625 11.875H13.125V6.87503H15.625C16.288 6.87503 16.9239 7.13842 17.3928 7.60726C17.8616 8.0761 18.125 8.71198 18.125 9.37503C18.125 10.0381 17.8616 10.674 17.3928 11.1428C16.9239 11.6116 16.288 11.875 15.625 11.875Z" fill="#2989C5"/>
+                </svg>
                   <a href="#">傳送廣播</a>
                 </p>
               </div>
@@ -577,8 +574,8 @@ interface StatsData {
     </Col>
   </Row>
 </div>
-
-      <Space direction="horizontal" style={{ marginBottom: '20px' }}>
+<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+     
         <Search
           placeholder="輸入關鍵字"
           allowClear
@@ -586,12 +583,13 @@ interface StatsData {
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />
-        <Button type="primary" onClick={() => setIsModalVisible(true)}>
+        <div>
+        <Button type="primary" onClick={() => setIsModalVisible(true)} className={styles.customButton}>
         <PlusCircleOutlined style={{ fontSize: '16px', marginRight: '5px' }} /> 新增會員
         </Button>
         {hasSelected ? `Selected ${selectedRowKeys.length} items` : null}
-      </Space>
-
+        </div>
+</div>
       <Table
         className="custom-table-header"
         rowSelection={rowSelection}
@@ -626,12 +624,14 @@ interface StatsData {
         
         <Form form={form} onFinish={onFinish} layout="vertical">
         <div className={styles.modalContainer}>
+        
           <Form.Item
             name="member_name"
             label="會員姓名"
             rules={[{ required: true, message: 'Please enter the member name' }]}
           >
             <Input />
+            
           </Form.Item>
           <Form.Item
             name="member_phone"
@@ -674,6 +674,7 @@ interface StatsData {
           </Form.Item>
         </Form>
       </Modal>
+      
     </div>
   );
 };

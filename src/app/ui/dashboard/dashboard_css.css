@@ -53,7 +53,7 @@
 }
 
 .ant-card .ant-card-body {
-  padding: 8px;
+  padding: 0px;
   border-radius: 0 0 8px 8px;
   text-align: center;
   flex-direction: column;
@@ -77,7 +77,6 @@
 .ant-tabs-tab-active .ant-tabs-tab-btn {
   color: black !important; /* 選中時的文字顏色 */
 }
-
 
 
  
