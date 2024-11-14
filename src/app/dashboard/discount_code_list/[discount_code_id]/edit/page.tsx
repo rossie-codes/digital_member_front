@@ -77,7 +77,6 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                 }
 
                 const data: DiscountCode = await response.json();
-                console.log(data)
                 setDiscountCode(data);
                 setSelectedDiscountType(data.discount_type);
 
@@ -258,6 +257,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                     Back
                 </Button>
             </div>
+            
             <Form.Item label="狀態">
                 <Switch
                     checkedChildren="已啟用"

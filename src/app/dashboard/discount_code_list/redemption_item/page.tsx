@@ -17,10 +17,16 @@ import {
   message,
   Spin,
   Alert,
-  DatePicker
+  DatePicker,
+  Dropdown
 } from 'antd';
-import type { TableColumnsType, TableProps } from 'antd';
-import { PlusOutlined, FormOutlined, DeleteOutlined } from '@ant-design/icons';
+const { Search } = Input;
+
+import type { TableColumnsType, TableProps, MenuProps } from 'antd';
+import { PlusOutlined, FormOutlined, DeleteOutlined, UserOutlined, DownOutlined } from '@ant-design/icons';
+
+import Link from 'next/link';
+
 import { useRouter } from 'next/navigation'; // For Next.js 13 with app directory
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
@@ -31,16 +37,23 @@ const { Option } = Select;
 interface RedemptionItem {
   created_at: string;
   redemption_item_id: number;
-  redemption_name: string;
-  discount_type: 'fixed_amount' | 'percentage';
+  redemption_item_name: string;
+  redemption_type: 'fixed_amount' | 'percentage';
   discount_amount?: number;
   discount_percentage?: number;
-  // fixed_discount_cap?: number;
+  fixed_discount_cap?: number;
   minimum_spending: number;
   validity_period: number;
   is_active: boolean;
   deleted_status?: boolean;
   redeem_point: number;
+  quantity_available: number;
+  valid_from: string;
+  valid_until: string;
+  redemption_content: string;
+  redemption_term: string;
+  redemption_item_status: string; // Add this line
+
 }
 
 const GetGiftSettingPage: React.FC = () => {
@@ -51,11 +64,15 @@ const GetGiftSettingPage: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
   const [addingItem, setAddingItem] = useState<boolean>(false);
-  const [selectedDiscountType, setSelectedDiscountType] = useState<'fixed_amount' | 'percentage'>('fixed_amount');
+  const [selectedRedemptionType, setSelectedRedemptionType] = useState<'fixed_amount' | 'percentage'>('fixed_amount');
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editingItemId, setEditingItemId] = useState<number | null>(null);
 
+  const [redemptionTypes, setRedemptionTypes] = useState<string[]>([]);
+  const [redemptionItemStatuses, setRedemptionItemStatuses] = useState<string[]>([]);
+
+  const [searchText, setSearchText] = useState<string>(''); // State for search text
 
   const router = useRouter();
   const handleEdit = (record: RedemptionItem) => {
@@ -80,16 +97,19 @@ const GetGiftSettingPage: React.FC = () => {
         },
         credentials: 'include',
       });
-
+  
       if (response.status === 404) {
-        // No redemption items found, initialize with empty array
         setRedemptionItems([]);
       } else if (!response.ok) {
         throw new Error(`Failed to fetch redemption items: ${response.status}`);
       } else {
-        const data: RedemptionItem[] = await response.json();
+        const responseData = await response.json();
+        const data: RedemptionItem[] = responseData.redemption_items;
         setRedemptionItems(data);
-        console.log(data)
+  
+        // Set filter data
+        setRedemptionTypes(responseData.redemption_types || []);
+        setRedemptionItemStatuses(responseData.redemption_item_status || []);
       }
     } catch (error: any) {
       console.error('Error fetching redemption items:', error);
@@ -105,6 +125,27 @@ const GetGiftSettingPage: React.FC = () => {
   useEffect(() => {
     fetchRedemptionItems();
   }, []);
+
+  // For Discount Type Filters
+  const redemptionTypeFilters = redemptionTypes.map((type) => ({ text: type, value: type }));
+
+  // For Discount Code Status Filters
+  const redemptionItemStatusFilters = redemptionItemStatuses.map((status) => ({ text: status, value: status }));
+
+
+  // Search function
+  const onSearch = (
+    value: string,
+  ) => {
+    setSearchText(value.trim().toLowerCase());
+  };
+
+  // Filtered data based on searchText
+  const filteredRedemptionItem = redemptionItems.filter(item =>
+    // item.redemption_item_name.toLowerCase().includes(searchText) ||
+    String(item.redemption_item_name).toLowerCase().includes(searchText)
+  );
+
 
   // Table columns
   const columns: TableColumnsType<RedemptionItem> = [
@@ -122,27 +163,43 @@ const GetGiftSettingPage: React.FC = () => {
       width: 50,
     },
     {
-      title: '建立日期',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      render: (text) => new Date(text).toLocaleDateString(),
+      title: '禮物名稱',
+      dataIndex: 'redemption_item_name',
+      key: 'redemption_item_name',
     },
     {
-      title: '禮遇名稱',
-      dataIndex: 'redemption_name',
-      key: 'redemption_name',
-    },
-    {
-      title: '禮遇類別',
-      dataIndex: 'discount_type',
-      key: 'discount_type',
+      title: '折扣類別',
+      dataIndex: 'redemption_type',
+      key: 'redemption_type',
+      filters: redemptionTypeFilters,
+      onFilter: (value, record) => record.redemption_type === value,
       render: (text) => (text === 'fixed_amount' ? 'Fixed Amount' : 'Percentage'),
+    },
+    {
+      title: '所需積分',
+      dataIndex: 'redeem_point',
+      key: 'redeem_point',
+      sorter: (a, b) => a.redeem_point - b.redeem_point,
+      sortDirections: ['ascend', 'descend', 'ascend'],
+      render: (text) => `${text}`,
     },
     {
       title: '折扣額',
       key: 'discount_amount',
-      render: (_, record) =>
-        record.discount_type === 'fixed_amount'
+      sorter: (a, b) => {
+        // If both are fixed_amount, compare discount_amount
+        if (a.redemption_type === 'fixed_amount' && b.redemption_type === 'fixed_amount') {
+          return (a.discount_amount ?? 0) - (b.discount_amount ?? 0);
+        }
+        // If one is fixed_amount and the other is percentage, decide which comes first
+        if (a.redemption_type === 'fixed_amount') return -1; // Put fixed_amount first
+        if (b.redemption_type === 'fixed_amount') return 1; // Put fixed_amount first
+        // If both are percentage, compare discount_percentage
+        return (a.discount_percentage ?? 0) - (b.discount_percentage ?? 0);
+      },
+      sortDirections: ['ascend', 'descend', 'ascend'],
+      render: (_: any, record: RedemptionItem) =>
+        record.redemption_type === 'fixed_amount'
           ? `$${record.discount_amount}`
           : `${record.discount_percentage}%`,
     },
@@ -150,41 +207,67 @@ const GetGiftSettingPage: React.FC = () => {
       title: '最低消費',
       dataIndex: 'minimum_spending',
       key: 'minimum_spending',
+      sorter: (a, b) => a.minimum_spending - b.minimum_spending,
+      sortDirections: ['ascend', 'descend', 'ascend'],
       render: (text) => `$${text}`,
     },
-    // {
-    //   title: '最高折扣限額',
-    //   dataIndex: 'fixed_discount_cap',
-    //   key: 'fixed_discount_cap',
-    //   render: (text, record) => (record.discount_type === 'percentage' ? `$${text}` : '--'),
-    // },
     {
-      title: '折扣券有效期 (月)',
+      title: '有效期 (月)',
       dataIndex: 'validity_period',
       key: 'validity_period',
+      sorter: (a, b) => a.validity_period - b.validity_period,
+      sortDirections: ['ascend', 'descend', 'ascend'],
+    },
+    // {
+    //   title: '可兌換數目',
+    //   dataIndex: 'quantity_available',
+    //   key: 'quantity_available',
+    // },
+    {
+      title: '換領開始日期',
+      dataIndex: 'valid_from',
+      key: 'valid_from',
+      sorter: (a, b) => new Date(a.valid_from || '').getTime() - new Date(b.valid_from || '').getTime(),
+      sortDirections: ['ascend', 'descend', 'ascend'],
+      render: (text) => (text ? new Date(text).toLocaleDateString() : '--'),
     },
     {
-      title: 'Active',
-      dataIndex: 'is_active',
-      key: 'is_active',
-      render: (is_active, record) => (
-        <Switch
-          checked={is_active}
-          onChange={(checked) => handleToggleActive(record.redemption_item_id, checked)}
-        />
-      ),
+      title: '換領結束日期',
+      dataIndex: 'valid_until',
+      key: 'valid_until',
+      sorter: (a, b) => new Date(a.valid_until || '').getTime() - new Date(b.valid_until || '').getTime(),
+      sortDirections: ['ascend', 'descend', 'ascend'],
+      render: (text) => (text ? new Date(text).toLocaleDateString() : '--'),
     },
     {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <Space>
-          <Button type="link" danger onClick={() => handleDeleteItem(record.redemption_item_id)}>
-            Delete
-          </Button>
-        </Space>
-      ),
+      title: '狀態',
+      dataIndex: 'redemption_item_status',
+      key: 'redemption_item_status',
+      filters: redemptionItemStatusFilters,
+      onFilter: (value, record) => record.redemption_item_status === value,
     },
+    // {
+    //   title: 'Active',
+    //   dataIndex: 'is_active',
+    //   key: 'is_active',
+    //   render: (is_active, record) => (
+    //     <Switch
+    //       checked={is_active}
+    //       onChange={(checked) => handleToggleActive(record.redemption_item_id, checked)}
+    //     />
+    //   ),
+    // },
+    // {
+    //   title: 'Actions',
+    //   key: 'actions',
+    //   render: (_, record) => (
+    //     <Space>
+    //       <Button type="link" danger onClick={() => handleDeleteItem(record.redemption_item_id)}>
+    //         Delete
+    //       </Button>
+    //     </Space>
+    //   ),
+    // },
   ];
 
   // Function to handle activation toggle
@@ -216,34 +299,40 @@ const GetGiftSettingPage: React.FC = () => {
   };
 
   const showModal = () => {
-    // setSelectedDiscountType('fixed_amount'); // Default type
+    // setselectedRedemptionType('fixed_amount'); // Default type
     // form.resetFields();
     setIsModalVisible(true);
   };
 
-  const handleDiscountTypeChange = (value: 'fixed_amount' | 'percentage') => {
-    setSelectedDiscountType(value);
-    form.resetFields(); // Reset fields when discount type changes
-    form.setFieldsValue({ discount_type: value });
+  const handleRedemptionTypeChange = (value: 'fixed_amount' | 'percentage') => {
+    setSelectedRedemptionType(value);
+    form.resetFields(); // Reset fields when Redemption type changes
+    form.setFieldsValue({ redemption_type: value });
   };
 
   const onFinish = async (values: any) => {
     // Build the item object
     const newItem: Partial<RedemptionItem> = {
-      redemption_name: values.redemption_name,
-      discount_type: selectedDiscountType,
+      redemption_item_name: values.redemption_item_name,
+      redemption_type: selectedRedemptionType,
       minimum_spending: values.minimum_spending,
       validity_period: values.validity_period,
       redeem_point: values.redeem_point,
+      fixed_discount_cap: 0,
+      quantity_available: 0,
+      valid_from: values.valid_from,
+      valid_until: values.valid_until,
+      redemption_content: values.redemption_content,
+      redemption_term: values.redemption_term,
     };
 
-    if (selectedDiscountType === 'fixed_amount') {
+    if (selectedRedemptionType === 'fixed_amount') {
       newItem.discount_amount = values.discount_amount;
       newItem.discount_percentage = undefined;
       // newItem.fixed_discount_cap = undefined;
-    } else if (selectedDiscountType === 'percentage') {
+    } else if (selectedRedemptionType === 'percentage') {
       newItem.discount_percentage = values.discount_percentage;
-      // newItem.fixed_discount_cap = values.fixed_discount_cap;
+      newItem.fixed_discount_cap = 0;
       newItem.discount_amount = undefined;
     }
 
@@ -270,7 +359,7 @@ const GetGiftSettingPage: React.FC = () => {
             'Content-Type': 'application/json',
           },
           credentials: 'include',
-          body: JSON.stringify({ ...newItem, is_active: false }),
+          body: JSON.stringify({ ...newItem, is_active: true }),
         });
       }
 
@@ -291,8 +380,8 @@ const GetGiftSettingPage: React.FC = () => {
         setRedemptionItems((prevItems) => [...prevItems, result]);
         message.success('Item added successfully!');
       }
-      
-      
+
+
 
       setIsModalVisible(false);
       setIsEditing(false);
@@ -348,25 +437,69 @@ const GetGiftSettingPage: React.FC = () => {
     );
   }
 
+  const items: MenuProps['items'] = [
+    {
+      label: 'Delete',
+      key: '1',
+      icon: <UserOutlined />,
+    },
+    {
+      label: 'Enable',
+      key: '2',
+      icon: <UserOutlined />,
+    },
+    {
+      label: 'Suspend',
+      key: '3',
+      icon: <UserOutlined />,
+      danger: true,
+    }
+  ];
+
+  const menuProps = {
+    items,
+    // onClick: handleMenuClick,
+  };
+
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Title level={2}>換領禮遇列表</Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-          新增換領禮遇
-        </Button>
-        <Button icon={<DeleteOutlined />} onClick={() => router.push('/dashboard/app_setting/redemption_item/deleted_redemption_item')}>
-          檢視垃圾桶
-        </Button>
+        <Space>
+          <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
+            新增換領禮遇
+          </Button>
+          <Button icon={<DeleteOutlined />} onClick={() => router.push('/dashboard/discount_code_list/redemption_item/deleted_redemption_item')}>
+            檢視垃圾桶
+          </Button>
+          <Dropdown menu={menuProps} disabled={selectedRowKeys.length === 0}>
+            <Button>
+              Bulk Actions <DownOutlined />
+            </Button>
+          </Dropdown>
+
+        </Space>
       </div>
+
+
+      <Space direction="vertical" style={{ marginBottom: '50px' }}>
+        <Search
+          placeholder="Search members"
+          allowClear
+          onSearch={onSearch}
+          style={{ width: 300 }}
+        />
+      </Space>
+
 
       <Table
         rowSelection={rowSelection}
         columns={columns}
-        dataSource={redemptionItems}
+        dataSource={filteredRedemptionItem}
         rowKey="redemption_item_id"
         style={{ marginTop: 16 }}
         locale={{ emptyText: 'No redemption items found.' }}
+        pagination={{ showSizeChanger: true, pageSizeOptions: ['10', '20', '50'] }}
       />
 
       {/* Modal Form */}
@@ -380,19 +513,19 @@ const GetGiftSettingPage: React.FC = () => {
       >
         <Form form={form} onFinish={onFinish} layout="vertical">
           <Form.Item
-            name="discount_type"
+            name="redemption_type"
             label="折扣類型"
-            initialValue={selectedDiscountType}
+            initialValue={selectedRedemptionType}
             rules={[{ required: true, message: '選擇折扣類型' }]}
           >
-            <Select onChange={handleDiscountTypeChange}>
+            <Select onChange={handleRedemptionTypeChange}>
               <Option value="fixed_amount">Fixed Amount Discount</Option>
               <Option value="percentage">Percentage Discount</Option>
             </Select>
           </Form.Item>
 
           <Form.Item
-            name="redemption_name"
+            name="redemption_item_name"
             label="禮物名稱"
             rules={[{ required: true, message: '輸入折扣名稱' }]}
           >
@@ -409,7 +542,7 @@ const GetGiftSettingPage: React.FC = () => {
           </Form.Item>
 
 
-          {selectedDiscountType === 'fixed_amount' && (
+          {selectedRedemptionType === 'fixed_amount' && (
             <Form.Item
               name="discount_amount"
               label="折扣金額"
@@ -419,7 +552,7 @@ const GetGiftSettingPage: React.FC = () => {
             </Form.Item>
           )}
 
-          {selectedDiscountType === 'percentage' && (
+          {selectedRedemptionType === 'percentage' && (
             <>
               <Form.Item
                 name="discount_percentage"
@@ -460,13 +593,13 @@ const GetGiftSettingPage: React.FC = () => {
             <InputNumber min={1} style={{ width: '100%' }} />
           </Form.Item>
 
-          <Form.Item
+          {/* <Form.Item
             name="quantity_available"
             label="可兌換數目"
             rules={[{ required: true, message: '輸入可供換領的數量' }]}
           >
             <InputNumber min={0} style={{ width: '100%' }} />
-          </Form.Item>
+          </Form.Item> */}
 
 
           <Form.Item
@@ -474,10 +607,10 @@ const GetGiftSettingPage: React.FC = () => {
             label="換領開始日期"
             rules={[{ required: false, message: '選擇日期' }]}
           >
-            <DatePicker 
-            showTime
-            format="YYYY-MM-DD HH:mm"
-            style={{ width: '100%' }} />
+            <DatePicker
+              showTime
+              format="YYYY-MM-DD HH:mm"
+              style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
@@ -485,10 +618,10 @@ const GetGiftSettingPage: React.FC = () => {
             label="換領結束日期"
             rules={[{ required: false, message: '選擇日期' }]}
           >
-            <DatePicker 
-            showTime
-            format="YYYY-MM-DD HH:mm"
-            style={{ width: '100%' }} />
+            <DatePicker
+              showTime
+              format="YYYY-MM-DD HH:mm"
+              style={{ width: '100%' }} />
           </Form.Item>
 
 
@@ -502,7 +635,7 @@ const GetGiftSettingPage: React.FC = () => {
 
 
           <Form.Item
-            name="term_and_condition"
+            name="redemption_term"
             label="條款及細則"
             rules={[{ required: true, message: '輸入禮物的條款及細則' }]}
           >

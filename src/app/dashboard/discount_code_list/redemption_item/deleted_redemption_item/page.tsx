@@ -24,8 +24,8 @@ const { Title } = Typography;
 interface RedemptionItem {
   created_at: string;
   redemption_item_id: number;
-  redemption_name: string;
-  discount_type: 'fixed_amount' | 'percentage';
+  redemption_item_name: string;
+  redemption_type: 'fixed_amount' | 'percentage';
   discount_amount?: number;
   discount_percentage?: number;
   // fixed_discount_cap?: number;
@@ -93,20 +93,20 @@ const DeletedRedemptionItemsPage: React.FC = () => {
     },
     {
       title: '禮遇名稱',
-      dataIndex: 'redemption_name',
-      key: 'redemption_name',
+      dataIndex: 'redemption_item_name',
+      key: 'redemption_item_name',
     },
     {
       title: '禮遇類別',
-      dataIndex: 'discount_type',
-      key: 'discount_type',
+      dataIndex: 'redemption_type',
+      key: 'redemption_type',
       render: (text) => (text === 'fixed_amount' ? 'Fixed Amount' : 'Percentage'),
     },
     {
       title: '折扣額',
       key: 'discount_amount',
       render: (_, record) =>
-        record.discount_type === 'fixed_amount'
+        record.redemption_type === 'fixed_amount'
           ? `$${record.discount_amount}`
           : `${record.discount_percentage}%`,
     },
@@ -120,7 +120,7 @@ const DeletedRedemptionItemsPage: React.FC = () => {
     //   title: '最高折扣限額',
     //   dataIndex: 'fixed_discount_cap',
     //   key: 'fixed_discount_cap',
-    //   render: (text, record) => (record.discount_type === 'percentage' ? `$${text}` : '--'),
+    //   render: (text, record) => (record.redemption_type === 'percentage' ? `$${text}` : '--'),
     // },
     {
       title: '折扣券有效期 (月)',

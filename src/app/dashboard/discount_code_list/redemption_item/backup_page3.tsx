@@ -33,7 +33,7 @@
 // interface RedemptionItem {
 //   id: number;
 //   created_at: string;
-//   redemption_name: string;
+//   redemption_item_name: string;
 //   discount_type: 'fixed_amount' | 'percentage';
 //   discount_amount?: number; // For fixed amount discount
 //   discount_percentage?: number; // For percentage discount
@@ -98,8 +98,8 @@
 //     },
 //     {
 //       title: '禮遇名稱',
-//       dataIndex: 'redemption_name',
-//       key: 'redemption_name',
+//       dataIndex: 'redemption_item_name',
+//       key: 'redemption_item_name',
 //     },
 //     {
 //       title: '禮遇類別',
@@ -201,7 +201,7 @@
 //   const onFinish = async (values: any) => {
 //     // Build the item object
 //     const newItem: Partial<RedemptionItem> = {
-//       redemption_name: values.redemption_name,
+//       redemption_item_name: values.redemption_item_name,
 //       discount_type: selectedDiscountType,
 //       minimum_spending: values.minimum_spending,
 //       validity_period: values.validity_period,
@@ -358,7 +358,7 @@
 //           </Form.Item>
 
 //           <Form.Item
-//             name="redemption_name"
+//             name="redemption_item_name"
 //             label="Redemption Name"
 //             rules={[{ required: true, message: 'Please enter the redemption name' }]}
 //           >

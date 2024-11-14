@@ -21,12 +21,13 @@ import {
   Menu,
   Dropdown
 } from 'antd';
-
 const { Search } = Input;
-import Link from 'next/link';
 
 import type { TableColumnsType, TableProps, MenuProps } from 'antd';
 import { PlusOutlined, FormOutlined, DeleteOutlined, DownOutlined, UserOutlined } from '@ant-design/icons';
+
+import Link from 'next/link';
+
 import { useRouter } from 'next/navigation';
 
 
@@ -275,14 +276,14 @@ const DiscountCodeListPage: React.FC = () => {
       title: '優惠碼',
       dataIndex: 'discount_code',
       key: 'discount_code',
-      sorter: true, // Enable server-side sorting
-      sortDirections: ['ascend', 'descend', 'ascend'],
+      // sorter: (a, b) => a.discount_code.localeCompare(b.discount_code),
+      // sortDirections: ['ascend', 'descend', 'ascend'],
     },
     {
       title: '類別',
       dataIndex: 'discount_type',
       key: 'discount_type',
-      sorter: true,
+      // sorter: true,
       filters: discountTypeFilters,
       onFilter: (value, record) => record.discount_type === value,
       render: (text) => (text === 'fixed_amount' ? 'Fixed Amount' : 'Percentage'),
@@ -290,9 +291,19 @@ const DiscountCodeListPage: React.FC = () => {
     {
       title: '折扣額',
       key: 'discount_amount',
-      sorter: true, // Enable server-side sorting
+      sorter: (a, b) => {
+        // If both are fixed_amount, compare discount_amount
+        if (a.discount_type === 'fixed_amount' && b.discount_type === 'fixed_amount') {
+          return (a.discount_amount ?? 0) - (b.discount_amount ?? 0);
+        }
+        // If one is fixed_amount and the other is percentage, decide which comes first
+        if (a.discount_type === 'fixed_amount') return -1; // Put fixed_amount first
+        if (b.discount_type === 'fixed_amount') return 1; // Put fixed_amount first
+        // If both are percentage, compare discount_percentage
+        return (a.discount_percentage ?? 0) - (b.discount_percentage ?? 0);
+      },
       sortDirections: ['ascend', 'descend', 'ascend'],
-      render: (_, record) =>
+      render: (_: any, record: DiscountCode) =>
         record.discount_type === 'fixed_amount'
           ? `$${record.discount_amount}`
           : `${record.discount_percentage}%`,
@@ -301,7 +312,8 @@ const DiscountCodeListPage: React.FC = () => {
       title: '最低消費',
       dataIndex: 'minimum_spending',
       key: 'minimum_spending',
-      sorter: true, // Enable server-side sorting
+      // sorter: true, // Enable server-side sorting
+      sorter: (a, b) => a.minimum_spending - b.minimum_spending,
       sortDirections: ['ascend', 'descend', 'ascend'],
       render: (text) => `$${text}`,
     },
@@ -309,7 +321,7 @@ const DiscountCodeListPage: React.FC = () => {
       title: '開始日期',
       dataIndex: 'valid_from',
       key: 'valid_from',
-      sorter: true, // Enable server-side sorting
+      sorter: (a, b) => new Date(a.valid_from || '').getTime() - new Date(b.valid_from || '').getTime(),
       sortDirections: ['ascend', 'descend', 'ascend'],
       render: (text) => (text ? new Date(text).toLocaleDateString() : '--'),
     },
@@ -317,7 +329,7 @@ const DiscountCodeListPage: React.FC = () => {
       title: '到期日',
       dataIndex: 'valid_until',
       key: 'valid_until',
-      sorter: true, // Enable server-side sorting
+      sorter: (a, b) => new Date(a.valid_until || '').getTime() - new Date(b.valid_until || '').getTime(),
       sortDirections: ['ascend', 'descend', 'ascend'],
       render: (text) => (text ? new Date(text).toLocaleDateString() : '--'),
     },
@@ -325,7 +337,6 @@ const DiscountCodeListPage: React.FC = () => {
       title: '使用限制',
       dataIndex: 'use_limit_type',
       key: 'use_limit_type',
-      sorter: true,
       filters: useLimitTypeFilters,
       onFilter: (value, record) => record.use_limit_type === value,
     },
@@ -333,7 +344,6 @@ const DiscountCodeListPage: React.FC = () => {
       title: '狀態',
       dataIndex: 'discount_code_status',
       key: 'discount_code_status',
-      sorter: true,
       filters: discountCodeStatusFilters,
       onFilter: (value, record) => record.discount_code_status === value,
     },
@@ -549,6 +559,7 @@ const DiscountCodeListPage: React.FC = () => {
         rowKey="discount_code_id"
         style={{ marginTop: 16 }}
         locale={{ emptyText: 'No discount codes found.' }}
+        pagination={{ showSizeChanger: true, pageSizeOptions: ['10', '20', '50'] }}
       />
 
       {/* Modal Form */}
