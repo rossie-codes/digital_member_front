@@ -14,12 +14,14 @@
 }
 
 .leftSection {
-  background-color: #fff7e6;
-  border: 3px solid #f0c674;
-  border-radius: 8px;
+  border-radius: 5px;
+  border: 5px solid #FFE08F;
+  background: #FFF2D0;
+  box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  
+
   padding: 20px;
   width: 500px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-top: 65px;
 }
 
@@ -73,12 +75,13 @@
 
 .customDescriptions {
   display: flex;
-  gap: 10px;
-  width: 100%;
-  border: 3px solid #a3a3a3;
-  border-radius: 8px;
-  padding: 10px;
-  flex-wrap: wrap;
+  padding: 0px 11px;
+  align-items: center;
+  gap: 9px;
+  align-self: stretch;
+  border-radius: 5px;
+  border: 5px solid var(--DarkGray, #737277);
+  background: #FFF;
 }
 
 .customItem {
@@ -103,18 +106,24 @@
 }
 
 .pointAvailable {
-  background-color: #d9f7be;
-  border: 3px solid #a3d69c;
+  border-radius: 5px;
+  border: 5px solid var(--Avaliable, #62A02B);
+  background: #D6FDB3;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
 
 .pointUsed {
-  background-color: #e8e8e8;
-  border: 3px solid #bfbfbf;
+  border-radius: 5px;
+  border: 5px solid var(--DarkGray, #737277);
+  background: var(--LightGray, #EDEDED);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
 
 .pointEarned {
-  background-color: #bae7ff;
-  border: 3px solid #80c5f6;
+  border-radius: 5px;
+  border: 5px solid var(--highlight2, #2989C5);
+  background: #CCEBFF;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
 
 .formField {

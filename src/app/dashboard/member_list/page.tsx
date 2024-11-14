@@ -29,6 +29,9 @@ interface NewMember {
   member_name: string;
   member_phone: number;
   birthday: string | null;
+  year?: string;
+  month?: string;
+  day?: string;
   referrer_phone: number | null;
   point: number;
 }
@@ -67,7 +70,9 @@ const GetMemberListPage: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
   const [addingMember, setAddingMember] = useState<boolean>(false);
-
+  const [year, setYear] = useState<string>('');
+  const [month, setMonth] = useState<string>('');
+  const [day, setDay] = useState<string>('');
 
   const statusMapping: { [key: number]: string } = {
     0: 'expired',
@@ -275,6 +280,15 @@ interface StatsData {
   };
 
   const onFinish = async (values: NewMember) => {
+    // 將年、月、日組合為 `YYYY-MM-DD` 格式
+  const { year, month, day } = values;
+  const formattedBirthday = year && month && day ? `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}` : null;
+
+  // 傳遞 `birthday` 到後端
+  const newMemberData = {
+    ...values,
+    birthday: formattedBirthday,
+  };
     try {
       setAddingMember(true);
       // Send the data to the backend
@@ -284,7 +298,7 @@ interface StatsData {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify(values),
+        body: JSON.stringify(newMemberData),
       });
 
       let errorMessage = 'Failed to add member';
@@ -337,8 +351,32 @@ interface StatsData {
       render: (_: any, record: DataType) => (
         <Button
           type="link"
-          icon={<FormOutlined style={{ color: '#ff4d4f' }} />}
-          onClick={() => handleEdit(record)}
+          icon={
+            <span
+              onClick={() => handleEdit(record)}
+              style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+              >
+                <g clipPath="url(#clip0_808_5100)">
+                  <path
+                    d="M3.45872 12.284C3.49443 12.284 3.53015 12.2805 3.56586 12.2751L6.56943 11.7483C6.60515 11.7412 6.63908 11.7251 6.66408 11.6983L14.2337 4.12868C14.2503 4.11216 14.2634 4.09254 14.2724 4.07094C14.2813 4.04934 14.2859 4.02618 14.2859 4.00279C14.2859 3.9794 14.2813 3.95625 14.2724 3.93464C14.2634 3.91304 14.2503 3.89342 14.2337 3.8769L11.2659 0.907254C11.2319 0.873326 11.1873 0.855469 11.1391 0.855469C11.0909 0.855469 11.0462 0.873326 11.0123 0.907254L3.44265 8.4769C3.41586 8.50368 3.39979 8.53583 3.39265 8.57154L2.86586 11.5751C2.84849 11.6708 2.8547 11.7692 2.88395 11.862C2.91319 11.9547 2.9646 12.0389 3.03372 12.1073C3.15158 12.2215 3.29979 12.284 3.45872 12.284ZM4.66229 9.16975L11.1391 2.69475L12.448 4.00368L5.97122 10.4787L4.38372 10.759L4.66229 9.16975ZM14.5712 13.784H1.42836C1.11229 13.784 0.856934 14.0394 0.856934 14.3555V14.9983C0.856934 15.0769 0.921219 15.1412 0.999791 15.1412H14.9998C15.0784 15.1412 15.1426 15.0769 15.1426 14.9983V14.3555C15.1426 14.0394 14.8873 13.784 14.5712 13.784Z"
+                    fill="#737277"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_808_5100">
+                    <rect width="16" height="16" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
+            </span>
+          }
         />
       ),
       width: 50,
@@ -349,18 +387,23 @@ interface StatsData {
       key: 'member_name',
       ellipsis: true,
       width: 150,
-      render: (text) => (
+      render: (text, record) => (
         <Tooltip title={text} placement="topLeft">
-          {text}
+          <span
+            style={{ color: '#1890ff', cursor: 'pointer' }}
+            onClick={() => handleEdit(record)}
+          >
+            {text}
+          </span>
         </Tooltip>
       ),
     },
     {
       title: (
         <span>
-          電話號碼
-          <WhatsAppOutlined style={{ marginLeft: 8, color: '#25D366'}} />
-        </span>
+      電話號碼
+      <WhatsAppOutlined className="whatsapp-icon" style={{ marginLeft: 6 }} />
+    </span>
       ),
       dataIndex: 'member_phone',
       key: 'member_phone',
@@ -379,16 +422,16 @@ interface StatsData {
       sorter: true, // Enable server-side sorting
       sortDirections: ['ascend', 'descend', 'ascend'],
     },
+    
     {
-      title: '生日',
+      title: '到期日',
       dataIndex: 'membership_expiry_date',
       key: 'membership_expiry_date',
       sorter: true, // Enable server-side sorting
       sortDirections: ['ascend', 'descend', 'ascend'],
     },
-
     {
-      title: '到期日',
+      title: '生日',
       dataIndex: 'membership_expiry_date',
       key: 'membership_expiry_date',
       sorter: true, // Enable server-side sorting
@@ -509,10 +552,10 @@ interface StatsData {
         </Col>
 
         {/* 動態渲染其他會員等級卡片 */}
-        {Object.entries(stats?.membership_tier_counts || {}).map(([tierName, count], index) => {
-          // 根據 index 使用對應的 dynamic icon 圖片，如果 index 超過三個就使用第四個預設 icon
-          const iconSrc = index < 3 ? dynamicIcons[index] : dynamicIcons[3];
-          
+        {Object.entries(stats?.membership_tier_counts || {})
+        .filter(([tierName]) => tierName && tierName !== "No Tier") // 過濾掉 "No Tier" 或空名稱
+        .map(([tierName, count], index) => {
+          const iconSrc = dynamicIcons[index % dynamicIcons.length];
           return (
             <Col key={tierName} style={{ marginRight: '25px' }}>
               <Card className={styles.cardContainer}>
@@ -611,6 +654,7 @@ interface StatsData {
       />
 
       <Modal
+      
         title={
           <div className={styles.modalTitle}>
             <img src={icons[3]} alt="Icon" style={{ width: '24px' }} /> {/* 使用 green.png 作為標題圖示 */}
@@ -627,36 +671,38 @@ interface StatsData {
         
           <Form.Item
             name="member_name"
-            label="會員姓名"
+            label={<span className={styles.Modalfont}>會員姓名</span>}
             rules={[{ required: true, message: 'Please enter the member name' }]}
+            style={{ marginBottom: '0px' }}
           >
-            <Input />
+            <Input  className={styles.ModalItem} placeholder="輸入姓名" /> 
             
           </Form.Item>
           <Form.Item
             name="member_phone"
-            label="會員電話"
+            label={<span className={styles.Modalfont}>電話號碼</span>}
             rules={[{ required: true, message: 'Please enter the phone number' }]}
+            style={{ marginBottom: '0px' }}
           >
-            <Input />
+            <Input  className={styles.ModalItem} placeholder="輸入電話號碼" /> 
           </Form.Item>
 
-          <Form.Item
-            name="birthday"
-            label="會員生日 (選填)"
-            rules={[{ required: false, message: 'Please enter birthday' }]}
-          >
-            <Input />
+          <Form.Item label={<span className={styles.Modalfont}>生日</span>} style={{ marginBottom: '0px' }}>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'space-between' }}>
+              <Form.Item name="year" noStyle><Input placeholder="年" maxLength={4} style={{ width: '30%' }} className={styles.ModalItem}/></Form.Item>
+              <Form.Item name="month" noStyle><Input placeholder="月" maxLength={2} style={{ width: '30%' }} className={styles.ModalItem}/></Form.Item>
+              <Form.Item name="day" noStyle><Input placeholder="日" maxLength={2} style={{ width: '30%' }} className={styles.ModalItem}/></Form.Item>
+            </div>
           </Form.Item>
           </div>
           
           <Form.Item
             name="referrer_phone"
-            label="推薦人電話號碼 (選填)"
+            label={<span className={styles.Modalfont}>推薦人號碼</span>}
             rules={[{ required: false, message: 'Please enter the referrer phone number' }]}
             className={styles.referrerField}
           >
-            <Input />
+            <Input className={styles.ModalItem}/>
           </Form.Item>
 
           {/* <Form.Item
@@ -667,15 +713,21 @@ interface StatsData {
             <Input />
           </Form.Item> */}
 
-          <Form.Item>
+          <Form.Item style={{ marginBottom: '0px' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end'}}>
+            <Button onClick={() => setIsModalVisible(false)} className={`${styles.CancelButton}`} style={{ marginRight: '10px' }}>
+              取消
+            </Button>
             <Button type="primary" htmlType="submit" loading={addingMember} className={styles.addButton}>
               新增
             </Button>
+            </div>
           </Form.Item>
         </Form>
+       
       </Modal>
-      
-    </div>
+      </div>
+    
   );
 };
 

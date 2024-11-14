@@ -176,6 +176,7 @@ const GetMemberDetailPage: React.FC = () => {
         // 設定左右表單的初始值
         leftForm.setFieldsValue({
           member_name: data.member_name,
+          member_phone: data.member_phone,
           birthday: formattedBirthday,
         });
 
@@ -342,7 +343,7 @@ const GetMemberDetailPage: React.FC = () => {
           <img
             src={getIconByTierId(memberData?.membership_tier?.membership_tier_id)}
             alt="會員層級圖示"
-            style={{ width: 50, height: 50, display: 'block', margin: '0 auto' }}
+            style={{ width: 113, height: 114, display: 'block', margin: '0 auto' }}
           />
         </div>
       }
@@ -353,6 +354,16 @@ const GetMemberDetailPage: React.FC = () => {
             name="member_name"
             label="會員姓名"
             rules={[{ required: true, message: "請輸入會員姓名" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="member_phone"
+            label="電話號碼"
+            rules={[
+              { required: true, message: "請輸入電話號碼" },
+              { pattern: /^[0-9]+$/, message: "電話號碼只能包含數字" }
+            ]}
           >
             <Input />
           </Form.Item>

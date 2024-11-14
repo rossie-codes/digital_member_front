@@ -39,17 +39,29 @@
   }
 
 .custom-table-header .ant-table-thead> tr > th {
-    background-color: black !important;
-    color: white !important;
+  background: var(--key-colors-primary, #131313) !important;
+    color: var(--LightGray, #EDEDED) !important;
+    /* body small heavy */
+    font-family: "Noto Sans HK";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 19px; /* 135.714% */
+    letter-spacing: -0.28px;
 }
 
 .custom-table-header .ant-table-thead> tr > th:hover {
-    background-color: black !important;
-    color: white !important;
+  background: var(--key-colors-primary, #131313) !important;
+    color: var(--LightGray, #EDEDED) !important;
 }
 
 .custom-table-header .ant-table-thead> tr > th .anticon {
-    color: white !important;
+  color: var(--LightGray, #EDEDED) !important;
+}
+
+.custom-table-header .ant-table-thead > tr > th .anticon.whatsapp-icon {
+  color: #14AE5C !important;
+  font-size: 25px !important;
 }
 
 .ant-card .ant-card-body {
@@ -76,6 +88,10 @@
 /* 設定選中時的文字顏色 */
 .ant-tabs-tab-active .ant-tabs-tab-btn {
   color: black !important; /* 選中時的文字顏色 */
+}
+
+.ant-modal .ant-modal-content {
+  padding: 30px !important; /* 覆蓋預設 padding */
 }
 
 

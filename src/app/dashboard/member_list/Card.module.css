@@ -114,7 +114,6 @@
   padding: 20px 40px;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
   gap: 15px;
   align-self: stretch;
   border-radius: 5px;
@@ -131,6 +130,37 @@
   align-self: stretch;
   border-bottom: 3px solid #000;
 }
+.Modalfont{
+  color: var(--key-colors-primary, #131313);
+  /* body */
+  font-family: "Noto Sans HK";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px; /* 137.5% */
+  letter-spacing: -0.32px;
+}
+.ModalItem{
+  display: flex;
+  height: 44px;
+  padding: 12px;
+  align-items: flex-start;
+  gap: 12px;
+  flex-shrink: 0;
+  align-self: stretch;
+  border-radius: 5px;
+  border: 1px solid var(--key-colors-primary, #131313);
+  background: var(--White, #FFF);
+  color: var(--DarkGray, #737277);
+
+  /* body */
+  font-family: "Noto Sans HK";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px; /* 137.5% */
+  letter-spacing: -0.32px;
+}
 .customButton {
   display: flex;
   width: 99px;
@@ -144,15 +174,32 @@
   color: white;
 }
 
+.addButton, .CancelButton {
+  display: flex;
+  width: 99px;
+  height: 32px;
+  padding: 8px 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+}
 
 .addButton {
-  background-color: #FF4500 !important;
-  border: none !important;
-  color: #FFFFFF !important;
+  border-radius: 5px;
+  background: var(--key-colors-tertiary, #D74D03);
 }
 
 .addButton:hover {
-  background-color: #FF4500 !important;
+  background: var(--key-colors-tertiary, #D74D03)!important;
+  color: #FFFFFF !important;
+}
+.CancelButton{
+  border-radius: 5px;
+  background: var(--DarkGray, #737277);
+  color: #FFFFFF;
+}
+.CancelButton:hover {
+  background: var(--DarkGray, #737277)!important;
   color: #FFFFFF !important;
 }
 
