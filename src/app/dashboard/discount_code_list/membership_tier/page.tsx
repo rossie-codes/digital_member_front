@@ -425,6 +425,7 @@ const GetMembershipTierPage: React.FC = () => {
                     >
                       <InputNumber
                         min={1}
+                        max={10000}
                         style={{ width: '100%' }}
                         onChange={() => forceUpdate({})}
                       />
@@ -439,13 +440,14 @@ const GetMembershipTierPage: React.FC = () => {
                     >
                       <InputNumber
                         min={0}
+                        max={10000}
                         style={{ width: '100%' }}
                         onChange={() => forceUpdate({})}
                       />
                     </Form.Item>
 
                     {/* Display Calculated Point Multiplier */}
-                    <Form.Item label="積分倍數">
+                    <Form.Item label="專屬積分倍數">
                       <Typography.Title level={5}>
                         {calculatePointMultiplier(
                           form,
