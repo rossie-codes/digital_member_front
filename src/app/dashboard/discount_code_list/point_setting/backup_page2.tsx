@@ -2,7 +2,7 @@
 
 // 想將 render 的問題按規則不同
 
-// src/app/dashboard/app_setting/member_setting/page.tsx
+// src/app/dashboard/app_setting/point_setting/page.tsx
 
 // 'use client';
 

@@ -31,11 +31,11 @@ const items: MenuItem[] = [
   },
   {
     label: (
-      <Link href="/dashboard/discount_code_list/member_setting">
+      <Link href="/dashboard/discount_code_list/point_setting">
         積分換領
       </Link>
     ),
-    key: 'member_setting',
+    key: 'point_setting',
     icon: <MailOutlined />,
   },
   {

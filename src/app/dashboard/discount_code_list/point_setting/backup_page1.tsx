@@ -1,6 +1,6 @@
 // 做了會員有效期 / 續會方式 / 會員期結束的處理
 // 想在下方加 獲取積分的 form
-// // src/app/dashboard/app_setting/member_setting/page.tsx
+// // src/app/dashboard/app_setting/point_setting/page.tsx
 
 // 'use client'
 
