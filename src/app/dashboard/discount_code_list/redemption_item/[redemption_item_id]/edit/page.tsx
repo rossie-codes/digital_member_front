@@ -3,9 +3,25 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Button, Card, Form, Input, InputNumber, Select, Typography, message, Spin, Alert, Descriptions, DatePicker, Modal } from 'antd';
+import {
+    Button,
+    Card,
+    Form,
+    Input,
+    InputNumber,
+    Select,
+    Typography,
+    message,
+    Spin,
+    Alert,
+    Descriptions,
+    DatePicker,
+    Modal,
+    Switch
+} from 'antd';
 import { useParams, useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
+import { red } from '@ant-design/colors';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -14,18 +30,21 @@ const { RangePicker } = DatePicker;
 interface RedemptionItem {
     redemption_item_id: number;
     redemption_item_name: string;
-    discount_type: 'percentage' | 'fixed_amount';
+    redemption_type: 'percentage' | 'fixed_amount';
     discount_amount?: number;
     discount_percentage?: number;
     quantity_available?: number;
     minimum_spending: number;
+    redeem_point: number;
     // fixed_discount_cap?: number;
     validity_period: number;
     valid_from?: string;
     valid_until?: string;
     created_at: string;
     updated_at: string;
-    status: 'active' | 'inactive' | 'expired';
+    redemption_item_status: 'expired' | 'active' | 'suspended' | 'scheduled';
+    redemption_content: string;
+    redemption_term: string;
 }
 
 const GetRedemptionItemDetailPage: React.FC = () => {
@@ -33,6 +52,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
     const router = useRouter();
     const redemption_item_id = params.redemption_item_id;
 
+    const [isActive, setIsActive] = useState<boolean>(false);
     const [redemptionItem, setRedemptionItem] = useState<RedemptionItem | null>(null);
     const [selectedDiscountType, setSelectedDiscountType] = useState<'fixed_amount' | 'percentage'>('fixed_amount');
     const [loading, setLoading] = useState<boolean>(true);
@@ -58,19 +78,28 @@ const GetRedemptionItemDetailPage: React.FC = () => {
 
                 const data: RedemptionItem = await response.json();
                 setRedemptionItem(data);
-                setSelectedDiscountType(data.discount_type);
+                setSelectedDiscountType(data.redemption_type);
+
+                if (data.redemption_item_status === 'suspended') {
+                    setIsActive(false);
+                } else {
+                    setIsActive(true);
+                }
 
                 // Set form fields
                 form.setFieldsValue({
                     redemption_item_name: data.redemption_item_name,
-                    discount_type: data.discount_type,
+                    redemption_type: data.redemption_type,
                     discount_amount: data.discount_amount,
                     discount_percentage: data.discount_percentage,
-                    // fixed_discount_cap: data.fixed_discount_cap,
                     minimum_spending: data.minimum_spending,
                     validity_period: data.validity_period,
                     quantity_available: data.quantity_available,
-                    validity_range: data.valid_from && data.valid_until ? [dayjs(data.valid_from), dayjs(data.valid_until)] : [],
+                    valid_from: data.valid_from ? dayjs(data.valid_from) : null,
+                    valid_until: data.valid_until ? dayjs(data.valid_until) : null,
+                    redeem_point: data.redeem_point,
+                    redemption_content: data.redemption_content,
+                    redemption_term: data.redemption_term,
                 });
             } catch (error: any) {
                 console.error('Error fetching redemption item:', error);
@@ -101,13 +130,18 @@ const GetRedemptionItemDetailPage: React.FC = () => {
         // Build the updated item object
         const updatedItem = {
             redemption_item_name: values.redemption_item_name,
-            discount_type: values.discount_type,
+            redemption_type: values.redemption_type,
             discount_amount: values.discount_amount,
             discount_percentage: values.discount_percentage,
             // fixed_discount_cap: values.fixed_discount_cap,
             minimum_spending: values.minimum_spending,
+            redeem_point: values.redeem_point,
             validity_period: values.validity_period,
-            // Include future fields if necessary
+            quantity_available: values.quantity_available,
+            valid_from: values.valid_from ? values.valid_from.toISOString() : null,
+            valid_until: values.valid_until ? values.valid_until.toISOString() : null,
+            redemption_content: values.redemption_content,
+            redemption_term: values.redemption_term,
         };
 
         try {
@@ -164,7 +198,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                     }
 
                     message.success('Redemption item deleted successfully!');
-                    router.push('/dashboard/app_setting/redemption_item'); // Navigate back to the list
+                    router.push('/dashboard/discount_code_list/redemption_item'); // Navigate back to the list
                 },
             });
         } catch (error: any) {
@@ -172,6 +206,42 @@ const GetRedemptionItemDetailPage: React.FC = () => {
             message.error(`Failed to delete redemption item: ${error.message}`);
         }
     };
+
+    const handleToggleActive = async (checked: boolean) => {
+        try {
+            setUpdating(true);
+
+            const status = checked ? 'enable' : 'suspended';
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/redemption_item/put_redemption_item_is_active/${redemption_item_id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ action: status }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to update status: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            // Update local state
+            setRedemptionItem(result);
+            setIsActive(checked); // Update state directly based on switch value
+            message.success('Discount code status updated successfully!');
+        } catch (error: any) {
+            console.error('Error updating status:', error);
+            setIsActive(!checked); // Revert the state
+            message.error(`Failed to update status: ${error.message}`);
+        } finally {
+            setUpdating(false);
+        }
+    };
+
+
 
     if (loading) {
         return (
@@ -197,11 +267,22 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                     Back
                 </Button>
             </div>
+
+            <Form.Item label="狀態">
+                <Switch
+                    checkedChildren="已啟用"
+                    unCheckedChildren="已停用"
+                    checked={isActive}
+                    onChange={(checked) => handleToggleActive(checked)}
+                />
+            </Form.Item>
+
+
             <Card style={{ marginTop: 16 }}>
                 <Form form={form} onFinish={onFinish} layout="vertical">
                     {/* Discount Type */}
                     <Form.Item
-                        name="discount_type"
+                        name="redemption_type"
                         label="禮遇類別"
                         rules={[{ required: true, message: 'Please select a discount type' }]}
                     >
@@ -286,18 +367,49 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                     {/* Future Development Fields */}
                     <Form.Item
                         name="quantity_available"
-                        label="可兌換總數（未開放）"
+                        label="可兌換總數"
                         tooltip="This field is for future development"
+                        
                     >
                         <InputNumber min={0} style={{ width: '100%' }} disabled />
                     </Form.Item>
 
                     <Form.Item
-                        name="validity_range"
-                        label="Validity Range"
-                        tooltip="These fields are for future development"
+                        name="valid_from"
+                        label="換領開始日期"
+                        rules={[{ required: true, message: '請選擇生效日期' }]}
                     >
-                        <RangePicker style={{ width: '100%' }} />
+                        <DatePicker
+                            showTime
+                            format="YYYY-MM-DD HH:mm"
+                            style={{ width: '100%' }}
+                        />
+                    </Form.Item>
+
+                    <Form.Item shouldUpdate noStyle>
+                        {() => (
+                            <Form.Item
+                                name="valid_until"
+                                label="換領結束日期"
+                                rules={[
+                                    { required: true, message: '請選擇到期日期' },
+                                    ({ getFieldValue }) => ({
+                                        validator(_, value) {
+                                            if (!value || !getFieldValue('valid_from') || value.isAfter(getFieldValue('valid_from'))) {
+                                                return Promise.resolve();
+                                            }
+                                            return Promise.reject(new Error('到期日期必須在生效日期之後'));
+                                        },
+                                    }),
+                                ]}
+                            >
+                                <DatePicker
+                                    showTime
+                                    format="YYYY-MM-DD HH:mm"
+                                    style={{ width: '100%' }}
+                                />
+                            </Form.Item>
+                        )}
                     </Form.Item>
 
 
@@ -311,7 +423,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
 
 
                     <Form.Item
-                        name="term_and_condition"
+                        name="redemption_term"
                         label="條款及細則"
                         rules={[{ required: true, message: '輸入禮物的條款及細則' }]}
                     >
@@ -326,21 +438,6 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                         </Button>
                     </Form.Item>
                 </Form>
-            </Card>
-
-            {/* Non-Editable Fields */}
-            <Card title="Additional Information" style={{ marginTop: 16 }}>
-                <Descriptions bordered column={1}>
-                    <Descriptions.Item label="Created At">
-                        {redemptionItem?.created_at ? new Date(redemptionItem.created_at).toLocaleString() : 'N/A'}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Updated At">
-                        {redemptionItem?.updated_at ? new Date(redemptionItem.updated_at).toLocaleString() : 'N/A'}
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Status">
-                        {redemptionItem?.status || 'N/A'}
-                    </Descriptions.Item>
-                </Descriptions>
             </Card>
 
             {/* Delete Button */}
