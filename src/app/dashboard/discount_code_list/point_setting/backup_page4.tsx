@@ -1,13 +1,13 @@
-// 完成基本的 question setup
+// 完成基本版面，將 membership_basic_setting 轉走
 
-// 想加入 form1 的處理
+// 想加入每次 fetch database previous setting
 
 
-// // src/app/dashboard/app_setting/member_setting/page.tsx
+// // src/app/dashboard/discount_code_list/point_setting/page.tsx
 
 // 'use client';
 
-// import React, { useState } from 'react';
+// import React, { useEffect, useState, useRef } from 'react';
 // import {
 //   Button,
 //   Form,
@@ -17,6 +17,7 @@
 //   InputNumber,
 //   Checkbox,
 //   Divider,
+//   message
 // } from 'antd';
 // import type { CheckboxChangeEvent } from 'antd/es/checkbox';
 // import { purple } from '@ant-design/colors';
@@ -24,31 +25,16 @@
 // const { Title } = Typography;
 
 
-// interface Form1Values {
-//   admin_setting_id: number;
-//   membership_period: string; // Assuming the value is a string as per Select options
-//   membership_extend_method: string;
-//   membership_end_result: string;
+
+// interface Form2Values {
+//   purchase_count: number; 
+//   purchase_count_point_awarded: number;
+//   purchase_amount: number;
+//   purchase_amount_point_awarded: number;
+//   points_per_referral: number
+
 // }
 
-
-// const membership_period = [
-//   { value: '1', label: '1' },
-//   { value: '2', label: '2' },
-//   { value: '3', label: '3' },
-//   { value: '4', label: '4' },
-//   { value: '5', label: '5' },
-// ];
-
-// const membership_extend_method = [
-//   { value: '1', label: '購物滿一定金額，開啟續會按鈕。' },
-//   { value: '2', label: '只需詢問顧客意願，無條件續會。' },
-// ];
-
-// const membership_end_result = [
-//   { value: '1', label: '會員期結束，會員擁有的積分及禮遇會失效' },
-//   { value: '2', label: '會員期結束，會員擁有的積分及禮遇不會失效，續會後可繼續使用。' },
-// ];
 
 // // Define the input fields for each option
 // const optionInputFields: Record<
@@ -111,25 +97,99 @@
 // };
 
 // const GetMemberSettingPage: React.FC = () => {
-//   const [form1] = Form.useForm();
+//   const [loading, setLoading] = useState<boolean>(true);
 //   const [form2] = Form.useForm();
 
-//   const onFinishForm1 = (values: any) => {
-//     console.log('Form1 Values:', values);
-//     // Handle submission for the first form here
+
+
+
+  
+//   const onFinishForm2 = async (values: Form2Values) => {
+//     // Include admin_setting_id in the data
+//     const dataToSend = {
+//       purchase_count: values.purchase_count,
+//       purchase_count_point_awarded: values.purchase_count_point_awarded,
+//       purchase_amount: values.purchase_amount,
+//       purchase_amount_point_awarded: values.purchase_amount_point_awarded,
+//       points_per_referral: values.points_per_referral,
+//     };
+  
+//     try {
+//       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin_setting/post_member_point_rule`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         credentials: 'include',
+//         body: JSON.stringify(dataToSend),
+//       });
+  
+//       if (!response.ok) {
+//         throw new Error(`Server error! status: ${response.status}`);
+//       }
+  
+//       const responseData = await response.json();
+//       console.log('Server Response:', responseData);
+//       // Optionally, display a success message or perform other actions
+//       message.success('Settings updated successfully!');
+//     } catch (error: any) {
+//       console.error('Error submitting form:', error);
+//       // Optionally, display an error message
+//       message.error(`Failed to update settings: ${error.message}`);
+//     }
 //   };
 
-//   const onFinishForm2 = (values: any) => {
-//     console.log('Form2 Values:', values);
-//     // Handle submission for the second form here
-//   };
+//   useEffect(() => {
+//     setLoading(true);
+    
+//     const fetchPointSettings = async () => {
+//       try {
+//         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/point_setting/get_member_point_rule`, {
+//           method: 'GET',
+//           headers: {
+//             'Content-Type': 'application/json',
+//           },
+//           credentials: 'include',
+//         });
+  
+//         if (!response.ok) {
+//           throw new Error(`Failed to fetch point settings: ${response.statusText}`);
+//         }
+  
+//         const data: PointSettings = await response.json();
+  
+//         // Update the form fields
+//         form2.setFieldsValue(data);
+  
+//         // Update checkedOptions based on the data
+//         const newCheckedOptions: Record<string, boolean> = {
+//           '購買次數': data.purchase_count != null && data.purchase_count_point_awarded != null,
+//           '購買金額': data.purchase_amount != null && data.purchase_amount_point_awarded != null,
+//           '會員推薦': data.points_per_referral != null,
+//         };
+  
+//         setCheckedOptions(newCheckedOptions);
+//       } catch (error) {
+//         console.error('Error fetching point settings:', error);
+//         // Optionally set an error state and display an error message
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+  
+//     fetchPointSettings();
+//   }, [form2]);
+
+
 
 //   // Checkbox States
-//   const [checkedOptions, setCheckedOptions] = useState<Record<string, boolean>>({
+//   const initialCheckedOptions = {
 //     '購買次數': false,
 //     '購買金額': false,
 //     '會員推薦': false,
-//   });
+//   };
+  
+//   const [checkedOptions, setCheckedOptions] = useState<Record<string, boolean>>(initialCheckedOptions);
 
 //   const plainOptions = Object.keys(checkedOptions);
 
@@ -160,70 +220,6 @@
 
 //   return (
 //     <>
-//       <Form
-//         form={form1}
-//         onFinish={onFinishForm1}
-//         layout="horizontal"
-//         labelCol={{ span: 6 }}
-//         wrapperCol={{ span: 14 }}
-//       >
-//         <div style={{ display: 'flex', justifyContent: 'center' }}>
-//           <Title level={2} style={{ backgroundColor: purple[1], padding: '1rem' }}>
-//             會員基本設定
-//           </Title>
-//         </div>
-
-//         <Form.Item
-//           label="會員有效年期"
-//           name="membership_period"
-//           rules={[{ required: true, message: '請選擇會員有效年期' }]}
-//         >
-//           <Select
-//             // defaultValue="1"
-//             style={{ width: 600 }}
-//             // allowClear
-//             options={membership_period}
-//             placeholder="選擇年數"
-//           />
-//         </Form.Item>
-
-//         <Form.Item
-//           label="續會方式"
-//           name="membership_extend_method"
-//           rules={[{ required: true, message: '請選擇續會方式' }]}
-//         >
-//           <Select
-//             // defaultValue="2"
-//             style={{ width: 600 }}
-//             // allowClear
-//             options={membership_extend_method}
-//             placeholder="選擇續會方式"
-//           />
-//         </Form.Item>
-
-//         <Form.Item
-//           label="會員期結束的處理"
-//           name="membership_end_result"
-//           rules={[{ required: true, message: '請選擇會員期結束的處理' }]}
-//         >
-//           <Select
-//             // defaultValue="1"
-//             style={{ width: 600 }}
-//             // allowClear
-//             options={membership_end_result}
-//             placeholder="選擇續會方式"
-//           />
-//         </Form.Item>
-
-//         <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-//           <Button type="primary" htmlType="submit">
-//             Submit
-//           </Button>
-//         </Form.Item>
-//       </Form>
-
-//       <Divider />
-
 //       {/* Second Form for 獲取積分規則 */}
 //       <Form
 //         form={form2}

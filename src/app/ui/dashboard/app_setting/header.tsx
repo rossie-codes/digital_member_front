@@ -44,7 +44,7 @@ const items: MenuItem[] = [
         網店設定 {/* The <a> tag is still needed for styling and accessibility */}
       </Link>
     ),
-    key: 'member_setting',
+    key: 'point_setting',
     icon: <MailOutlined />,
   },
 ];
