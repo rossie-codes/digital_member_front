@@ -129,20 +129,15 @@ const GetMemberDetailPage: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         fontWeight: 'bold',
-        fontSize: '16px',
+        fontSize: '20px',
       }}
     >
       <img
             src={getIcon(memberData?.membership_tier?.membership_tier_id)}
             alt="會員層級小圖示"
-            style={{ width: 30, height: 30, marginRight: 8 }}
+            style={{ width: 33, height: 33, marginRight: 8 }}
           />
-          <span style={{
-            maxWidth: '250px', 
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}>
+          <span className={styles.pointValue}>
           {memberData?.member_name}
           </span>
     </Button>
@@ -352,10 +347,10 @@ const GetMemberDetailPage: React.FC = () => {
         <Form form={leftForm} onFinish={onFinish} layout="vertical">
           <Form.Item
             name="member_name"
-            label="會員姓名"
+            label={<span className={styles.label}>會員姓名</span>}
             rules={[{ required: true, message: "請輸入會員姓名" }]}
           >
-            <Input />
+            <Input className={styles['input-container']} />
           </Form.Item>
           <Form.Item
             name="member_phone"

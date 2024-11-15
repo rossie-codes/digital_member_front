@@ -94,5 +94,8 @@
   padding: 30px !important; /* 覆蓋預設 padding */
 }
 
+.flex-grow.overflow-y-auto {
+  padding: 30px !important;
+}
 
  
