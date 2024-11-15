@@ -59,6 +59,14 @@
   color: var(--LightGray, #EDEDED) !important;
 }
 
+.custom-table-header .ant-table-thead > tr > th {
+  background: var(--key-colors-primary, #131313);
+  color: var(--LightGray, #EDEDED);
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-weight: 700;
+}
+
 .custom-table-header .ant-table-thead > tr > th .anticon.whatsapp-icon {
   color: #14AE5C !important;
   font-size: 25px !important;
@@ -71,7 +79,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
   box-sizing: border-box;
 }
 
@@ -98,4 +105,75 @@
   padding: 30px !important;
 }
 
+:where(.css-dev-only-do-not-override-ni1kz0) .ant-picker .ant-picker-input > input {
+  font-size: 16px !important;
+  line-height: 22px !important;
+  font-family: "Noto Sans HK", sans-serif !important;
+  color: var(--key-colors-primary, #131313) !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.32px !important;
+  padding: 2px 0px 0px 0px !important;
+}
  
+:where(.css-dev-only-do-not-override-ni1kz0) .ant-form-item .ant-form-item-label > label {
+  display: block !important;
+  font-family: "Noto Sans HK", sans-serif;
+  font-size: 16px;
+  color: var(--key-colors-primary, #131313);
+  line-height: 22px;
+}
+.saveButton, .cancelButton {
+  display: flex;
+  width: 99px;
+  height: 32px;
+  padding: 8px 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  border-radius: 5px;
+  color: #ffffff !important; /* 確保文字顏色為白色 */
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* 平滑過渡 */
+}
+
+/* 儲存按鈕的初始和懸停顏色 */
+.saveButton {
+  background-color: var(--key-colors-tertiary, #D74D03) !important;
+}
+
+.saveButton:hover {
+  background-color: #b03d02 !important; /* 強制懸停顏色 */
+  color: #ffffff !important; /* 強制文字顏色 */
+}
+
+/* 取消按鈕的初始和懸停顏色 */
+.cancelButton {
+  background-color: var(--DarkGray, #737277) !important;
+}
+
+.cancelButton:hover {
+  background-color: #595959 !important; /* 強制懸停顏色 */
+  color: #ffffff !important; /* 強制文字顏色 */
+}
+
+.suspendButton {
+  display: flex;
+  height: 32px;
+  padding: 8px 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  border-radius: 5px;
+  background-color: var(--key-colors-error, #F64331) !important;
+  color: #ffffff !important;
+  border: none !important;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.suspendButton:hover {
+  background-color: #d53929 !important; /* 保持紅色系統 */
+  color: #ffffff !important; /* 確保文字保持白色 */
+}
+

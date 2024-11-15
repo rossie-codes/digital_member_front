@@ -21,7 +21,7 @@ import dayjs, { Dayjs } from "dayjs"; // Import Dayjs and its type
 import { useParams, useRouter } from "next/navigation";
 import type { ColumnsType } from "antd/es/table";
 import styles from './MemberDetail.module.css';
-import { UserDeleteOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { UserDeleteOutlined, ArrowLeftOutlined,WhatsAppOutlined } from '@ant-design/icons';
 const icons = ['/blue.png', '/pink.png', '/purple.png', '/green.png']; 
 const dynamicIcons = ['/1st.png', '/2nd.png', '/3rd.png', '/Amount.png'];
 const getIcon = (id: number | undefined): string => {
@@ -178,6 +178,7 @@ const GetMemberDetailPage: React.FC = () => {
         rightForm.setFieldsValue({
           unused_points: data.unused_points,
           used_points: data.used_points,
+          membership_end_date: data.membership_end_date ? dayjs(data.membership_end_date, "YYYY-MM-DD") : null,
         });
 
         
@@ -214,9 +215,8 @@ const GetMemberDetailPage: React.FC = () => {
     // Convert 'birthday' from dayjs to string
     const formattedValues = {
       ...values,
-      birthday: values.birthday
-        ? values.birthday.format("YYYY-MM-DD")
-        : null,
+      birthday: values.birthday ? values.birthday.format("YYYY-MM-DD") : null,
+      membership_end_date: values.membership_end_date ? values.membership_end_date.format("YYYY-MM-DD") : null,
     };
 
 
@@ -344,7 +344,8 @@ const GetMemberDetailPage: React.FC = () => {
       }
       className={`${styles.card} ${styles.noBackgroundCard}`}
     >
-        <Form form={leftForm} onFinish={onFinish} layout="vertical">
+     
+        <Form form={leftForm} onFinish={onFinish} layout="vertical" >
           <Form.Item
             name="member_name"
             label={<span className={styles.label}>會員姓名</span>}
@@ -354,21 +355,24 @@ const GetMemberDetailPage: React.FC = () => {
           </Form.Item>
           <Form.Item
             name="member_phone"
-            label="電話號碼"
+            label={<span className={styles.label}>電話號碼</span>}
             rules={[
               { required: true, message: "請輸入電話號碼" },
               { pattern: /^[0-9]+$/, message: "電話號碼只能包含數字" }
             ]}
           >
-            <Input />
+            <Input 
+            className={styles['input-container']}
+            suffix={<WhatsAppOutlined style={{ color: '#14AE5C', fontSize: 25 }} />}
+            />
           </Form.Item>
           <Form.Item
             name="birthday"
-            label="生日"
+            label={<span className={styles.label}>生日</span>}
             rules={[{ required: true, message: "請選擇生日" }]}
           >
             <DatePicker
-              style={{ width: "100%" }}
+              className={styles['input-container']}
               format="YYYY-MM-DD"
               placeholder="選擇生日"
             />
@@ -381,19 +385,21 @@ const GetMemberDetailPage: React.FC = () => {
     <div className={styles.rightSection}>
     {/* save button */}
     <Form form={rightForm} style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
-        <Space>
-          <Button type="default" onClick={() => router.back()}>
-            取消
-          </Button>
-          <Button type="primary" onClick={handleSave}>
-            儲存
-          </Button>
-        </Space>
-        </Form>
+    <Space>
+    <Button className="cancelButton" onClick={() => router.back()}>
+      取消
+    </Button>
+    <Button className="saveButton" onClick={handleSave}>
+      儲存
+    </Button>
+    </Space>
+  </Form>
+
 
     {/* Points Statistics */}
       <div className={styles.pointsContainer}>
-            <div className={`${styles.pointCard} ${styles.pointAvailable}`}>可使用積分
+            <div className={`${styles.pointCard} ${styles.pointAvailable}`}>
+            <span className={styles.label}>可使用積分</span>
             <span className={styles.pointValue}>{memberData?.unused_points}</span></div>
             <div className={`${styles.pointCard} ${styles.pointUsed}`}>已使用積分
             <span className={styles.pointValue}>{memberData?.used_points}</span></div>
@@ -413,29 +419,41 @@ const GetMemberDetailPage: React.FC = () => {
       
       {/* Membership Information */}
       <div className={styles.membershipInfoContainer}>
+
         <div className={styles.infoItem}>
           <span className={styles.label}>會籍建立日期</span>
           <span className={styles.value}>
             {memberData?.membership_creation_date ? dayjs(memberData.membership_creation_date).format("YYYY-MM-DD") : "N/A"}
           </span>
         </div>
+
         <div className={styles.infoItem}>
-          <span className={styles.label}>會籍到期日期</span>
-          <span className={styles.value}>
-            {memberData?.membership_end_date ? dayjs(memberData.membership_end_date).format("YYYY-MM-DD") : "N/A"}
-          </span>
+        <span className={styles.label}>會籍到期日期</span>
+        <Form.Item
+          name="membership_end_date"
+          initialValue={memberData?.membership_end_date ? dayjs(memberData.membership_end_date, "YYYY-MM-DD") : null}
+          style={{ marginBottom: '0' }} 
+        >
+        <DatePicker
+          format="YYYY-MM-DD"
+          placeholder={memberData?.membership_end_date ? dayjs(memberData.membership_end_date).format("YYYY-MM-DD") : "選擇會籍到期日期"}
+          className={styles['input-container']}
+        />
+        </Form.Item>
         </div>
+
         <div className={styles.infoItem}>
           <span className={styles.label}>登記推薦人</span>
           <span className={styles.value}>
             {memberData?.referrer || "N/A"}
           </span>
         </div>
+
       </div>
       
       {/* 暫停會藉 */}
       <div style={{ marginTop: 3, display: 'flex', justifyContent: 'flex-end' }}>
-        <Button type="primary" onClick={handleSuspendMembership} >
+        <Button type="primary" onClick={handleSuspendMembership} className="suspendButton" >
         <UserDeleteOutlined />
           {memberData?.is_active === 2 ? "重啟會藉" : "終止會藉"}
         </Button>
@@ -466,6 +484,7 @@ const GetMemberDetailPage: React.FC = () => {
                   title: '日期',
                   dataIndex: 'purchase_date',
                   key: 'purchase_date',
+                  render: (date: string) => (date ? dayjs(date).format("YYYY-MM-DD") : "N/A"),
                 },
                 {
                   title: '單號',
@@ -476,6 +495,7 @@ const GetMemberDetailPage: React.FC = () => {
                   title: '消費總額',
                   dataIndex: 'amount',
                   key: 'amount',
+                  render: (amount: number) => `$${amount.toLocaleString()}`,
                 },
                 {
                   title: '賺取積分',
@@ -508,7 +528,12 @@ const GetMemberDetailPage: React.FC = () => {
               className="custom-table-header"
               dataSource={memberData?.discount_codes || []}
               columns={[
-                { title: '接收日期', dataIndex: 'received_date', key: 'received_date'},
+                { 
+                  title: '接收日期', 
+                  dataIndex: 'received_date', 
+                  key: 'received_date',
+                  render: (date: string) => (date ? dayjs(date).format("YYYY-MM-DD") : "N/A") 
+                },
                 { title: '優惠券名稱', dataIndex: 'code_name', key: 'code_name'},
                 { title: '優惠碼', dataIndex: 'code', key: 'code'},
                 { title: '折扣類型', dataIndex: 'type', key: 'type'},
@@ -538,6 +563,7 @@ const GetMemberDetailPage: React.FC = () => {
                   title: '加入日期',
                   dataIndex: 'created_at',
                   key: 'created_at',
+                  render: (date: string) => (date ? dayjs(date).format("YYYY-MM-DD") : "N/A"),
                 },
                 {
                   title: '會員姓名',
@@ -559,6 +585,7 @@ const GetMemberDetailPage: React.FC = () => {
                   title: '消費總額',
                   dataIndex: 'total_purchase_amount',
                   key: 'total_purchase_amount',
+                  render: (amount: number) => `$${amount.toLocaleString()}`,
                 },
                 // Add more columns if needed
               ]}
