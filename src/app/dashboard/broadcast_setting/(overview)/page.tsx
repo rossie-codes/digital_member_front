@@ -1,11 +1,24 @@
 // src/app/dashboard/broadcast_setting/page.tsx
 
 'use client';
-import { useEffect, useState, useRef } from 'react';
-import { Table, Input, Space, Button, Modal, Form, message } from 'antd';
+import React, { useEffect, useState, useRef } from 'react';
+import {
+  Button,
+  Checkbox,
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Radio,
+  Select,
+  Space,
+  Table,
+  message,
+} from 'antd';
 import type { TableColumnsType, PaginationProps } from 'antd';
 import { FormOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
+import dayjs from 'dayjs';
 
 const { Search } = Input;
 
@@ -26,6 +39,19 @@ interface FetchParams {
   searchText?: string;
 }
 
+interface WatiTemplate {
+  id: string;
+  name: string;
+  // Include other relevant fields
+}
+
+interface Member {
+  id: string;
+  name: string;
+  phone_number: string;
+  status: string;
+}
+
 const BroadcastSettingPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
@@ -44,6 +70,21 @@ const BroadcastSettingPage: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(10);
   const [totalItems, setTotalItems] = useState<number>(0);
 
+  // State variables for modal and form
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [broadcastForm] = Form.useForm(); // Form instance for the modal
+
+  // State variables for WATI templates
+  const [watiTemplates, setWatiTemplates] = useState<WatiTemplate[]>([]);
+  const [loadingTemplates, setLoadingTemplates] = useState<boolean>(false);
+
+  // State variables for members
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loadingMembers, setLoadingMembers] = useState<boolean>(false);
+  const [memberSearchText, setMemberSearchText] = useState<string>('');
+  const [memberFilters, setMemberFilters] = useState({});
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+
   const fetchData = async (params: FetchParams = { page: 1, pageSize: 10 }) => {
     setLoading(true);
     try {
@@ -56,7 +97,6 @@ const BroadcastSettingPage: React.FC = () => {
       if (sortField) queryParams.append('sortField', sortField);
       if (sortOrder) queryParams.append('sortOrder', sortOrder);
 
-      // Include search text in the queryParams
       if (searchText) {
         queryParams.append('searchText', searchText);
       }
@@ -113,7 +153,7 @@ const BroadcastSettingPage: React.FC = () => {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
   };
 
-  // Use effect to fetch data on component mount
+  // Fetch data when component mounts
   useEffect(() => {
     if (!hasFetched.current) {
       hasFetched.current = true;
@@ -126,7 +166,7 @@ const BroadcastSettingPage: React.FC = () => {
   }, [currentPage, pageSize, searchText]);
 
   const onSearch = (value: string) => {
-    const trimmedValue = value.trim().toLowerCase();
+    const trimmedValue = value.trim();
     setSearchText(trimmedValue);
 
     // Reset pagination to the first page when a new search is performed
@@ -178,11 +218,7 @@ const BroadcastSettingPage: React.FC = () => {
     },
   ];
 
-  const handleTableChange = (
-    pagination: any,
-    filters: any,
-    sorter: any
-  ) => {
+  const handleTableChange = (pagination: any, filters: any, sorter: any) => {
     setCurrentPage(pagination.current);
     setPageSize(pagination.pageSize);
 
@@ -190,7 +226,6 @@ const BroadcastSettingPage: React.FC = () => {
     let sortField = sorter.field;
     let sortOrder = sorter.order;
     if (sortOrder) {
-      // Convert sortOrder to 'ascend' or 'descend'
       sortOrder = sorter.order === 'ascend' ? 'ascend' : 'descend';
     }
 
@@ -202,6 +237,141 @@ const BroadcastSettingPage: React.FC = () => {
       sortOrder: sortOrder,
       searchText: searchText,
     });
+  };
+
+  // Fetch WATI templates and members when modal opens
+  useEffect(() => {
+    if (isModalVisible) {
+      fetchWatiTemplates();
+      fetchMembers();
+    } else {
+      // Reset form and selections when modal closes
+      broadcastForm.resetFields();
+      setSelectedMembers([]);
+      setMemberSearchText('');
+    }
+  }, [isModalVisible]);
+
+  const fetchWatiTemplates = async () => {
+    setLoadingTemplates(true);
+    try {
+      // Fetch templates from WATI (replace with actual API call)
+      const response = await fetch('/api/wati/templates');
+      if (!response.ok) {
+        throw new Error(`Error fetching WATI templates: ${response.status}`);
+      }
+      const templatesData = await response.json();
+      setWatiTemplates(templatesData);
+    } catch (error) {
+      console.error('Error fetching WATI templates:', error);
+      message.error('Failed to fetch WATI templates.');
+    } finally {
+      setLoadingTemplates(false);
+    }
+  };
+
+  const fetchMembers = async (searchText = '', filters = {}) => {
+    setLoadingMembers(true);
+    try {
+      // Fetch members (replace with actual API call)
+      const queryParams = new URLSearchParams();
+      if (searchText) {
+        queryParams.append('search', searchText);
+      }
+      // Add filters if any
+
+      const response = await fetch(`/api/members?${queryParams.toString()}`);
+      if (!response.ok) {
+        throw new Error(`Error fetching members: ${response.status}`);
+      }
+      const membersData = await response.json();
+      setMembers(membersData);
+    } catch (error) {
+      console.error('Error fetching members:', error);
+      message.error('Failed to fetch members.');
+    } finally {
+      setLoadingMembers(false);
+    }
+  };
+
+  const handleMemberSelect = (memberId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedMembers([...selectedMembers, memberId]);
+    } else {
+      setSelectedMembers(selectedMembers.filter((id) => id !== memberId));
+    }
+  };
+
+  const memberColumns: TableColumnsType<Member> = [
+    {
+      title: '',
+      dataIndex: 'checkbox',
+      render: (_: any, record: Member) => (
+        <Checkbox
+          checked={selectedMembers.includes(record.id)}
+          onChange={(e) => handleMemberSelect(record.id, e.target.checked)}
+        />
+      ),
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Phone Number',
+      dataIndex: 'phone_number',
+      key: 'phone_number',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+    },
+  ];
+
+  const handleMemberSearch = (value: string) => {
+    setMemberSearchText(value);
+    fetchMembers(value, memberFilters);
+  };
+
+  const handleCreateBroadcast = async (values: any) => {
+    const memberIds = selectedMembers;
+
+    if (memberIds.length === 0) {
+      message.error('Please select at least one member.');
+      return;
+    }
+
+    const dataToSubmit = {
+      ...values,
+      member_ids: memberIds,
+    };
+
+    try {
+      // Submit broadcast creation (replace with actual API call)
+      const response = await fetch('/api/broadcasts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataToSubmit),
+      });
+      if (!response.ok) {
+        throw new Error(`Error creating broadcast: ${response.status}`);
+      }
+      message.success('Broadcast created successfully');
+      setIsModalVisible(false);
+      // Refresh the list
+      fetchData({
+        page: currentPage,
+        pageSize: pageSize,
+        searchText: searchText,
+      });
+    } catch (error) {
+      console.error('Error creating broadcast:', error);
+      message.error('Error creating broadcast');
+    }
   };
 
   if (error) return <p>Error: {error.message}</p>;
@@ -216,11 +386,114 @@ const BroadcastSettingPage: React.FC = () => {
           onChange={(e) => setSearchText(e.target.value)}
           style={{ width: 300 }}
         />
-        <Button type="primary" onClick={() => router.push('/dashboard/broadcast_setting/new')}>
+        <Button type="primary" onClick={() => setIsModalVisible(true)}>
           New Broadcast
         </Button>
       </Space>
 
+      {/* Modal for New Broadcast */}
+      <Modal
+        title="New Broadcast"
+        visible={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        width={800}
+        footer={null}
+      >
+        <Form
+          form={broadcastForm}
+          layout="vertical"
+          onFinish={handleCreateBroadcast}
+        >
+          {/* Broadcast Name */}
+          <Form.Item
+            label="Broadcast Name"
+            name="broadcast_name"
+            rules={[{ required: true, message: 'Please input the broadcast name!' }]}
+          >
+            <Input />
+          </Form.Item>
+
+          {/* Template Message Selection */}
+          <Form.Item
+            label="Template Message"
+            name="wati_template"
+            rules={[{ required: true, message: 'Please select a template message!' }]}
+          >
+            <Select loading={loadingTemplates}>
+              {watiTemplates.map((template) => (
+                <Select.Option key={template.id} value={template.id}>
+                  {template.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          {/* Schedule Type */}
+          <Form.Item
+            label="Schedule Type"
+            name="schedule_type"
+            rules={[{ required: true, message: 'Please select a schedule type!' }]}
+          >
+            <Radio.Group>
+              <Radio value="now">Send Now</Radio>
+              <Radio value="later">Schedule for Later</Radio>
+            </Radio.Group>
+          </Form.Item>
+
+          {/* Conditional Scheduled Time */}
+          {broadcastForm.getFieldValue('schedule_type') === 'later' && (
+            <Form.Item
+              label="Scheduled Time"
+              name="scheduled_time"
+              rules={[{ required: true, message: 'Please select a scheduled time!' }]}
+            >
+              <DatePicker
+                showTime
+                style={{ width: '100%' }}
+                disabledDate={(current) => current && dayjs(current).isBefore(dayjs().startOf('day'))}
+              />
+            </Form.Item>
+          )}
+
+          {/* Member Selection */}
+          <Form.Item label="Member Selection" required>
+            <Space style={{ marginBottom: 16 }}>
+              <Input.Search
+                placeholder="Search members"
+                value={memberSearchText}
+                onChange={(e) => setMemberSearchText(e.target.value)}
+                onSearch={handleMemberSearch}
+                style={{ width: 300 }}
+              />
+              <Button
+                onClick={() => {
+                  // Implement filter functionality here
+                  message.info('Filters feature is not implemented yet.');
+                }}
+              >
+                Filters
+              </Button>
+            </Space>
+
+            <Table
+              dataSource={members}
+              columns={memberColumns}
+              rowKey="id"
+              loading={loadingMembers}
+              pagination={{ pageSize: 5 }}
+            />
+          </Form.Item>
+
+          {/* Submit Button */}
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Create Broadcast
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      {/* Existing Table */}
       <Table
         dataSource={data}
         columns={columns}
