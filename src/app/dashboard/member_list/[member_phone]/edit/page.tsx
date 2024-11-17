@@ -25,7 +25,7 @@ interface MemberDataType {
   member_phone: string;
   member_name: string;
   birthday: string | null;
-  is_active: number;
+  membership_status: 'expired' | 'active' | 'suspended';
   membership_tier?: {
     membership_tier_id: number;
     membership_tier_name: string;
@@ -182,7 +182,7 @@ const GetMemberDetailPage: React.FC = () => {
   };
 
   const handleSuspendMembership = async () => {
-    if (memberData?.is_active === 2) {
+    if (memberData?.membership_status === 'suspended') {
       // Reactivate Membership
       try {
         console.log("put_reactivate_membership start")
@@ -193,8 +193,8 @@ const GetMemberDetailPage: React.FC = () => {
             headers: {
               "Content-Type": "application/json",
             },
-            credentials: 'include', // Ensure cookies are included
-            body: JSON.stringify({ is_active: 1 }), // Payload to set as active
+            credentials: 'include',
+            body: JSON.stringify({ membership_status: 'active' }),
           }
         );
 
@@ -205,7 +205,7 @@ const GetMemberDetailPage: React.FC = () => {
 
         message.success("Membership reactivated successfully");
         // Update local state to reflect the change
-        setMemberData({ ...memberData!, is_active: 1 });
+        setMemberData({ ...memberData!, membership_status: 'active' });
       } catch (err: any) {
         message.error(err.message || "Failed to reactivate membership");
       }
@@ -221,18 +221,18 @@ const GetMemberDetailPage: React.FC = () => {
               "Content-Type": "application/json",
             },
             credentials: 'include',
-            body: JSON.stringify({ is_active: 2 }), // Payload to suspend
+            body: JSON.stringify({ membership_status: 'suspended' }),
           }
         );
-
+  
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || `Error: ${response.statusText}`);
         }
-
+  
         message.success("Membership suspended successfully");
         // Update local state to reflect the change
-        setMemberData({ ...memberData!, is_active: 2 });
+        setMemberData({ ...memberData!, membership_status: 'suspended' });
       } catch (err: any) {
         message.error(err.message || "Failed to suspend membership");
       }
@@ -333,7 +333,7 @@ const GetMemberDetailPage: React.FC = () => {
                 暫停會藉
               </Button> */}
               <Button type="primary" onClick={handleSuspendMembership}>
-                {memberData?.is_active === 2 ? "重啟會藉" : "暫停會藉"}
+                {memberData?.membership_status === 'suspended' ? "重啟會藉" : "暫停會藉"}
               </Button>
             </Space>
           </Form.Item>
