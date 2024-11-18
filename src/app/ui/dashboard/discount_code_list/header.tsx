@@ -1,63 +1,90 @@
-// src/app/ui/dashboard/discount_code_list/header.tsx
+"use client";
 
-"use client"
+import React, { useState, useEffect } from "react";
+import { CaretRightOutlined } from "@ant-design/icons";
+import type { MenuProps } from "antd";
+import { Menu } from "antd";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import './discount_code_list_css.css';
 
-import React, { useState } from 'react';
-import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import { Menu } from 'antd';
-import Link from 'next/link';
-
-type MenuItem = Required<MenuProps>['items'][number];
+type MenuItem = {
+  key: string;
+  label: string;
+};
 
 const items: MenuItem[] = [
-  {
-    label: (
-      <Link href="/dashboard/discount_code_list/">
-        優惠管理
-      </Link>
-    ),
-    key: 'app_setting',
-    icon: <MailOutlined />,
-  },
-  {
-    label: (
-      <Link href="/dashboard/discount_code_list/redemption_item">
-        禮物換領
-      </Link>
-    ),
-    key: 'membership_tier',
-    icon: <MailOutlined />,
-  },
-  {
-    label: (
-      <Link href="/dashboard/discount_code_list/point_setting">
-        積分換領
-      </Link>
-    ),
-    key: 'point_setting',
-    icon: <MailOutlined />,
-  },
-  {
-    label: (
-      <Link href="/dashboard/discount_code_list/membership_tier">
-        會員制度
-      </Link>
-    ),
-    key: 'gift_setting',
-    icon: <MailOutlined />,
-  },
+  { key: "/dashboard/discount_code_list/", label: "優惠管理" },
+  { key: "/dashboard/discount_code_list/redemption_item", label: "禮物換領" },
+  { key: "/dashboard/discount_code_list/point_setting", label: "積分換領" },
+  { key: "/dashboard/discount_code_list/membership_tier", label: "會員制度" },
 ];
 
 const App: React.FC = () => {
-  const [current, setCurrent] = useState('mail');
+  const pathname = usePathname();
+  const [current, setCurrent] = useState<string>(pathname);
 
-  const onClick: MenuProps['onClick'] = (e) => {
-    console.log('click ', e);
+  useEffect(() => {
+    setCurrent(pathname);
+  }, [pathname]);
+
+  const onClick: MenuProps["onClick"] = (e) => {
     setCurrent(e.key);
   };
 
-  return <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />;
+  return (
+    <div className="custom-page-menu">
+      <Menu
+        onClick={onClick}
+        selectedKeys={[current]}
+        mode="horizontal"
+        items={items.map((item) => {
+          const isCurrentItemSelected = item.key === current;
+          const isExactDiscountPage =
+            pathname === "/dashboard/discount_code_list/" &&
+            item.key === "/dashboard/discount_code_list/";
+          const isDiscountPage =
+            pathname.startsWith("/dashboard/discount_code_list") &&
+            item.key === "/dashboard/discount_code_list/";
+          const showCaret =
+            (item.key === "/dashboard/discount_code_list/" && isExactDiscountPage) ||
+            isCurrentItemSelected;
+
+          return {
+            key: item.key,
+            icon: null,
+            label: (
+              <Link href={item.key}>
+                <div className="menu-item-container">
+                  {item.key !== "/dashboard/discount_code_list/" && (
+                    <div className="icon-box">
+                      <span className="diamondIcon"></span>
+                    </div>
+                  )}
+                  <CaretRightOutlined
+                    className="caret-icon"
+                    style={{
+                      visibility: showCaret ? "visible" : "hidden",
+                      color: showCaret
+                        ? "var(--key-colors-tertiary, #D74D03)"
+                        : "transparent",
+                    }}
+                  />
+                  <span
+                    className={`menu-item-text ${
+                      showCaret ? "menu-item-selected" : ""
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                </div>
+              </Link>
+            ),
+          };
+        })}
+      />
+    </div>
+  );
 };
 
 export default App;

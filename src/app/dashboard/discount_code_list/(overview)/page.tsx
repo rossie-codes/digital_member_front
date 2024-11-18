@@ -24,12 +24,11 @@ import {
 const { Search } = Input;
 
 import type { TableColumnsType, TableProps, MenuProps } from 'antd';
-import { PlusOutlined, FormOutlined, DeleteOutlined, DownOutlined, UserOutlined } from '@ant-design/icons';
+import { PlusOutlined, FormOutlined, DeleteOutlined, DownOutlined, UserOutlined,PlusCircleOutlined } from '@ant-design/icons';
 
 import Link from 'next/link';
 
 import { useRouter } from 'next/navigation';
-
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
 
@@ -262,15 +261,53 @@ const DiscountCodeListPage: React.FC = () => {
       key: 'edit',
       render: (_: any, record: DiscountCode) => (
         <Link href={`/dashboard/discount_code_list/${record.discount_code_id}/edit`}>
-          <Button type="link" icon={<FormOutlined style={{ color: '#ff4d4f' }} />} />
+          <Button
+            type="link"
+            icon={
+              <span
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16" // 可以調整圖標的寬度
+                  height="16" // 可以調整圖標的高度
+                  viewBox="0 0 16 16"
+                  fill="none"
+                >
+                  <g clipPath="url(#clip0_808_5100)">
+                    <path
+                      d="M3.45872 12.284C3.49443 12.284 3.53015 12.2805 3.56586 12.2751L6.56943 11.7483C6.60515 11.7412 6.63908 11.7251 6.66408 11.6983L14.2337 4.12868C14.2503 4.11216 14.2634 4.09254 14.2724 4.07094C14.2813 4.04934 14.2859 4.02618 14.2859 4.00279C14.2859 3.9794 14.2813 3.95625 14.2724 3.93464C14.2634 3.91304 14.2503 3.89342 14.2337 3.8769L11.2659 0.907254C11.2319 0.873326 11.1873 0.855469 11.1391 0.855469C11.0909 0.855469 11.0462 0.873326 11.0123 0.907254L3.44265 8.4769C3.41586 8.50368 3.39979 8.53583 3.39265 8.57154L2.86586 11.5751C2.84849 11.6708 2.8547 11.7692 2.88395 11.862C2.91319 11.9547 2.9646 12.0389 3.03372 12.1073C3.15158 12.2215 3.29979 12.284 3.45872 12.284ZM4.66229 9.16975L11.1391 2.69475L12.448 4.00368L5.97122 10.4787L4.38372 10.759L4.66229 9.16975ZM14.5712 13.784H1.42836C1.11229 13.784 0.856934 14.0394 0.856934 14.3555V14.9983C0.856934 15.0769 0.921219 15.1412 0.999791 15.1412H14.9998C15.0784 15.1412 15.1426 15.0769 15.1426 14.9983V14.3555C15.1426 14.0394 14.8873 13.784 14.5712 13.784Z"
+                      fill="#737277" // 更改這裡以調整圖標的顏色
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_808_5100">
+                      <rect width="16" height="16" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </span>
+            }
+          />
         </Link>
       ),
       width: 50,
-    },
+    }, 
     {
       title: '優惠名稱',
       dataIndex: 'discount_code_name',
       key: 'discount_code_name',
+      render: (text: string, record: DiscountCode) => (
+        <Link href={`/dashboard/discount_code_list/${record.discount_code_id}/edit`}>
+          <span style={{ color: '#1890ff', cursor: 'pointer', textDecoration: 'underline' }}>
+            {text}
+          </span>
+        </Link>
+      ),
     },
     {
       title: '優惠碼',
@@ -286,7 +323,11 @@ const DiscountCodeListPage: React.FC = () => {
       // sorter: true,
       filters: discountTypeFilters,
       onFilter: (value, record) => record.discount_type === value,
-      render: (text) => (text === 'fixed_amount' ? 'Fixed Amount' : 'Percentage'),
+      render: (text) => (
+        <div className="custom-row-style">
+          {text === 'fixed_amount' ? 'Fixed Amount' : 'Percentage'}
+        </div>
+      ),
     },
     {
       title: '折扣額',
@@ -323,7 +364,10 @@ const DiscountCodeListPage: React.FC = () => {
       key: 'valid_from',
       sorter: (a, b) => new Date(a.valid_from || '').getTime() - new Date(b.valid_from || '').getTime(),
       sortDirections: ['ascend', 'descend', 'ascend'],
-      render: (text) => (text ? new Date(text).toLocaleDateString() : '--'),
+      render: (text) =>
+        text
+          ? new Date(text).toISOString().slice(0, 10) // 轉換為 YYYY-MM-DD 格式
+          : '--',
     },
     {
       title: '到期日',
@@ -331,14 +375,19 @@ const DiscountCodeListPage: React.FC = () => {
       key: 'valid_until',
       sorter: (a, b) => new Date(a.valid_until || '').getTime() - new Date(b.valid_until || '').getTime(),
       sortDirections: ['ascend', 'descend', 'ascend'],
-      render: (text) => (text ? new Date(text).toLocaleDateString() : '--'),
+      render: (text) =>
+        text
+          ? new Date(text).toISOString().slice(0, 10) // 轉換為 YYYY-MM-DD 格式
+          : '--',
     },
+    
     {
       title: '使用限制',
       dataIndex: 'use_limit_type',
       key: 'use_limit_type',
       filters: useLimitTypeFilters,
       onFilter: (value, record) => record.use_limit_type === value,
+      render: (text) => <div className="custom-row-style">{text}</div>,
     },
     {
       title: '狀態',
@@ -346,7 +395,37 @@ const DiscountCodeListPage: React.FC = () => {
       key: 'discount_code_status',
       filters: discountCodeStatusFilters,
       onFilter: (value, record) => record.discount_code_status === value,
-    },
+      render: (status: string) => {
+        // 定義狀態對應的顏色
+        let color;
+        if (status === 'active') {
+          color = 'green'; // 活動中的優惠
+        } else if (status === 'expired') {
+          color = 'red'; // 已過期的優惠
+        } else if (status === 'scheduled') {
+          color = 'orange'; // 預定中的優惠
+        } else {
+          color = 'gray'; // 默認的未知狀態
+        }
+    
+        // 返回顯示樣式
+        return (
+          <span>
+            <span
+              style={{
+                display: 'inline-block',
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                backgroundColor: color,
+                marginRight: 8,
+              }}
+            />
+            {status}
+          </span>
+        );
+      },
+    }
 
   ];
 
@@ -519,40 +598,84 @@ const DiscountCodeListPage: React.FC = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Title level={2}>折扣券列表</Title>
-        <div>
-          <Space>
-            <Button type="primary" icon={<PlusOutlined />} onClick={showModal}>
-              新增優惠
-            </Button>
-            <Button
-              icon={<DeleteOutlined />}
-              onClick={() => router.push('/dashboard/discount_code_list/deleted_discount_code')}
-            >
-              檢視垃圾桶
-            </Button>
-            <Dropdown menu={menuProps} disabled={selectedRowKeys.length === 0}>
-              <Button>
-                Bulk Actions <DownOutlined />
-              </Button>
-            </Dropdown>
-          </Space>
+
+
+
+<div className="promotion-summary">
+      {/* 第一張圖片和內容 */}
+      <div className="promotion-item">
+        <img
+          src="/promotion.png"
+          alt="Promotion"
+          className="promotion-image"
+        />
+        <div className="promotion-content">
+        <div className="promotion-text">有效優惠</div>
+        <div className="promotion-number">5</div>
         </div>
       </div>
 
+      {/* 第二張圖片和內容 */}
+      <div className="promotion-item">
+        <img
+          src="/pending.png"
+          alt="Pending"
+          className="promotion-image"
+        />
+        <div className="promotion-content">
+        <div className="promotion-text">預定優惠</div>
+        <div className="promotion-number">8</div>
+        </div>
+      </div>
 
-      <Space direction="vertical" style={{ marginBottom: '50px' }}>
+      <Button
+        onClick={() => router.push('/dashboard/discount_code_list/deleted_discount_code')}
+        className="custom-button"
+      >
+        <span className="button-text">檢視垃圾桶</span>
+        <DeleteOutlined className="button-icon" />
+      </Button>
+
+
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+      
+        
+          
+           
+            
+           
+        
+     
+
+
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+
         <Search
-          placeholder="Search members"
+          placeholder="輸入關鍵字"
           allowClear
           onSearch={onSearch}
-          style={{ width: 300 }}
+          style={{ width: 232 }}
         />
-      </Space>
+
+        <Button type="primary" onClick={showModal} className='customButton'>
+        <PlusCircleOutlined style={{ fontSize: '16px', marginRight: '5px' }} /> 新增優惠
+        </Button>
+      </div>
 
 
       <Table
+      className="custom-table-header"
         rowSelection={rowSelection}
         columns={columns}
         dataSource={filteredDiscountCodes}

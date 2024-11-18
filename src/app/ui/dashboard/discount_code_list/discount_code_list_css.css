@@ -44,3 +44,229 @@
     }
     /* Add styles for a mobile menu if needed */
   }
+
+ /* header */
+
+/* 菱形圖標 */
+.custom-page-menu .diamondIcon {
+  width: 4.243px !important;
+  height: 4.243px;
+  background: #d9d9d9;
+  transform: rotate(45deg);
+  display: inline-block;
+  position: relative;
+}
+
+/* 框框 */
+.custom-page-menu .icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* 菱形靠右 */
+  width: 21px;
+  height: 6px;
+  margin-right: 0px; /* 與 CaretRightOutlined 的距離 */
+}
+
+/* 整體容器 */
+.custom-page-menu .menu-item-container {
+  display: flex;
+  align-items: center;
+  gap: 0px; /* 控制菱形、CaretRight 和文字之間的間距 */
+}
+
+/* CaretRight 圖標 */
+.custom-page-menu .caret-icon {
+  margin-right: 0px; /* CaretRightOutlined 與文字之間的間距 */
+  display: flex;
+  align-items: center; /* 保持內容居中 */
+  justify-content: center;
+  font-size: 21px !important;
+}
+
+/* 通用文字樣式 */
+.custom-page-menu .menu-item-text {
+  font-family: "Noto Sans HK";
+  font-size: 16px;
+  font-style: normal;
+  line-height: 22px; /* 137.5% */
+  letter-spacing: -0.32px; /* 字母間距 */
+}
+
+/* 黑色文字樣式 */
+.custom-page-menu .menu-item-text {
+  color: var(--key-colors-primary, #131313); /* 黑色 */
+  font-weight: 400; /* 常規字重 */
+}
+
+/* 橘色文字樣式（選中） */
+.custom-page-menu .menu-item-selected {
+  color: var(--key-colors-tertiary, #D74D03); /* 橘色 */
+  font-weight: 700; /* 加粗 */
+}
+
+.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light.ant-menu-horizontal > .ant-menu-item::after,
+.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light > .ant-menu.ant-menu-horizontal > .ant-menu-item::after,
+.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light.ant-menu-horizontal > .ant-menu-submenu::after,
+.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light > .ant-menu.ant-menu-horizontal > .ant-menu-submenu::after {
+  content: none !important; /* 禁用所有伺服於 after 的樣式 */
+  border-bottom: none !important; /* 禁用任何邊框樣式 */
+}
+
+.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal {
+  line-height: normal !important; /* 重置行高 */
+}
+
+
+
+.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal .ant-menu-item,
+.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal .ant-menu-submenu {
+  padding-inline: 0 !important; /* 移除左右內距 */
+  margin-right: 8px; /* 添加右側間距 */
+}
+
+.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu .ant-menu-item .ant-menu-item-icon + span,
+.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu .ant-menu-submenu-title .ant-menu-item-icon + span,
+.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu .ant-menu-item .anticon + span,
+.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu .ant-menu-submenu-title .anticon + span {
+  margin-inline-start: 0 !important; /* 移除開始邊距 */
+}
+
+.custom-page-menu :where(.ant-menu-horizontal) > .ant-menu-item {
+  height: 50px; /* 設定高度 */
+  line-height: 50px; /* 確保文字垂直居中 */
+  display: flex; /* 使用 flex 布局 */
+  align-items: center; /* 垂直居中對齊 */
+}
+ /* header */
+
+/* page */
+
+/* 整個容器的樣式 */
+.promotion-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px; /* 調整兩個項目間的間距 */
+  margin-bottom: 25px; /* 與下方內容的間距 */
+}
+
+/* 單項目容器 */
+.promotion-item {
+  display: flex;
+  align-items: center; /* 確保內容垂直居中 */
+  gap: 10px; /* 圖片與文字區塊的間距 */
+}
+
+/* 圖片樣式 */
+.promotion-image {
+  width: 82px; /* 圖片寬度 */
+  height: 82px; /* 圖片高度 */
+  display: block;
+}
+
+/* 文字與數字的區塊 */
+.promotion-content {
+  display: flex;
+  flex-direction: column; /* 垂直排列文字與數字 */
+  align-items: flex-start; /* 左對齊文字與數字 */
+  gap: 4px; /* 文字與數字之間的間距 */
+}
+
+/* 文字樣式 */
+.promotion-text {
+  color: var(--Text, #272727);
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: -0.28px;
+}
+
+/* 數字樣式 */
+.promotion-number {
+  color: var(--Text, #272727);
+  font-family: "Noto Sans HK";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 30px;
+}
+
+/* 按鈕樣式 */
+.custom-button {
+  display: flex;
+  justify-content: center;
+  align-items: center; /* 確保文字和圖標垂直居中 */
+  height: 32px; /* 按鈕的固定高度 */
+  padding: 8px 10px; /* 內部邊距 */
+  gap: 5px; /* 文字和圖標之間的間距 */
+  border-radius: 5px; /* 邊角圓角 */
+  border: 3px solid var(--key-colors-primary, #131313); /* 按鈕邊框顏色 */
+  background-color: transparent; /* 按鈕背景透明 */
+  margin-top: auto;
+}
+
+/* 按鈕文字樣式 */
+.custom-button .button-text {
+  color: var(--key-colors-primary, #131313); /* 文字顏色 */
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1; /* 固定行高，防止文字偏移 */
+  letter-spacing: -0.28px; /* 字符間距 */
+}
+
+/* 圖標樣式 */
+.custom-button .button-icon {
+  width: 24px; /* 圖標寬度 */
+  height: 24px; /* 圖標高度 */
+  font-size: 24px; /* 圖標大小 */
+  display: flex;
+  align-items: center; /* 圖標內部垂直居中 */
+  justify-content: center; /* 圖標內部水平居中 */
+}
+
+.customButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  background: var(--key-colors-secondary, #0B49A0);
+  color: white;
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 19px;
+}
+
+.customButton:hover {
+  background: var(--key-colors-secondary-hover, #083D80);
+  color: white !important;
+}
+
+.custom-row-style {
+  color: var(--DarkGray, #737277);
+
+/* body small */
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px; /* 157.143% */
+  letter-spacing: -0.28px;
+}
+
+
+/* page */
+
+  
+
+  
+  
+  
+  
+  
+  
