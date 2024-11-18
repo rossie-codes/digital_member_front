@@ -16,6 +16,7 @@ import {
   message,
   Dropdown,
   InputNumber,
+  Popconfirm
 } from "antd";
 import type { TableColumnsType, PaginationProps } from "antd";
 import {
@@ -38,14 +39,28 @@ interface DataType {
   recipient_count: number;
 }
 
-interface FetchParams {
+
+interface BroadcastFetchParams {
   page: number;
   pageSize: number;
   sortField?: string;
   sortOrder?: string;
   filters?: any;
-  searchText?: string;
+  broadcastSearchText?: string;
 }
+
+
+interface MemberFetchParams {
+  page: number;
+  pageSize: number;
+  sortField?: string;
+  sortOrder?: string;
+  filters?: any;
+  memberSearchText?: string;
+  modalMemberSearchText?: string;
+}
+
+
 
 interface WatiTemplate {
   id: string;
@@ -74,20 +89,20 @@ const BroadcastSettingPage: React.FC = () => {
     router.push(`/dashboard/broadcast_setting/${record.key}/edit`);
   };
 
-  const [broadcastData, setData] = useState<DataType[]>([]);
-  const [searchText, setSearchText] = useState<string>("");
+  const [broadcastData, setBroadcastData] = useState<DataType[]>([]);
+  const [broadcastSearchText, setBroadcastSearchText] = useState<string>("");
   const showTotal: PaginationProps["showTotal"] = (total) =>
     `Total ${total} items`;
 
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
-  const [totalItems, setTotalItems] = useState<number>(0);
+  const [broadcastCurrentPage, setBroadcastCurrentPage] = useState<number>(1);
+  const [broadcastPageSize, setBroadcastPageSize] = useState<number>(10);
+  const [broadcastTotalItems, setBroadcastTotalItems] = useState<number>(0);
 
   // State variables for modal and form
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [broadcastForm] = Form.useForm(); // Form instance for the modal
   const [isFilterModalVisible, setIsFilterModalVisible] =
     useState<boolean>(false);
+  const [broadcastForm] = Form.useForm(); // Form instance for the modal
   const [filterForm] = Form.useForm();
 
   // State variables for WATI templates
@@ -101,7 +116,6 @@ const BroadcastSettingPage: React.FC = () => {
 
   const [loadingModalMembers, setLoadingModalMembers] =
     useState<boolean>(false);
-  const [memberSearchText, setMemberSearchText] = useState<string>("");
   const [modalMemberSearchText, setModalMemberSearchText] =
     useState<string>("");
   const [modalMemberFilters, setModalMemberFilters] = useState<any>({});
@@ -109,21 +123,19 @@ const BroadcastSettingPage: React.FC = () => {
   const [memberPageSize, setModalPageSize] = useState<number>(10);
   const [memberTotalItems, setModalTotalItems] = useState<number>(0);
 
-  // const [memberFilters, setMemberFilters] = useState({});
-  // const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
   const [selectedMembers, setSelectedMembers] = useState<React.Key[]>([]);
-  
+
   // 要將各個 request 集合在一個 request，反正都是打開 modal 時發生
   const [membershipTierOptions, setMembershipTierOptions] = useState<
     { label: string; value: string }[]
   >([]);
 
   const fetchBroadcastData = async (
-    params: FetchParams = { page: 1, pageSize: 10 }
+    params: BroadcastFetchParams = { page: 1, pageSize: 10 }
   ) => {
     setLoading(true);
     try {
-      const { page, pageSize, sortField, sortOrder, filters, searchText } =
+      const { page, pageSize, sortField, sortOrder, filters, broadcastSearchText } =
         params;
 
       const queryParams = new URLSearchParams({
@@ -133,13 +145,12 @@ const BroadcastSettingPage: React.FC = () => {
       if (sortField) queryParams.append("sortField", sortField);
       if (sortOrder) queryParams.append("sortOrder", sortOrder);
 
-      if (searchText) {
-        queryParams.append("searchText", searchText);
+      if (broadcastSearchText) {
+        queryParams.append("broadcastSearchText", broadcastSearchText);
       }
 
       const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL
+        `${process.env.NEXT_PUBLIC_API_URL
         }/broadcast_setting/get_broadcast_list?${queryParams.toString()}`,
         {
           credentials: "include",
@@ -173,8 +184,8 @@ const BroadcastSettingPage: React.FC = () => {
         recipient_count: broadcast.recipient_count || 0,
       }));
 
-      setData(formattedData);
-      setTotalItems(total);
+      setBroadcastData(formattedData);
+      setBroadcastTotalItems(total);
     } catch (err: any) {
       console.error("Fetch error:", err);
       setError(err);
@@ -221,28 +232,73 @@ const BroadcastSettingPage: React.FC = () => {
     if (!hasFetched.current) {
       hasFetched.current = true;
       fetchBroadcastData({
-        page: currentPage,
-        pageSize: pageSize,
-        searchText: searchText,
+        page: broadcastCurrentPage,
+        pageSize: broadcastPageSize,
+        broadcastSearchText: broadcastSearchText,
       });
     }
-  }, [currentPage, pageSize, searchText]);
+  }, [broadcastCurrentPage, broadcastPageSize, broadcastSearchText]);
 
-  const onSearch = (value: string) => {
+  const onBroadcastSearch = (value: string) => {
     const trimmedValue = value.trim();
-    setSearchText(trimmedValue);
+    setBroadcastSearchText(trimmedValue);
 
     // Reset pagination to the first page when a new search is performed
-    setCurrentPage(1);
+    setBroadcastCurrentPage(1);
 
     fetchBroadcastData({
       page: 1,
-      pageSize: pageSize,
-      searchText: trimmedValue,
+      pageSize: broadcastPageSize,
+      broadcastSearchText: trimmedValue,
     });
   };
 
+  const handleDelete = async (key: string) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/delete_broadcast/${key}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error(`Failed to delete broadcast: ${response.status}`);
+      }
+  
+      message.success("Broadcast deleted successfully!");
+      // Option 1: Refresh the table data
+      fetchBroadcastData({
+        page: broadcastCurrentPage,
+        pageSize: broadcastPageSize,
+        broadcastSearchText: broadcastSearchText,
+      });
+      
+      // Option 2: Remove the deleted item from state
+      // setBroadcastData(prevData => prevData.filter(item => item.key !== key));
+    } catch (error: any) {
+      console.error("Delete error:", error);
+      message.error(`Error deleting broadcast: ${error.message}`);
+    }
+  };
+
   const broadcastColumns: TableColumnsType<DataType> = [
+    {
+      title: "",
+      key: "",
+      render: (_: any, record: DataType) => (
+        <Button
+          type="link"
+          icon={<FormOutlined style={{ color: "#ff4d4f" }} />}
+          onClick={() => handleEdit(record)}
+        />
+      ),
+      width: 50,
+    },
     {
       title: "Broadcast Name",
       dataIndex: "broadcast_name",
@@ -269,21 +325,25 @@ const BroadcastSettingPage: React.FC = () => {
       align: "right",
     },
     {
-      title: "Action",
-      key: "action",
+      title: "",
+      key: "",
       render: (_: any, record: DataType) => (
-        <Button
-          type="link"
-          icon={<FormOutlined style={{ color: "#ff4d4f" }} />}
-          onClick={() => handleEdit(record)}
-        />
+        <Popconfirm
+          title="Are you sure to delete this broadcast?"
+          onConfirm={() => handleDelete(record.key)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button type="link" icon={<DeleteOutlined style={{ color: "#ff4d4f" }} />} />
+        </Popconfirm>
       ),
+      width: 50,
     },
   ];
 
   const handleBroadcastTableChange = (pagination: any, filters: any, sorter: any) => {
-    setCurrentPage(pagination.current);
-    setPageSize(pagination.pageSize);
+    setBroadcastCurrentPage(pagination.current);
+    setBroadcastPageSize(pagination.pageSize);
 
     // Prepare sort parameters
     let sortField = sorter.field;
@@ -298,34 +358,34 @@ const BroadcastSettingPage: React.FC = () => {
       pageSize: pagination.pageSize,
       sortField: sortField,
       sortOrder: sortOrder,
-      searchText: searchText,
+      broadcastSearchText: broadcastSearchText,
     });
   };
 
-  const fetchWatiTemplates = async () => {
-    setLoadingTemplates(true);
-    try {
-      // Fetch templates from WATI (replace with actual API call)
-      const response = await fetch("/api/wati/templates");
-      if (!response.ok) {
-        throw new Error(`Error fetching WATI templates: ${response.status}`);
-      }
-      const templatesData = await response.json();
-      setWatiTemplates(templatesData);
-    } catch (error) {
-      console.error("Error fetching WATI templates:", error);
-      message.error("Failed to fetch WATI templates.");
-    } finally {
-      setLoadingTemplates(false);
-    }
-  };
+  // const fetchWatiTemplates = async () => {
+  //   setLoadingTemplates(true);
+  //   try {
+  //     // Fetch templates from WATI (replace with actual API call)
+  //     const response = await fetch("/api/wati/templates");
+  //     if (!response.ok) {
+  //       throw new Error(`Error fetching WATI templates: ${response.status}`);
+  //     }
+  //     const templatesData = await response.json();
+  //     setWatiTemplates(templatesData);
+  //   } catch (error) {
+  //     console.error("Error fetching WATI templates:", error);
+  //     message.error("Failed to fetch WATI templates.");
+  //   } finally {
+  //     setLoadingTemplates(false);
+  //   }
+  // };
 
   const fetchModalMembers = async (
-    params: FetchParams = { page: 1, pageSize: 10 }
+    params: MemberFetchParams = { page: 1, pageSize: 10 }
   ) => {
     setLoadingModalMembers(true);
     try {
-      const { page, pageSize, sortField, sortOrder, filters, searchText } =
+      const { page, pageSize, sortField, sortOrder, filters, modalMemberSearchText } =
         params;
 
       const queryParams = new URLSearchParams({
@@ -348,14 +408,13 @@ const BroadcastSettingPage: React.FC = () => {
       }
 
       // Include search text in the queryParams
-      if (searchText) {
-        queryParams.append("searchText", searchText);
+      if (modalMemberSearchText) {
+        queryParams.append("modalMemberSearchText", modalMemberSearchText);
       }
 
       const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL
-        }/member/get_member_list?${queryParams.toString()}`,
+        `${process.env.NEXT_PUBLIC_API_URL
+        }/broadcast_setting/get_broadcast_member_list?${queryParams.toString()}`,
         {
           credentials: "include",
         }
@@ -369,6 +428,12 @@ const BroadcastSettingPage: React.FC = () => {
 
       const members: any[] = jsonData.data;
       const total: number = jsonData.total;
+      const watiTemplateList: WatiTemplate[] = jsonData.watiTemplateList.map((template: any) => ({
+        id: template,
+        name: template,
+      }));
+
+
 
       if (!Array.isArray(members)) {
         throw new Error("Invalid data format: 'members' should be an array.");
@@ -399,6 +464,8 @@ const BroadcastSettingPage: React.FC = () => {
         order_count: member.order_count || 0,
       }));
 
+      setWatiTemplates(watiTemplateList);
+      console.log("watiTemplateList", watiTemplateList);
       setModalMembers(formattedData);
       setModalTotalItems(total);
 
@@ -420,18 +487,18 @@ const BroadcastSettingPage: React.FC = () => {
       page: 1,
       pageSize: memberPageSize,
       filters: values,
-      searchText: modalMemberSearchText,
+      modalMemberSearchText: modalMemberSearchText,
     });
   };
-  
+
 
   // const handleClearFilters = () => {
   //   filterForm.resetFields();
   //   setMemberFilters({});
-  //   fetchModalMembers(memberSearchText, {});
+  //   fetchModalMembers(modalMemberSearchText, {});
   //   setIsFilterModalVisible(false);
   // };
-  
+
 
   // const fetchMembershipTiers = async () => {
   //   try {
@@ -454,13 +521,13 @@ const BroadcastSettingPage: React.FC = () => {
   // Fetch WATI templates and members when modal opens
   useEffect(() => {
     if (isModalVisible) {
-      fetchWatiTemplates();
+      // fetchWatiTemplates();
       // fetchMembershipTiers();
       fetchModalMembers({
         page: memberCurrentPage,
         pageSize: memberPageSize,
         filters: modalMemberFilters,
-        searchText: modalMemberSearchText,
+        modalMemberSearchText: modalMemberSearchText,
       });
     } else {
       // Reset form and selections when modal closes
@@ -474,7 +541,7 @@ const BroadcastSettingPage: React.FC = () => {
     }
   }, [isModalVisible]);
 
-  
+
 
   const memberColumns: TableColumnsType<Member> = [
     {
@@ -521,15 +588,15 @@ const BroadcastSettingPage: React.FC = () => {
   const onModalMemberSearch = (value: string) => {
     const trimmedValue = value.trim().toLowerCase();
     setModalMemberSearchText(trimmedValue);
-  
+
     // Reset pagination to the first page when a new search is performed
     setModalCurrentPage(1);
-  
+
     fetchModalMembers({
       page: 1,
       pageSize: memberPageSize,
       filters: modalMemberFilters,
-      searchText: trimmedValue,
+      modalMemberSearchText: trimmedValue,
     });
   };
 
@@ -556,7 +623,7 @@ const BroadcastSettingPage: React.FC = () => {
       sortField: sortField,
       sortOrder: sortOrder,
       filters: filters,
-      searchText: modalMemberSearchText,
+      modalMemberSearchText: modalMemberSearchText,
     });
   };
 
@@ -575,7 +642,7 @@ const BroadcastSettingPage: React.FC = () => {
 
     try {
       // Submit broadcast creation (replace with actual API call)
-      const response = await fetch("/api/broadcasts", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/post_new_broadcast`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -589,9 +656,9 @@ const BroadcastSettingPage: React.FC = () => {
       setIsModalVisible(false);
       // Refresh the list
       fetchBroadcastData({
-        page: currentPage,
-        pageSize: pageSize,
-        searchText: searchText,
+        page: broadcastCurrentPage,
+        pageSize: broadcastPageSize,
+        broadcastSearchText: broadcastSearchText,
       });
     } catch (error) {
       console.error("Error creating broadcast:", error);
@@ -619,8 +686,8 @@ const BroadcastSettingPage: React.FC = () => {
           <Search
             placeholder="Search broadcasts"
             allowClear
-            onSearch={onSearch}
-            onChange={(e) => setSearchText(e.target.value)}
+            onSearch={onBroadcastSearch}
+            onChange={(e) => setBroadcastSearchText(e.target.value)}
             style={{ width: 300 }}
           />
           <Button type="primary" onClick={() => setIsModalVisible(true)}>
@@ -632,6 +699,12 @@ const BroadcastSettingPage: React.FC = () => {
               Bulk Actions <DownOutlined />
             </Button>
           </Dropdown>
+
+          <Button
+              onClick={() => router.push('/dashboard/broadcast_setting/broadcast_history')}
+            >
+              廣播歷史
+            </Button>
         </Space>
       </div>
 
@@ -714,8 +787,8 @@ const BroadcastSettingPage: React.FC = () => {
             <Space style={{ marginBottom: 16 }}>
               <Input.Search
                 placeholder="Search members"
-                value={memberSearchText}
-                onChange={(e) => setMemberSearchText(e.target.value)}
+                value={modalMemberSearchText}
+                onChange={(e) => setModalMemberSearchText(e.target.value)}
                 onSearch={onModalMemberSearch}
                 style={{ width: 300 }}
               />
@@ -740,7 +813,7 @@ const BroadcastSettingPage: React.FC = () => {
                 position: ["bottomRight"],
               }}
               onChange={handleModalMembersTableChange}
-              // ... other props
+            // ... other props
             />
           </Form.Item>
 
@@ -828,9 +901,9 @@ const BroadcastSettingPage: React.FC = () => {
         columns={broadcastColumns}
         locale={{ emptyText: "No broadcasts found." }}
         pagination={{
-          current: currentPage,
-          pageSize: pageSize,
-          total: totalItems,
+          current: broadcastCurrentPage,
+          pageSize: broadcastPageSize,
+          total: broadcastTotalItems,
           showTotal: showTotal,
           showSizeChanger: true,
           showQuickJumper: true,
