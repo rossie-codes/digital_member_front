@@ -22,7 +22,7 @@ interface DataType {
   point: string | number;
   membership_tier: string;
   membership_expiry_date: string;
-  is_active: string; // Add this line
+  membership_status: 'expired' | 'active' | 'suspended'; // Updated field
 }
 
 interface NewMember {
@@ -45,10 +45,6 @@ interface FetchParams {
   searchText?: string;
 }
 
-
-
-
-
 const GetMemberListPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
@@ -66,7 +62,6 @@ const GetMemberListPage: React.FC = () => {
   const [searchText, setSearchText] = useState<string>('');
   const showTotal: PaginationProps['showTotal'] = (total) => `Total ${total} items`;
 
-
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [form] = Form.useForm();
   const [addingMember, setAddingMember] = useState<boolean>(false);
@@ -80,9 +75,9 @@ const GetMemberListPage: React.FC = () => {
     2: 'suspended',
   };
   const statusOptions = [
-    { text: 'expired', value: 0 },
-    { text: 'active', value: 1 },
-    { text: 'suspended', value: 2 },
+    { text: 'expired', value: 'expired' },
+    { text: 'active', value: 'active' },
+    { text: 'suspended', value: 'suspended' },
   ];
 
   const [membershipTiers, setMembershipTiers] = useState<string[]>([]);
@@ -101,9 +96,6 @@ const GetMemberListPage: React.FC = () => {
     },
   };
   const hasSelected = selectedRowKeys.length > 0;
-
-  // const { token } = useContext(AuthContext);
-
 
   const fetchData = async (params: FetchParams = { page: 1, pageSize: 10 }) => {
     setLoading(true);
@@ -129,7 +121,6 @@ const GetMemberListPage: React.FC = () => {
         });
       }
 
-
       // Include search text in the queryParams
       if (searchText) {
         queryParams.append('searchText', searchText);
@@ -152,7 +143,6 @@ const GetMemberListPage: React.FC = () => {
       const members: any[] = jsonData.data;
       const total: number = jsonData.total;
       const membershipTiers: string[] = jsonData.membership_tiers || [];
-
 
       if (!Array.isArray(members)) {
         throw new Error("Invalid data format: 'members' should be an array.");
@@ -177,7 +167,7 @@ const GetMemberListPage: React.FC = () => {
           ? member.membership_tier.membership_tier_name
           : 'N/A',
         membership_expiry_date: formatDate(member.membership_expiry_date),
-        is_active: statusMapping[member.is_active] || 'Unknown',
+        membership_status: member.membership_status || 'Unknown', // Use membership_status directly
       }));
 
       setData(formattedData);
@@ -416,17 +406,17 @@ interface StatsData {
       sortDirections: ['ascend', 'descend', 'ascend'],
     },
     {
-      title: '累計清費金額',
+      title: '累計消費金額',
       dataIndex: 'point',
-      key: 'point',
+      key: 'total_spent', // Adjusted key if needed
       sorter: true, // Enable server-side sorting
       sortDirections: ['ascend', 'descend', 'ascend'],
     },
     
     {
-      title: '到期日',
-      dataIndex: 'membership_expiry_date',
-      key: 'membership_expiry_date',
+      title: '生日',
+      dataIndex: 'birthday', // Adjusted dataIndex if birthday is available
+      key: 'birthday',
       sorter: true, // Enable server-side sorting
       sortDirections: ['ascend', 'descend', 'ascend'],
     },
@@ -462,12 +452,12 @@ interface StatsData {
     
     {
       title: '狀態',
-      dataIndex: 'is_active',
-      key: 'is_active',
+      dataIndex: 'membership_status',
+      key: 'membership_status', // Updated key
       sorter: true,
       sortDirections: ['ascend', 'descend', 'ascend'],
       filters: statusOptions,
-      filteredValue: tableFilters.is_active || null,
+      filteredValue: tableFilters.membership_status || null,
       render: (text: string) => {
         // 設定顏色
         let color;
@@ -503,7 +493,6 @@ interface StatsData {
   const handleTableChange = (
     pagination: any,
     filters: any,
-    // sorter: { field?: string; order?: string }
     sorter: any
   ) => {
     setCurrentPage(pagination.current);
@@ -705,6 +694,7 @@ interface StatsData {
             <Input className={styles.ModalItem}/>
           </Form.Item>
 
+          {/* Uncomment if you want to include initial points */}
           {/* <Form.Item
             name="point"
             label="會員積分"
