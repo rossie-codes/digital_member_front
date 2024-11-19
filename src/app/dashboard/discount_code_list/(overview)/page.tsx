@@ -571,6 +571,7 @@ const DiscountCodeListPage: React.FC = () => {
 
 
 
+
   const items: MenuProps['items'] = [
     {
       label: 'Delete',
@@ -687,8 +688,12 @@ const DiscountCodeListPage: React.FC = () => {
 
       {/* Modal Form */}
       <Modal
-        // title={`${isEditing ? 'Edit' : 'Add New'} Discount Code`}
-        title='新增優惠'
+        title={
+          <div className="modalTitle">
+            <img src="/coupon.png" alt="Icon" style={{ width: '24px' }} /> 
+            <span className="BigcountText">新增優惠</span>
+          </div>
+        }
         open={isModalVisible}
         onCancel={() => {
           setIsModalVisible(false);
@@ -696,43 +701,74 @@ const DiscountCodeListPage: React.FC = () => {
           setEditingItemId(null);
         }}
         footer={null}
-      >
-        <Form form={form} onFinish={onFinish} layout="vertical">
-          <Form.Item
-            name="discount_type"
-            label="折扣類型"
-            initialValue={selectedDiscountType}
-            rules={[{ required: true, message: 'Please select a discount type' }]}
-          >
-            <Select onChange={handleDiscountTypeChange}>
-              <Option value="fixed_amount">固定金額優惠券</Option>
-              <Option value="percentage">折扣比率優惠券</Option>
-            </Select>
-          </Form.Item>
+        width={1000}
+        style={{ maxWidth: '90%', height: 'auto', top: 20 }} // 最大寬度不超過 90%，調整高度和頂部間距
 
+      >
+      <Form form={form} onFinish={onFinish} layout="vertical" className="two-column-form">
+        <div className="form-left">
           <Form.Item
             name="discount_code_name"
-            label="折扣名稱"
+            label={<span className="form-item-label">優惠名稱</span>}
             rules={[{ required: true, message: 'Please enter the discount code name' }]}
           >
-            <Input />
+            <Input className="form-input" placeholder="輸入優惠名稱" />
           </Form.Item>
 
           <Form.Item
             name="discount_code"
-            label="優惠碼"
+            label={<span className="form-item-label">優惠碼</span>}
             rules={[{ required: true, message: 'Please enter the discount code' }]}
           >
-            <Input />
+            <Input className="form-input" placeholder="輸入優惠碼"/>
+          </Form.Item>
+
+          <Form.Item
+            name="discount_code_content"
+            label={<span className="form-item-label">優惠詳情</span>}
+            rules={[{ required: true, message: '輸入禮物詳情' }]}
+          >
+            <TextArea
+              className="form-input"
+              placeholder="輸入優惠詳情"
+              autoSize={{ minRows: 3, maxRows: 5 }}
+            />
+          </Form.Item>
+
+
+          <Form.Item
+            name="discount_code_term"
+            label={<span className="form-item-label">條款及細則</span>}
+            rules={[{ required: true, message: '輸入禮物的條款及細則' }]}
+          >
+            <TextArea
+              className="form-input"
+              placeholder="輸入禮物的條款及細則"
+              autoSize={{ minRows: 3, maxRows: 5 }}
+            />
+          </Form.Item>
+        </div>
+
+        <div id="custom-modal" className="form-right">
+            <Form.Item
+            name="discount_type"
+            label={<span className="form-item-label">折扣類型</span>}
+            initialValue={selectedDiscountType}
+            rules={[{ required: true, message: 'Please select a discount type' }]}
+          >
+            <Select onChange={handleDiscountTypeChange}>
+              <Option value="fixed_amount">固定金額</Option>
+              <Option value="percentage">折扣比率</Option>
+            </Select>
           </Form.Item>
 
           {selectedDiscountType === 'fixed_amount' && (
             <Form.Item
               name="discount_amount"
-              label="折扣金額"
+              label={<span className="form-item-label">折扣金額</span>}
               rules={[{ required: true, message: 'Please enter the discount amount' }]}
             >
-              <InputNumber min={0} style={{ width: '100%' }} />
+              <InputNumber min={0} style={{ width: '100%' }} placeholder="輸入折扣金額"/>
             </Form.Item>
           )}
 
@@ -740,7 +776,7 @@ const DiscountCodeListPage: React.FC = () => {
             <>
               <Form.Item
                 name="discount_percentage"
-                label="折扣額 % "
+                label={<span className="form-item-label">折扣比率</span>}
                 rules={[{ required: true, message: 'Please enter the discount percentage' }]}
               >
                 <InputNumber<number>
@@ -756,18 +792,18 @@ const DiscountCodeListPage: React.FC = () => {
 
           <Form.Item
             name="minimum_spending"
-            label="最低消費金額"
+            label={<span className="form-item-label">最低消費金額</span>}
             rules={[{ required: true, message: 'Please enter the minimum spending' }]}
           >
-            <InputNumber min={0} style={{ width: '100%' }} />
+            <InputNumber min={0} style={{ width: '100%' }} placeholder="最低消費金額" />
           </Form.Item>
 
           <Form.Item
             name="use_limit_type"
-            label="使用限制"
+            label={<span className="form-item-label">使用限制</span>}
             rules={[{ required: true, message: 'Please select the use limit type' }]}
           >
-            <Select>
+            <Select placeholder="選擇使用限制">
               <Option value="single_use">此編號使用一次後失效</Option>
               <Option value="once_per_customer">每位客戶可使用一次</Option>
               <Option value="unlimited">沒有限制</Option>
@@ -776,55 +812,59 @@ const DiscountCodeListPage: React.FC = () => {
 
           <Form.Item
             name="valid_from"
-            label="折扣有效期（開始）"
+            label={<span className="form-item-label">換領開始日期</span>}
             rules={[{ required: false, message: 'Please select the valid from date' }]}
           >
             <DatePicker
               showTime
               format="YYYY-MM-DD HH:mm"
+              placeholder="選擇日期"
               style={{ width: '100%' }} />
           </Form.Item>
 
           <Form.Item
             name="valid_until"
-            label="折扣有效期（結束）"
+            label={<span className="form-item-label">換領結束日期</span>}
             rules={[{ required: false, message: 'Please select the valid until date' }]}
           >
             <DatePicker
               showTime
               format="YYYY-MM-DD HH:mm"
+              placeholder="選擇日期"
               style={{ width: '100%' }} />
           </Form.Item>
-
-          <Form.Item
-            name="discount_code_content"
-            label="優惠詳情"
-            rules={[{ required: true, message: '輸入禮物詳情' }]}
-          >
-            <TextArea
-              placeholder="輸入禮物詳情"
-              autoSize={{ minRows: 3, maxRows: 5 }}
-            />
-          </Form.Item>
+          </div>
 
 
-          <Form.Item
-            name="discount_code_term"
-            label="條款及細則"
-            rules={[{ required: true, message: '輸入禮物的條款及細則' }]}
-          >
-            <TextArea
-              placeholder="輸入禮物的條款及細則"
-              autoSize={{ minRows: 3, maxRows: 5 }}
-            />
-          </Form.Item>
+          
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit" loading={addingItem}>
-              {isEditing ? 'Update Discount Code' : 'Add Discount Code'}
-            </Button>
-          </Form.Item>
         </Form>
+        <Form.Item style={{ marginBottom: '0px' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Button
+                onClick={() => {
+                  setIsModalVisible(false);
+                  setIsEditing(false);
+                  setEditingItemId(null);
+                }}
+                className="CancelButton"
+                style={{ marginRight: '10px' }}
+              >
+                取消
+              </Button>
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={addingItem}
+                className="addButton"
+              >
+                儲存
+              </Button>
+            </div>
+          </Form.Item>
+
+
+
       </Modal>
     </div>
   );

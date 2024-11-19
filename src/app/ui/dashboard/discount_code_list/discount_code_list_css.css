@@ -108,9 +108,17 @@
 .custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light > .ant-menu.ant-menu-horizontal > .ant-menu-item::after,
 .custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light.ant-menu-horizontal > .ant-menu-submenu::after,
 .custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light > .ant-menu.ant-menu-horizontal > .ant-menu-submenu::after {
-  content: none !important; /* 禁用所有伺服於 after 的樣式 */
-  border-bottom: none !important; /* 禁用任何邊框樣式 */
+  content: none !important; /* 禁用原有的 after 樣式 */
+  border-bottom: none !important; /* 禁用任何底部邊框 */
 }
+
+/* 加強選中項目的覆蓋 */
+.custom-page-menu :where(.ant-menu-light.ant-menu-horizontal) > .ant-menu-item-selected::after,
+.custom-page-menu :where(.ant-menu-light.ant-menu-horizontal) > .ant-menu-submenu-selected::after {
+  content: none !important;
+  border-bottom: none !important;
+}
+
 
 .custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal {
   line-height: normal !important; /* 重置行高 */
@@ -257,6 +265,178 @@
   font-weight: 400;
   line-height: 22px; /* 157.143% */
   letter-spacing: -0.28px;
+}
+
+.modalTitle {
+  display: flex;
+  padding-bottom: 0px;
+  align-items: flex-start;
+  gap: 5px;
+  align-self: stretch;
+  border-bottom: 3px solid #000;
+}
+
+.BigcountText {
+  color: var(--Text, #272727);
+  /* H3 */
+  font-family: "Noto Sans HK";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 30px; /* 125% */
+}
+
+
+.addButton, .CancelButton {
+  display: flex;
+  width: 99px;
+  height: 32px;
+  padding: 8px 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+}
+
+.addButton {
+  border-radius: 5px;
+  background: var(--key-colors-tertiary, #D74D03);
+}
+
+.addButton:hover {
+  background: var(--key-colors-tertiary, #D74D03)!important;
+  color: #FFFFFF !important;
+}
+.CancelButton{
+  border-radius: 5px;
+  background: var(--DarkGray, #737277);
+  color: #FFFFFF;
+}
+.CancelButton:hover {
+  background: var(--DarkGray, #737277)!important;
+  color: #FFFFFF !important;
+}
+
+.two-column-form {
+  display: flex;
+  gap: 20px; /* 左右表单间距 */
+  padding-top: 20px;
+}
+
+.form-left,
+.form-right {
+  flex: 1; /* 左右两边等宽 */
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* 每个表单项的间距 */
+}
+
+.form-left{
+  display: flex;
+  height: auto;
+  padding: 20px 50px;
+  flex-direction: column;
+  border-radius: 5px;
+  border: 5px solid var(--highlight2, #2989C5);
+  background: var(--key-colors-secondary, #0B49A0);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.form-left .form-item-label {
+  color: var(--key-colors-neutral, #FFF);
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 19px; /* 135.714% */
+  letter-spacing: -0.28px;
+}
+
+.form-right .form-item-label {
+  color: var(--primary, #202124);
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 19px; /* 135.714% */
+  letter-spacing: -0.28px;
+}
+
+.form-body-text {
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: -0.28px;
+}
+
+.form-input {
+  display: flex;
+  height: 44px;
+  padding: 12px;
+  align-items: flex-start;
+  gap: 12px;
+  flex-shrink: 0;
+  align-self: stretch;
+  border-radius: 5px;
+  border: 1px solid var(--key-colors-primary, #131313);
+  background: var(--White, #FFF);
+}
+
+.form-left .form-input {
+  width: 100%; 
+  height: 50px; 
+  padding: 12px;
+  border-radius: 5px;
+  border: 1px solid var(--key-colors-primary, #131313);
+  background: var(--White, #FFF);
+}
+
+.form-right .form-input {
+  width: 100%; 
+  height: 50px; 
+  padding: 12px;
+  border-radius: 5px;
+  border: 1px solid var(--key-colors-primary, #131313);
+  background: var(--White, #FFF);
+}
+#custom-modal .ant-select-selector {
+  border: 1px solid var(--key-colors-primary, #131313) !important;
+  background: var(--White, #FFF) !important;
+  height: 50px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 12px !important;
+}
+
+#custom-modal .ant-input-number {
+  border: 1px solid var(--key-colors-primary, #131313) !important;
+  background: var(--White, #FFF) !important;
+  height: 50px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 12px !important;
+}
+
+#custom-modal .ant-select.ant-select-single:not(.ant-select-customize-input) .ant-select-selector {
+  border: 1px solid var(--key-colors-primary, #131313) !important;
+  background: var(--White, #FFF) !important;
+  height: 50px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 12px !important;
+  border-radius: 5px !important;
+}
+
+#custom-modal .ant-picker {
+  width: 100% !important;
+  height: 50px !important;
+  border: 1px solid var(--key-colors-primary, #131313) !important;
+  border-radius: 5px !important;
+  background: var(--White, #FFF) !important;
+  padding: 0 12px !important;
+  display: flex !important;
+  align-items: center !important;
 }
 
 
