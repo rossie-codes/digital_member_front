@@ -1,4 +1,4 @@
-// src/app/dashboard/broadcast_setting/page.tsx
+// src/app/dashboard/broadcast_setting/broadcast_history/page.tsx
 
 "use client";
 import React, { useEffect, useState, useRef } from "react";
@@ -16,9 +16,11 @@ import {
   message,
   Dropdown,
   InputNumber,
-  Popconfirm
+  Popconfirm,
+  Badge,
+  Tag,
 } from "antd";
-import type { TableColumnsType, PaginationProps } from "antd";
+import type { TableColumnsType, TableProps, PaginationProps } from "antd";
 import {
   PlusOutlined,
   FormOutlined,
@@ -26,19 +28,20 @@ import {
   UserOutlined,
   DownOutlined,
 } from "@ant-design/icons";
+import Link from 'next/link';
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
 
 const { Search } = Input;
 
-interface DataType {
+interface Broadcast {
   key: string;
+  broadcast_id: number;
   broadcast_name: string;
   wati_template: string;
   scheduled_start: string;
   recipient_count: number;
 }
-
 
 interface BroadcastFetchParams {
   page: number;
@@ -85,11 +88,8 @@ const BroadcastHistoryPage: React.FC = () => {
   const hasFetched = useRef(false);
 
   const router = useRouter();
-  const handleEdit = (record: DataType) => {
-    router.push(`/dashboard/broadcast_setting/${record.key}/edit`);
-  };
 
-  const [broadcastData, setBroadcastData] = useState<DataType[]>([]);
+  const [broadcastData, setBroadcastData] = useState<Broadcast[]>([]);
   const [broadcastSearchText, setBroadcastSearchText] = useState<string>("");
   const showTotal: PaginationProps["showTotal"] = (total) =>
     `Total ${total} items`;
@@ -109,7 +109,8 @@ const BroadcastHistoryPage: React.FC = () => {
   const [watiTemplates, setWatiTemplates] = useState<WatiTemplate[]>([]);
   const [loadingTemplates, setLoadingTemplates] = useState<boolean>(false);
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [selectedBroadcastRowKeys, setSelectedBroadcastRowKeys] = useState<React.Key[]>([]);
+  const [selectedMemberRowKeys, setSelectedMemberRowKeys] = useState<React.Key[]>([]);
 
   // State variables for members
   const [modalMembers, setModalMembers] = useState<Member[]>([]);
@@ -123,7 +124,9 @@ const BroadcastHistoryPage: React.FC = () => {
   const [memberPageSize, setModalPageSize] = useState<number>(10);
   const [memberTotalItems, setModalTotalItems] = useState<number>(0);
 
-  const [selectedMembers, setSelectedMembers] = useState<React.Key[]>([]);
+  const [selectedTemplateData, setSelectedTemplateData] = useState<any>(null);
+  const [loadingTemplateData, setLoadingTemplateData] = useState<boolean>(false);
+
 
   // 要將各個 request 集合在一個 request，反正都是打開 modal 時發生
   const [membershipTierOptions, setMembershipTierOptions] = useState<
@@ -172,10 +175,9 @@ const BroadcastHistoryPage: React.FC = () => {
         );
       }
 
-      const formattedData: DataType[] = broadcasts.map((broadcast: any) => ({
-        key: broadcast.broadcast_id
-          ? broadcast.broadcast_id.toString()
-          : Math.random().toString(),
+      const formattedData: Broadcast[] = broadcasts.map((broadcast: any) => ({
+        key: broadcast.broadcast_id,
+        broadcast_id: broadcast.broadcast_id,
         broadcast_name: broadcast.broadcast_name || "N/A",
         wati_template: broadcast.wati_template || "N/A",
         scheduled_start: broadcast.scheduled_start
@@ -195,25 +197,29 @@ const BroadcastHistoryPage: React.FC = () => {
   };
 
   const broadcastRowSelection = {
-    selectedRowKeys,
-    onChange: (newSelectedRowKeys: React.Key[], selectedRows: DataType[]) => {
-      setSelectedRowKeys(newSelectedRowKeys);
+    selectedBroadcastRowKeys: selectedBroadcastRowKeys,
+    onChange: (newSelectedBroadcastRowKeys: React.Key[], selectedBroadcastRows: Broadcast[]) => {
+      setSelectedBroadcastRowKeys(newSelectedBroadcastRowKeys);
       // Optionally, you can also store the selectedRows for future use
     },
     // Uncomment below if you want to disable selection for certain rows
 
-    // getCheckboxProps: (record: DataType) => ({
+    // getCheckboxProps: (record: Broadcast) => ({
     //   disabled: record.name === 'Disabled Broadcast', // Disable checkbox for specific rows
     // }),
   };
 
-  // Define the rowSelection object
-  const memberRowSelection = {
-    selectedRowKeys: selectedMembers,
+
+  const memberRowSelection: TableProps<Member>['rowSelection'] = {
+    selectedRowKeys: selectedMemberRowKeys,
     onChange: (selectedRowKeys: React.Key[]) => {
-      setSelectedMembers(selectedRowKeys as string[]);
+      const keysAsString = selectedRowKeys.map((key) => key.toString());
+      setSelectedMemberRowKeys(keysAsString);
+      console.log('Selected members:', keysAsString);
     },
+    preserveSelectedRowKeys: true, // Add this property
   };
+
 
   const formatDate = (isoString: string): string => {
     if (!isoString) return "N/A";
@@ -253,49 +259,16 @@ const BroadcastHistoryPage: React.FC = () => {
     });
   };
 
-  const handleDelete = async (key: string) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/delete_broadcast/${key}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
-      );
-  
-      if (!response.ok) {
-        throw new Error(`Failed to delete broadcast: ${response.status}`);
-      }
-  
-      message.success("Broadcast deleted successfully!");
-      // Option 1: Refresh the table data
-      fetchBroadcastData({
-        page: broadcastCurrentPage,
-        pageSize: broadcastPageSize,
-        broadcastSearchText: broadcastSearchText,
-      });
-      
-      // Option 2: Remove the deleted item from state
-      // setBroadcastData(prevData => prevData.filter(item => item.key !== key));
-    } catch (error: any) {
-      console.error("Delete error:", error);
-      message.error(`Error deleting broadcast: ${error.message}`);
-    }
-  };
 
-  const broadcastColumns: TableColumnsType<DataType> = [
+  const broadcastColumns: TableColumnsType<Broadcast> = [
     {
-      title: "",
-      key: "",
-      render: (_: any, record: DataType) => (
-        <Button
-          type="link"
-          icon={<FormOutlined style={{ color: "#ff4d4f" }} />}
-          onClick={() => handleEdit(record)}
-        />
+      title: '',
+      dataIndex: 'edit',
+      key: 'edit',
+      render: (_: any, record: Broadcast) => (
+        <Link href={`/dashboard/broadcast_setting/${record.broadcast_id}/edit`}>
+          <Button type="link" icon={<FormOutlined style={{ color: '#ff4d4f' }} />} />
+        </Link>
       ),
       width: 50,
     },
@@ -324,21 +297,6 @@ const BroadcastHistoryPage: React.FC = () => {
       sortDirections: ["ascend", "descend"],
       align: "right",
     },
-    {
-      title: "",
-      key: "",
-      render: (_: any, record: DataType) => (
-        <Popconfirm
-          title="Are you sure to delete this broadcast?"
-          onConfirm={() => handleDelete(record.key)}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Button type="link" icon={<DeleteOutlined style={{ color: "#ff4d4f" }} />} />
-        </Popconfirm>
-      ),
-      width: 50,
-    },
   ];
 
   const handleBroadcastTableChange = (pagination: any, filters: any, sorter: any) => {
@@ -361,24 +319,6 @@ const BroadcastHistoryPage: React.FC = () => {
       broadcastSearchText: broadcastSearchText,
     });
   };
-
-  // const fetchWatiTemplates = async () => {
-  //   setLoadingTemplates(true);
-  //   try {
-  //     // Fetch templates from WATI (replace with actual API call)
-  //     const response = await fetch("/api/wati/templates");
-  //     if (!response.ok) {
-  //       throw new Error(`Error fetching WATI templates: ${response.status}`);
-  //     }
-  //     const templatesData = await response.json();
-  //     setWatiTemplates(templatesData);
-  //   } catch (error) {
-  //     console.error("Error fetching WATI templates:", error);
-  //     message.error("Failed to fetch WATI templates.");
-  //   } finally {
-  //     setLoadingTemplates(false);
-  //   }
-  // };
 
   const fetchModalMembers = async (
     params: MemberFetchParams = { page: 1, pageSize: 10 }
@@ -450,9 +390,8 @@ const BroadcastHistoryPage: React.FC = () => {
       };
 
       const formattedData: Member[] = members.map((member: any) => ({
-        id: member.member_id
-          ? member.member_id.toString()
-          : Math.random().toString(),
+        key: member.member_id.toString(),
+        id: member.member_id.toString(),
         name: member.member_name || "N/A",
         phone_number: member.member_phone || "N/A",
         membership_tier: member.membership_tier
@@ -465,7 +404,6 @@ const BroadcastHistoryPage: React.FC = () => {
       }));
 
       setWatiTemplates(watiTemplateList);
-      console.log("watiTemplateList", watiTemplateList);
       setModalMembers(formattedData);
       setModalTotalItems(total);
 
@@ -491,20 +429,9 @@ const BroadcastHistoryPage: React.FC = () => {
     });
   };
 
-
-  // const handleClearFilters = () => {
-  //   filterForm.resetFields();
-  //   setMemberFilters({});
-  //   fetchModalMembers(modalMemberSearchText, {});
-  //   setIsFilterModalVisible(false);
-  // };
-
-
   // Fetch WATI templates and members when modal opens
   useEffect(() => {
     if (isModalVisible) {
-      // fetchWatiTemplates();
-      // fetchMembershipTiers();
       fetchModalMembers({
         page: memberCurrentPage,
         pageSize: memberPageSize,
@@ -515,7 +442,7 @@ const BroadcastHistoryPage: React.FC = () => {
       // Reset form and selections when modal closes
       broadcastForm.resetFields();
       filterForm.resetFields();
-      setSelectedMembers([]);
+      setSelectedMemberRowKeys([]);
       setModalMemberSearchText('');
       setModalMemberFilters({});
       setModalCurrentPage(1);
@@ -523,7 +450,42 @@ const BroadcastHistoryPage: React.FC = () => {
     }
   }, [isModalVisible]);
 
+  const handleWatiTemplateChange = async (templateId: string) => {
+    setLoadingTemplateData(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/get_wati_template_detail/${templateId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        }
+      );
 
+      if (!response.ok) {
+        throw new Error(`Failed to fetch template details: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setSelectedTemplateData(data);
+
+      // Optionally, update form fields with the fetched data
+      broadcastForm.setFieldsValue({
+        // Example: Assuming the fetched data has a 'description' field
+        description: data.description || '',
+        // Add other fields as needed
+      });
+
+      message.success('Template details loaded successfully!');
+    } catch (error: any) {
+      console.error('Error fetching template details:', error);
+      message.error(`Error fetching template details: ${error.message}`);
+    } finally {
+      setLoadingTemplateData(false);
+    }
+  };
 
   const memberColumns: TableColumnsType<Member> = [
     {
@@ -610,7 +572,7 @@ const BroadcastHistoryPage: React.FC = () => {
   };
 
   const handleCreateBroadcast = async (values: any) => {
-    const memberIds = selectedMembers;
+    const memberIds = selectedMemberRowKeys;
 
     if (memberIds.length === 0) {
       message.error("Please select at least one member.");
@@ -676,19 +638,19 @@ const BroadcastHistoryPage: React.FC = () => {
             New Broadcast
           </Button>
 
-          <Dropdown menu={menuProps} disabled={selectedRowKeys.length === 0}>
+          <Dropdown menu={menuProps} disabled={selectedBroadcastRowKeys.length === 0}>
             <Button>
               Bulk Actions <DownOutlined />
             </Button>
           </Dropdown>
 
           <Button
-              onClick={() => router.push('/dashboard/broadcast_setting/')}
-            >
-              預定廣播
-            </Button>
+            onClick={() => router.push('/dashboard/broadcast_setting/')}
+          >
+            預定廣播
+          </Button>
         </Space>
-      </div>
+      </div>  
 
       {/* Modal for New Broadcast */}
       <Modal
@@ -716,13 +678,15 @@ const BroadcastHistoryPage: React.FC = () => {
 
           {/* Template Message Selection */}
           <Form.Item
-            label="Template Message"
             name="wati_template"
-            rules={[
-              { required: true, message: "Please select a template message!" },
-            ]}
+            label="WATI Template"
+            rules={[{ required: true, message: 'Please select a WATI template' }]}
           >
-            <Select loading={loadingTemplates}>
+            <Select
+              loading={loadingTemplates}
+              onChange={handleWatiTemplateChange} // Add this line
+              placeholder="Select a WATI Template"
+            >
               {watiTemplates.map((template) => (
                 <Select.Option key={template.id} value={template.id}>
                   {template.name}
@@ -746,23 +710,26 @@ const BroadcastHistoryPage: React.FC = () => {
           </Form.Item>
 
           {/* Conditional Scheduled Time */}
-          {broadcastForm.getFieldValue("schedule_type") === "later" && (
-            <Form.Item
-              label="Scheduled Time"
-              name="scheduled_time"
-              rules={[
-                { required: true, message: "Please select a scheduled time!" },
-              ]}
-            >
-              <DatePicker
-                showTime
-                style={{ width: "100%" }}
-                disabledDate={(current) =>
-                  current && dayjs(current).isBefore(dayjs().startOf("day"))
-                }
-              />
-            </Form.Item>
-          )}
+          <Form.Item shouldUpdate={(prevValues, currentValues) => prevValues.schedule_type !== currentValues.schedule_type}>
+            {({ getFieldValue }) => {
+              return getFieldValue('schedule_type') === 'later' ? (
+                <Form.Item
+                  label="Scheduled Time"
+                  name="scheduled_time"
+                  rules={[{ required: true, message: 'Please select a scheduled time!' }]}
+                >
+                  <DatePicker
+                    showTime
+                    format="YYYY-MM-DD HH:mm"
+                    style={{ width: '100%' }}
+                    disabledDate={(current) =>
+                      current && dayjs(current).isBefore(dayjs().startOf('day'))
+                    }
+                  />
+                </Form.Item>
+              ) : null;
+            }}
+          </Form.Item>
 
           {/* Member Selection */}
           <Form.Item label="Member Selection" required>
@@ -771,12 +738,30 @@ const BroadcastHistoryPage: React.FC = () => {
                 placeholder="Search members"
                 value={modalMemberSearchText}
                 onChange={(e) => setModalMemberSearchText(e.target.value)}
-                onSearch={onModalMemberSearch}
+                onSearch={(value, event) => {
+                  event?.preventDefault(); // Prevent form submission
+                  onModalMemberSearch(value);
+                }}
+                enterButton={<Button type="primary" htmlType="button">Search</Button>}
                 style={{ width: 300 }}
+                onPressEnter={(e) => {
+                  e.preventDefault(); // Prevent form submission on Enter key press
+                  onModalMemberSearch(modalMemberSearchText);
+                }}
               />
               <Button onClick={() => setIsFilterModalVisible(true)}>
                 Filters
               </Button>
+              {selectedMemberRowKeys.length > 0 && (
+                <Badge count={selectedMemberRowKeys.length} overflowCount={999} />
+              )}
+              {selectedMemberRowKeys.length > 0 && (
+                <Tag color="blue">
+                  {selectedMemberRowKeys.length} Selected
+                </Tag>
+              )}
+
+
             </Space>
 
             <Table
@@ -816,7 +801,7 @@ const BroadcastHistoryPage: React.FC = () => {
       >
         <Form form={filterForm} layout="vertical" onFinish={handleFilterApply}>
           {/* Membership Tier Filter */}
-          <Form.Item name="membership_tier" label="Membership Tier">
+          <Form.Item name="membership_tier" label="會員級別">
             <Select
               allowClear
               placeholder="Select Membership Tier"
@@ -835,31 +820,66 @@ const BroadcastHistoryPage: React.FC = () => {
               ]}
             />
           </Form.Item>
+
+          <Form.Item
+            name="membership_expiry_date"
+            label="會籍到期月份"
+            rules={[{ required: false, message: '選擇日期' }]}
+          >
+            <DatePicker
+              picker="month"
+              format="YYYY-MM"
+              style={{ width: '100%' }} />
+          </Form.Item>
+
+          <Form.Item
+            name="birthday"
+            label="生日月份"
+            rules={[{ required: false, message: '選擇日期' }]}
+          >
+            <DatePicker
+              picker="month"
+              format="MM"
+              style={{ width: '100%' }} />
+          </Form.Item>
+
+          <Form.Item
+            name="created_at"
+            label="加入日期"
+            rules={[{ required: false, message: '選擇日期' }]}
+          >
+            <DatePicker
+              // showTime
+              format="YYYY-MM-DD"
+              style={{ width: '100%' }} />
+          </Form.Item>
+
           {/* Points Balance Filter */}
-          <Form.Item name="points_balance" label="Points Balance">
+          {/* <Form.Item name="points_balance" label="Points Balance">
             <InputNumber
               min={0}
               placeholder="Minimum Points Balance"
               style={{ width: "100%" }}
             />
-          </Form.Item>
+          </Form.Item> */}
           {/* Referral Count Filter */}
-          <Form.Item name="referral_count" label="Count of Referrals">
+          {/* <Form.Item name="referral_count" label="Count of Referrals">
             <InputNumber
               min={0}
               placeholder="Minimum Referrals"
               style={{ width: "100%" }}
             />
-          </Form.Item>
+          </Form.Item> */}
           {/* Order Count Filter */}
-          <Form.Item name="order_count" label="Count of Orders">
+          {/* <Form.Item name="order_count" label="Count of Orders">
             <InputNumber
               min={0}
               placeholder="Minimum Orders"
               style={{ width: "100%" }}
             />
-          </Form.Item>
+          </Form.Item> */}
           {/* Apply and Clear Buttons */}
+
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Apply Filters

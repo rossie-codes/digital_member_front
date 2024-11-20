@@ -1,8 +1,8 @@
-// 完成 member_list 跨頁的記憶，下一步要 broadcast_list 的做法複製去其他頁
+// 想將 broadcast 首頁原樣複製
 
-// 想修改一下 filter 的項目先
 
-// // src/app/dashboard/broadcast_setting/page.tsx
+
+// // src/app/dashboard/broadcast_setting/broadcast_history/page.tsx
 
 // "use client";
 // import React, { useEffect, useState, useRef } from "react";
@@ -20,8 +20,7 @@
 //   message,
 //   Dropdown,
 //   InputNumber,
-//   Popconfirm,
-//   Typography
+//   Popconfirm
 // } from "antd";
 // import type { TableColumnsType, TableProps, PaginationProps } from "antd";
 // import {
@@ -31,22 +30,19 @@
 //   UserOutlined,
 //   DownOutlined,
 // } from "@ant-design/icons";
-// import Link from 'next/link';
 // import { useRouter } from "next/navigation";
 // import dayjs from "dayjs";
-// const { Title } = Typography;
-
 
 // const { Search } = Input;
 
-// interface Broadcast {
+// interface DataType {
 //   key: string;
-//   broadcast_id: number;
 //   broadcast_name: string;
 //   wati_template: string;
 //   scheduled_start: string;
 //   recipient_count: number;
 // }
+
 
 // interface BroadcastFetchParams {
 //   page: number;
@@ -57,6 +53,7 @@
 //   broadcastSearchText?: string;
 // }
 
+
 // interface MemberFetchParams {
 //   page: number;
 //   pageSize: number;
@@ -66,6 +63,8 @@
 //   memberSearchText?: string;
 //   modalMemberSearchText?: string;
 // }
+
+
 
 // interface WatiTemplate {
 //   id: string;
@@ -84,17 +83,14 @@
 //   order_count: number;
 // }
 
-// const BroadcastSettingPage: React.FC = () => {
+// const BroadcastHistoryPage: React.FC = () => {
 //   const [loading, setLoading] = useState<boolean>(true);
 //   const [error, setError] = useState<Error | null>(null);
 //   const hasFetched = useRef(false);
 
 //   const router = useRouter();
-//   // const handleEdit = (record: Broadcast) => {
-//   //   router.push(`/dashboard/broadcast_setting/${record.key}/edit`);
-//   // };
 
-//   const [broadcastData, setBroadcastData] = useState<Broadcast[]>([]);
+//   const [broadcastData, setBroadcastData] = useState<DataType[]>([]);
 //   const [broadcastSearchText, setBroadcastSearchText] = useState<string>("");
 //   const showTotal: PaginationProps["showTotal"] = (total) =>
 //     `Total ${total} items`;
@@ -116,7 +112,6 @@
 
 //   const [selectedBroadcastRowKeys, setSelectedBroadcastRowKeys] = useState<React.Key[]>([]);
 //   const [selectedMemberRowKeys, setSelectedMemberRowKeys] = useState<React.Key[]>([]);
-//   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
 //   // State variables for members
 //   const [modalMembers, setModalMembers] = useState<Member[]>([]);
@@ -130,11 +125,8 @@
 //   const [memberPageSize, setModalPageSize] = useState<number>(10);
 //   const [memberTotalItems, setModalTotalItems] = useState<number>(0);
 
-
-
 //   const [selectedTemplateData, setSelectedTemplateData] = useState<any>(null);
 //   const [loadingTemplateData, setLoadingTemplateData] = useState<boolean>(false);
-
 
 
 //   // 要將各個 request 集合在一個 request，反正都是打開 modal 時發生
@@ -163,7 +155,7 @@
 
 //       const response = await fetch(
 //         `${process.env.NEXT_PUBLIC_API_URL
-//         }/broadcast_setting/get_broadcast_list?${queryParams.toString()}`,
+//         }/broadcast_setting/get_broadcast_history_list?${queryParams.toString()}`,
 //         {
 //           credentials: "include",
 //         }
@@ -184,7 +176,7 @@
 //         );
 //       }
 
-//       const formattedData: Broadcast[] = broadcasts.map((broadcast: any) => ({
+//       const formattedData: DataType[] = broadcasts.map((broadcast: any) => ({
 //         key: broadcast.broadcast_id,
 //         broadcast_id: broadcast.broadcast_id,
 //         broadcast_name: broadcast.broadcast_name || "N/A",
@@ -206,9 +198,9 @@
 //   };
 
 //   const broadcastRowSelection = {
-//     selectedBroadcastRowKeys,
-//     onChange: (newSelectedBroadcastRowKeys: React.Key[], selectedBroadcastRows: Broadcast[]) => {
-//       setSelectedBroadcastRowKeys(newSelectedBroadcastRowKeys);
+//     selectedRowKeys: selectedBroadcastRowKeys,
+//     onChange: (newSelectedRowKeys: React.Key[], selectedRows: DataType[]) => {
+//       setSelectedBroadcastRowKeys(newSelectedRowKeys);
 //       // Optionally, you can also store the selectedRows for future use
 //     },
 //     // Uncomment below if you want to disable selection for certain rows
@@ -218,15 +210,6 @@
 //     // }),
 //   };
 
-//   // Define the rowSelection object
-//   // const memberRowSelection: TableProps<Member>['rowSelection'] = {
-//   // const memberRowSelection = {
-//   //   selectedRowKeys: selectedMemberRowKeys,
-//   //   onChange: (selectedRowKeys: React.Key[]) => {
-//   //     setSelectedMemberRowKeys(selectedRowKeys as string[]);
-//   //     console.log('Selected members:', selectedRowKeys);
-//   //   },
-//   // };
 
 //   const memberRowSelection: TableProps<Member>['rowSelection'] = {
 //     selectedRowKeys: selectedMemberRowKeys,
@@ -277,64 +260,20 @@
 //     });
 //   };
 
-//   const handleDelete = async (key: string) => {
-//     try {
-//       const response = await fetch(
-//         `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/delete_broadcast/${key}`,
-//         {
-//           method: "DELETE",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//           credentials: "include",
-//         }
-//       );
 
-//       if (!response.ok) {
-//         throw new Error(`Failed to delete broadcast: ${response.status}`);
-//       }
-
-//       message.success("Broadcast deleted successfully!");
-//       // Option 1: Refresh the table data
-//       fetchBroadcastData({
-//         page: broadcastCurrentPage,
-//         pageSize: broadcastPageSize,
-//         broadcastSearchText: broadcastSearchText,
-//       });
-
-//       // Option 2: Remove the deleted item from state
-//       // setBroadcastData(prevData => prevData.filter(item => item.key !== key));
-//     } catch (error: any) {
-//       console.error("Delete error:", error);
-//       message.error(`Error deleting broadcast: ${error.message}`);
-//     }
-//   };
-
-//   const broadcastColumns: TableColumnsType<Broadcast> = [
-//     // {
-//     //   title: "",
-//     //   key: "",
-//     //   render: (_: any, record: Broadcast) => (
-//     //     <Button
-//     //       type="link"
-//     //       icon={<FormOutlined style={{ color: "#ff4d4f" }} />}
-//     //       onClick={() => handleEdit(record)}
-//     //     />
-//     //   ),
-//     //   width: 50,
-//     // },
+//   const broadcastColumns: TableColumnsType<DataType> = [
 //     {
-//       title: '',
-//       dataIndex: 'edit',
-//       key: 'edit',
-//       render: (_: any, record: Broadcast) => (
-//         <Link href={`/dashboard/broadcast_setting/${record.broadcast_id}/edit`}>
-//           <Button type="link" icon={<FormOutlined style={{ color: '#ff4d4f' }} />} />
-//         </Link>
+//       title: "",
+//       key: "",
+//       render: (_: any, record: DataType) => (
+//         <Button
+//           type="link"
+//           icon={<FormOutlined style={{ color: "#ff4d4f" }} />}
+//           onClick={() => handleEdit(record)}
+//         />
 //       ),
 //       width: 50,
 //     },
-
 //     {
 //       title: "Broadcast Name",
 //       dataIndex: "broadcast_name",
@@ -360,21 +299,6 @@
 //       sortDirections: ["ascend", "descend"],
 //       align: "right",
 //     },
-//     {
-//       title: "",
-//       key: "",
-//       render: (_: any, record: Broadcast) => (
-//         <Popconfirm
-//           title="Are you sure to delete this broadcast?"
-//           onConfirm={() => handleDelete(record.key)}
-//           okText="Yes"
-//           cancelText="No"
-//         >
-//           <Button type="link" icon={<DeleteOutlined style={{ color: "#ff4d4f" }} />} />
-//         </Popconfirm>
-//       ),
-//       width: 50,
-//     },
 //   ];
 
 //   const handleBroadcastTableChange = (pagination: any, filters: any, sorter: any) => {
@@ -397,24 +321,6 @@
 //       broadcastSearchText: broadcastSearchText,
 //     });
 //   };
-
-//   // const fetchWatiTemplates = async () => {
-//   //   setLoadingTemplates(true);
-//   //   try {
-//   //     // Fetch templates from WATI (replace with actual API call)
-//   //     const response = await fetch("/api/wati/templates");
-//   //     if (!response.ok) {
-//   //       throw new Error(`Error fetching WATI templates: ${response.status}`);
-//   //     }
-//   //     const templatesData = await response.json();
-//   //     setWatiTemplates(templatesData);
-//   //   } catch (error) {
-//   //     console.error("Error fetching WATI templates:", error);
-//   //     message.error("Failed to fetch WATI templates.");
-//   //   } finally {
-//   //     setLoadingTemplates(false);
-//   //   }
-//   // };
 
 //   const fetchModalMembers = async (
 //     params: MemberFetchParams = { page: 1, pageSize: 10 }
@@ -538,14 +444,13 @@
 //       // Reset form and selections when modal closes
 //       broadcastForm.resetFields();
 //       filterForm.resetFields();
-//       setSelectedMemberRowKeys([]); // Only reset when modal is closed
+//       setSelectedMemberRowKeys([]);
 //       setModalMemberSearchText('');
 //       setModalMemberFilters({});
 //       setModalCurrentPage(1);
 //       setModalPageSize(10);
 //     }
 //   }, [isModalVisible]);
-
 
 //   const handleWatiTemplateChange = async (templateId: string) => {
 //     setLoadingTemplateData(true);
@@ -583,7 +488,6 @@
 //       setLoadingTemplateData(false);
 //     }
 //   };
-
 
 //   const memberColumns: TableColumnsType<Member> = [
 //     {
@@ -715,8 +619,6 @@
 //     // onClick: handleMenuClick,
 //   };
 
-
-
 //   return (
 //     <div>
 //       <div
@@ -745,12 +647,12 @@
 //           </Dropdown>
 
 //           <Button
-//             onClick={() => router.push('/dashboard/broadcast_setting/broadcast_history')}
+//             onClick={() => router.push('/dashboard/broadcast_setting/')}
 //           >
-//             廣播歷史
+//             預定廣播
 //           </Button>
 //         </Space>
-//       </div>
+//       </div>  
 
 //       {/* Modal for New Broadcast */}
 //       <Modal
@@ -778,15 +680,13 @@
 
 //           {/* Template Message Selection */}
 //           <Form.Item
+//             label="Template Message"
 //             name="wati_template"
-//             label="WATI Template"
-//             rules={[{ required: true, message: 'Please select a WATI template' }]}
+//             rules={[
+//               { required: true, message: "Please select a template message!" },
+//             ]}
 //           >
-//             <Select
-//               loading={loadingTemplates}
-//               onChange={handleWatiTemplateChange} // Add this line
-//               placeholder="Select a WATI Template"
-//             >
+//             <Select loading={loadingTemplates}>
 //               {watiTemplates.map((template) => (
 //                 <Select.Option key={template.id} value={template.id}>
 //                   {template.name}
@@ -810,25 +710,23 @@
 //           </Form.Item>
 
 //           {/* Conditional Scheduled Time */}
-//           <Form.Item shouldUpdate={(prevValues, currentValues) => prevValues.schedule_type !== currentValues.schedule_type}>
-//             {({ getFieldValue }) => {
-//               return getFieldValue('schedule_type') === 'later' ? (
-//                 <Form.Item
-//                   label="Scheduled Time"
-//                   name="scheduled_time"
-//                   rules={[{ required: true, message: 'Please select a scheduled time!' }]}
-//                 >
-//                   <DatePicker
-//                     showTime
-//                     style={{ width: '100%' }}
-//                     disabledDate={(current) =>
-//                       current && dayjs(current).isBefore(dayjs().startOf('day'))
-//                     }
-//                   />
-//                 </Form.Item>
-//               ) : null;
-//             }}
-//           </Form.Item>
+//           {broadcastForm.getFieldValue("schedule_type") === "later" && (
+//             <Form.Item
+//               label="Scheduled Time"
+//               name="scheduled_time"
+//               rules={[
+//                 { required: true, message: "Please select a scheduled time!" },
+//               ]}
+//             >
+//               <DatePicker
+//                 showTime
+//                 style={{ width: "100%" }}
+//                 disabledDate={(current) =>
+//                   current && dayjs(current).isBefore(dayjs().startOf("day"))
+//                 }
+//               />
+//             </Form.Item>
+//           )}
 
 //           {/* Member Selection */}
 //           <Form.Item label="Member Selection" required>
@@ -837,16 +735,8 @@
 //                 placeholder="Search members"
 //                 value={modalMemberSearchText}
 //                 onChange={(e) => setModalMemberSearchText(e.target.value)}
-//                 onSearch={(value, event) => {
-//                   event?.preventDefault(); // Prevent form submission
-//                   onModalMemberSearch(value);
-//                 }}
-//                 enterButton={<Button type="primary" htmlType="button">Search</Button>}
+//                 onSearch={onModalMemberSearch}
 //                 style={{ width: 300 }}
-//                 onPressEnter={(e) => {
-//                   e.preventDefault(); // Prevent form submission on Enter key press
-//                   onModalMemberSearch(modalMemberSearchText);
-//                 }}
 //               />
 //               <Button onClick={() => setIsFilterModalVisible(true)}>
 //                 Filters
@@ -972,4 +862,4 @@
 //   );
 // };
 
-// export default BroadcastSettingPage;
+// export default BroadcastHistoryPage;

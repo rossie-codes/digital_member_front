@@ -1,6 +1,6 @@
-// 完成 member_list 跨頁的記憶，下一步要 broadcast_list 的做法複製去其他頁
+// 完成 selected count，完成 filter button，但 filter 未有功能
 
-// 想修改一下 filter 的項目先
+// 將這頁的 modal 複製到 detail edit page。
 
 // // src/app/dashboard/broadcast_setting/page.tsx
 
@@ -21,7 +21,9 @@
 //   Dropdown,
 //   InputNumber,
 //   Popconfirm,
-//   Typography
+//   Typography,
+//   Badge,
+//   Tag,
 // } from "antd";
 // import type { TableColumnsType, TableProps, PaginationProps } from "antd";
 // import {
@@ -90,9 +92,6 @@
 //   const hasFetched = useRef(false);
 
 //   const router = useRouter();
-//   // const handleEdit = (record: Broadcast) => {
-//   //   router.push(`/dashboard/broadcast_setting/${record.key}/edit`);
-//   // };
 
 //   const [broadcastData, setBroadcastData] = useState<Broadcast[]>([]);
 //   const [broadcastSearchText, setBroadcastSearchText] = useState<string>("");
@@ -116,7 +115,6 @@
 
 //   const [selectedBroadcastRowKeys, setSelectedBroadcastRowKeys] = useState<React.Key[]>([]);
 //   const [selectedMemberRowKeys, setSelectedMemberRowKeys] = useState<React.Key[]>([]);
-//   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
 //   // State variables for members
 //   const [modalMembers, setModalMembers] = useState<Member[]>([]);
@@ -129,7 +127,6 @@
 //   const [memberCurrentPage, setModalCurrentPage] = useState<number>(1);
 //   const [memberPageSize, setModalPageSize] = useState<number>(10);
 //   const [memberTotalItems, setModalTotalItems] = useState<number>(0);
-
 
 
 //   const [selectedTemplateData, setSelectedTemplateData] = useState<any>(null);
@@ -218,15 +215,6 @@
 //     // }),
 //   };
 
-//   // Define the rowSelection object
-//   // const memberRowSelection: TableProps<Member>['rowSelection'] = {
-//   // const memberRowSelection = {
-//   //   selectedRowKeys: selectedMemberRowKeys,
-//   //   onChange: (selectedRowKeys: React.Key[]) => {
-//   //     setSelectedMemberRowKeys(selectedRowKeys as string[]);
-//   //     console.log('Selected members:', selectedRowKeys);
-//   //   },
-//   // };
 
 //   const memberRowSelection: TableProps<Member>['rowSelection'] = {
 //     selectedRowKeys: selectedMemberRowKeys,
@@ -311,18 +299,6 @@
 //   };
 
 //   const broadcastColumns: TableColumnsType<Broadcast> = [
-//     // {
-//     //   title: "",
-//     //   key: "",
-//     //   render: (_: any, record: Broadcast) => (
-//     //     <Button
-//     //       type="link"
-//     //       icon={<FormOutlined style={{ color: "#ff4d4f" }} />}
-//     //       onClick={() => handleEdit(record)}
-//     //     />
-//     //   ),
-//     //   width: 50,
-//     // },
 //     {
 //       title: '',
 //       dataIndex: 'edit',
@@ -397,24 +373,6 @@
 //       broadcastSearchText: broadcastSearchText,
 //     });
 //   };
-
-//   // const fetchWatiTemplates = async () => {
-//   //   setLoadingTemplates(true);
-//   //   try {
-//   //     // Fetch templates from WATI (replace with actual API call)
-//   //     const response = await fetch("/api/wati/templates");
-//   //     if (!response.ok) {
-//   //       throw new Error(`Error fetching WATI templates: ${response.status}`);
-//   //     }
-//   //     const templatesData = await response.json();
-//   //     setWatiTemplates(templatesData);
-//   //   } catch (error) {
-//   //     console.error("Error fetching WATI templates:", error);
-//   //     message.error("Failed to fetch WATI templates.");
-//   //   } finally {
-//   //     setLoadingTemplates(false);
-//   //   }
-//   // };
 
 //   const fetchModalMembers = async (
 //     params: MemberFetchParams = { page: 1, pageSize: 10 }
@@ -820,6 +778,7 @@
 //                 >
 //                   <DatePicker
 //                     showTime
+//                     format="YYYY-MM-DD HH:mm"
 //                     style={{ width: '100%' }}
 //                     disabledDate={(current) =>
 //                       current && dayjs(current).isBefore(dayjs().startOf('day'))
@@ -851,6 +810,15 @@
 //               <Button onClick={() => setIsFilterModalVisible(true)}>
 //                 Filters
 //               </Button>
+//               {selectedMemberRowKeys.length > 0 && (
+//                 <Badge count={selectedMemberRowKeys.length} overflowCount={999} />
+//               )}
+//               {selectedMemberRowKeys.length > 0 && (
+//                 <Tag color="blue">
+//                   {selectedMemberRowKeys.length} Selected
+//                 </Tag>
+//               )}
+
 //             </Space>
 
 //             <Table
@@ -879,6 +847,7 @@
 //               Create Broadcast
 //             </Button>
 //           </Form.Item>
+
 //         </Form>
 //       </Modal>
 
@@ -890,7 +859,7 @@
 //       >
 //         <Form form={filterForm} layout="vertical" onFinish={handleFilterApply}>
 //           {/* Membership Tier Filter */}
-//           <Form.Item name="membership_tier" label="Membership Tier">
+//           <Form.Item name="membership_tier" label="會員級別">
 //             <Select
 //               allowClear
 //               placeholder="Select Membership Tier"
@@ -909,31 +878,66 @@
 //               ]}
 //             />
 //           </Form.Item>
+
+//           <Form.Item
+//             name="membership_expiry_date"
+//             label="會籍到期月份"
+//             rules={[{ required: false, message: '選擇日期' }]}
+//           >
+//             <DatePicker
+//               picker="month"
+//               format="YYYY-MM"
+//               style={{ width: '100%' }} />
+//           </Form.Item>
+
+//           <Form.Item
+//             name="birthday"
+//             label="生日月份"
+//             rules={[{ required: false, message: '選擇日期' }]}
+//           >
+//             <DatePicker
+//               picker="month"
+//               format="MM"
+//               style={{ width: '100%' }} />
+//           </Form.Item>
+
+//           <Form.Item
+//             name="created_at"
+//             label="加入日期"
+//             rules={[{ required: false, message: '選擇日期' }]}
+//           >
+//             <DatePicker
+//               // showTime
+//               format="YYYY-MM-DD"
+//               style={{ width: '100%' }} />
+//           </Form.Item>
+
 //           {/* Points Balance Filter */}
-//           <Form.Item name="points_balance" label="Points Balance">
+//           {/* <Form.Item name="points_balance" label="Points Balance">
 //             <InputNumber
 //               min={0}
 //               placeholder="Minimum Points Balance"
 //               style={{ width: "100%" }}
 //             />
-//           </Form.Item>
+//           </Form.Item> */}
 //           {/* Referral Count Filter */}
-//           <Form.Item name="referral_count" label="Count of Referrals">
+//           {/* <Form.Item name="referral_count" label="Count of Referrals">
 //             <InputNumber
 //               min={0}
 //               placeholder="Minimum Referrals"
 //               style={{ width: "100%" }}
 //             />
-//           </Form.Item>
+//           </Form.Item> */}
 //           {/* Order Count Filter */}
-//           <Form.Item name="order_count" label="Count of Orders">
+//           {/* <Form.Item name="order_count" label="Count of Orders">
 //             <InputNumber
 //               min={0}
 //               placeholder="Minimum Orders"
 //               style={{ width: "100%" }}
 //             />
-//           </Form.Item>
+//           </Form.Item> */}
 //           {/* Apply and Clear Buttons */}
+
 //           <Form.Item>
 //             <Button type="primary" htmlType="submit">
 //               Apply Filters
