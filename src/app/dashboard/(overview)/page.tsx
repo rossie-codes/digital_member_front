@@ -67,17 +67,4 @@ export default function DashboardPage() {
     );
   }
 
-  return (
-    <div style={{ padding: '20px' }}>
-      <Title level={2}>Welcome to the Dashboard</Title>
-      {dashboardData && (
-        <div style={{ marginTop: '20px' }}>
-          <Text strong>User Count:</Text> <Text>{dashboardData.userCount}</Text>
-          <br />
-          <Text strong>Sales:</Text> <Text>${dashboardData.sales}</Text>
-          {/* Add more fields as necessary */}
-        </div>
-      )}
-    </div>
-  );
 }
