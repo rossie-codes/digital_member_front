@@ -743,6 +743,7 @@ const DiscountCodeListPage: React.FC = () => {
           >
             <TextArea
               className="form-input"
+              style={{ marginBottom: '6px' }}
               placeholder="輸入禮物的條款及細則"
               autoSize={{ minRows: 3, maxRows: 5 }}
             />
@@ -756,7 +757,7 @@ const DiscountCodeListPage: React.FC = () => {
             initialValue={selectedDiscountType}
             rules={[{ required: true, message: 'Please select a discount type' }]}
           >
-            <Select onChange={handleDiscountTypeChange}>
+            <Select onChange={handleDiscountTypeChange}  style={{ marginBottom: '18px' }}>
               <Option value="fixed_amount">固定金額</Option>
               <Option value="percentage">折扣比率</Option>
             </Select>
@@ -803,7 +804,7 @@ const DiscountCodeListPage: React.FC = () => {
             label={<span className="form-item-label">使用限制</span>}
             rules={[{ required: true, message: 'Please select the use limit type' }]}
           >
-            <Select placeholder="選擇使用限制">
+            <Select placeholder="選擇使用限制" style={{ marginBottom: '18px' }}>
               <Option value="single_use">此編號使用一次後失效</Option>
               <Option value="once_per_customer">每位客戶可使用一次</Option>
               <Option value="unlimited">沒有限制</Option>
