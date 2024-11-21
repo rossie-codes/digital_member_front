@@ -1,4 +1,4 @@
-// src/app/dashboard/broadcast_setting/page.tsx
+// src/app/dashboard/broadcast_setting/broadcast_history/page.tsx
 
 "use client";
 import React, { useEffect, useState, useRef } from "react";
@@ -17,7 +17,6 @@ import {
   Dropdown,
   InputNumber,
   Popconfirm,
-  Typography,
   Badge,
   Tag,
 } from "antd";
@@ -32,8 +31,6 @@ import {
 import Link from 'next/link';
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
-const { Title } = Typography;
-
 
 const { Search } = Input;
 
@@ -55,6 +52,7 @@ interface BroadcastFetchParams {
   broadcastSearchText?: string;
 }
 
+
 interface MemberFetchParams {
   page: number;
   pageSize: number;
@@ -64,6 +62,8 @@ interface MemberFetchParams {
   memberSearchText?: string;
   modalMemberSearchText?: string;
 }
+
+
 
 interface WatiTemplate {
   id: string;
@@ -82,7 +82,7 @@ interface Member {
   order_count: number;
 }
 
-const BroadcastSettingPage: React.FC = () => {
+const BroadcastHistoryPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const hasFetched = useRef(false);
@@ -128,7 +128,6 @@ const BroadcastSettingPage: React.FC = () => {
   const [loadingTemplateData, setLoadingTemplateData] = useState<boolean>(false);
 
 
-
   // 要將各個 request 集合在一個 request，反正都是打開 modal 時發生
   const [membershipTierOptions, setMembershipTierOptions] = useState<
     { label: string; value: string }[]
@@ -155,7 +154,7 @@ const BroadcastSettingPage: React.FC = () => {
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL
-        }/broadcast_setting/get_broadcast_list?${queryParams.toString()}`,
+        }/broadcast_setting/get_broadcast_history_list?${queryParams.toString()}`,
         {
           credentials: "include",
         }
@@ -198,14 +197,14 @@ const BroadcastSettingPage: React.FC = () => {
   };
 
   const broadcastRowSelection = {
-    selectedBroadcastRowKeys,
+    selectedBroadcastRowKeys: selectedBroadcastRowKeys,
     onChange: (newSelectedBroadcastRowKeys: React.Key[], selectedBroadcastRows: Broadcast[]) => {
       setSelectedBroadcastRowKeys(newSelectedBroadcastRowKeys);
       // Optionally, you can also store the selectedRows for future use
     },
     // Uncomment below if you want to disable selection for certain rows
 
-    // getCheckboxProps: (record: DataType) => ({
+    // getCheckboxProps: (record: Broadcast) => ({
     //   disabled: record.name === 'Disabled Broadcast', // Disable checkbox for specific rows
     // }),
   };
@@ -260,38 +259,6 @@ const BroadcastSettingPage: React.FC = () => {
     });
   };
 
-  const handleDelete = async (key: string) => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/delete_broadcast/${key}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to delete broadcast: ${response.status}`);
-      }
-
-      message.success("Broadcast deleted successfully!");
-      // Option 1: Refresh the table data
-      fetchBroadcastData({
-        page: broadcastCurrentPage,
-        pageSize: broadcastPageSize,
-        broadcastSearchText: broadcastSearchText,
-      });
-
-      // Option 2: Remove the deleted item from state
-      // setBroadcastData(prevData => prevData.filter(item => item.key !== key));
-    } catch (error: any) {
-      console.error("Delete error:", error);
-      message.error(`Error deleting broadcast: ${error.message}`);
-    }
-  };
 
   const broadcastColumns: TableColumnsType<Broadcast> = [
     {
@@ -305,7 +272,6 @@ const BroadcastSettingPage: React.FC = () => {
       ),
       width: 50,
     },
-
     {
       title: "Broadcast Name",
       dataIndex: "broadcast_name",
@@ -330,21 +296,6 @@ const BroadcastSettingPage: React.FC = () => {
       sorter: true,
       sortDirections: ["ascend", "descend"],
       align: "right",
-    },
-    {
-      title: "",
-      key: "",
-      render: (_: any, record: Broadcast) => (
-        <Popconfirm
-          title="Are you sure to delete this broadcast?"
-          onConfirm={() => handleDelete(record.key)}
-          okText="Yes"
-          cancelText="No"
-        >
-          <Button type="link" icon={<DeleteOutlined style={{ color: "#ff4d4f" }} />} />
-        </Popconfirm>
-      ),
-      width: 50,
     },
   ];
 
@@ -491,14 +442,13 @@ const BroadcastSettingPage: React.FC = () => {
       // Reset form and selections when modal closes
       broadcastForm.resetFields();
       filterForm.resetFields();
-      setSelectedMemberRowKeys([]); // Only reset when modal is closed
+      setSelectedMemberRowKeys([]);
       setModalMemberSearchText('');
       setModalMemberFilters({});
       setModalCurrentPage(1);
       setModalPageSize(10);
     }
   }, [isModalVisible]);
-
 
   const handleWatiTemplateChange = async (templateId: string) => {
     setLoadingTemplateData(true);
@@ -536,7 +486,6 @@ const BroadcastSettingPage: React.FC = () => {
       setLoadingTemplateData(false);
     }
   };
-
 
   const memberColumns: TableColumnsType<Member> = [
     {
@@ -668,8 +617,6 @@ const BroadcastSettingPage: React.FC = () => {
     // onClick: handleMenuClick,
   };
 
-
-
   return (
     <div>
       <div
@@ -698,12 +645,12 @@ const BroadcastSettingPage: React.FC = () => {
           </Dropdown>
 
           <Button
-            onClick={() => router.push('/dashboard/broadcast_setting/broadcast_history')}
+            onClick={() => router.push('/dashboard/broadcast_setting/')}
           >
-            廣播歷史
+            預定廣播
           </Button>
         </Space>
-      </div>
+      </div>  
 
       {/* Modal for New Broadcast */}
       <Modal
@@ -843,7 +790,6 @@ const BroadcastSettingPage: React.FC = () => {
               Create Broadcast
             </Button>
           </Form.Item>
-
         </Form>
       </Modal>
 
@@ -972,4 +918,4 @@ const BroadcastSettingPage: React.FC = () => {
   );
 };
 
-export default BroadcastSettingPage;
+export default BroadcastHistoryPage;
