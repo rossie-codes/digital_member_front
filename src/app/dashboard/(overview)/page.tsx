@@ -70,9 +70,13 @@ const DonutChart = () => (
 );
 
 
+interface DashboardInfo {
+  userCount: number;
+  sales: number;
+  // Add other relevant fields as needed
+}
 
 export default function DashboardPage() {
- 
   const [dashboardData, setDashboardData] = useState<DashboardInfo | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
