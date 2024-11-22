@@ -759,7 +759,7 @@ const DiscountCodeListPage: React.FC = () => {
           >
             <Select onChange={handleDiscountTypeChange}  style={{ marginBottom: '18px' }}>
               <Option value="fixed_amount">固定金額</Option>
-              <Option value="percentage">折扣比率</Option>
+              <Option value="percentage">百分比</Option>
             </Select>
           </Form.Item>
 

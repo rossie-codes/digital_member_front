@@ -436,12 +436,38 @@
   display: flex !important;
   align-items: center !important;
 }
-
-
-
 /* page */
 
-  
+/* edit */
+
+.switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  padding: 5px;
+}
+
+.switch-text {
+  color: var(--dark-gray, #596869);
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 14px;
+  letter-spacing: -0.28px;
+  display: flex;
+  align-items: center;
+}
+
+.ant-card-bordered {
+  border: none !important;
+}
+
+
+
+
+/* edit */
 
   
   

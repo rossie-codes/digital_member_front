@@ -21,6 +21,7 @@ import {
 } from 'antd';
 import { useParams, useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
+import { CloseOutlined } from '@ant-design/icons';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -251,33 +252,49 @@ const GetDiscountCodeDetailPage: React.FC = () => {
 
     return (
         <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Title level={2}>折扣券詳情</Title>
-                <Button type="primary" onClick={() => router.back()}>
-                    Back
-                </Button>
-            </div>
+
+        <div className="modalTitle">
+            <img src="/coupon.png" alt="Icon" style={{ width: '24px' }} /> 
+            <span className="BigcountText">優惠詳情</span>
+        
+
+            <Button
+            type="text"
+            onClick={() => router.back()}
+            icon={<CloseOutlined />}
+            style={{
+                marginLeft: 'auto',
+                fontSize: '16px', // 圖標大小
+              }}
+        />
+        </div>
+       
             
-            <Form.Item label="狀態">
-                <Switch
-                    checkedChildren="已啟用"
-                    unCheckedChildren="已停用"
-                    checked={isActive}
-                    onChange={(checked) => handleToggleActive(checked)}
-                />
-            </Form.Item>
+        <div className="switch-container">
+        <span className="switch-text">
+            {isActive ? '已啟用' : '已停用'}
+        </span>
+        <Switch
+            checked={isActive}
+            onChange={(checked) => handleToggleActive(checked)}
+        />
+        </div>
+
+
+
+            
 
             <Card style={{ marginTop: 16 }}>
                 <Form form={form} onFinish={onFinish} layout="vertical">
                     {/* Discount Type */}
                     <Form.Item
                         name="discount_type"
-                        label="折扣類別"
+                        label="折扣類型"
                         rules={[{ required: true, message: 'Please select a discount type' }]}
                     >
                         <Select onChange={handleDiscountTypeChange} disabled>
-                            <Option value="fixed_amount">Fixed Amount Discount</Option>
-                            <Option value="percentage">Percentage Discount</Option>
+                            <Option value="fixed_amount">固定金額</Option>
+                            <Option value="percentage">百分比</Option>
                         </Select>
                     </Form.Item>
 
@@ -313,7 +330,7 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                         <>
                             <Form.Item
                                 name="discount_percentage"
-                                label="折扣額"
+                                label="折扣百分比"
                                 rules={[{ required: true, message: 'Please enter the discount percentage' }]}
                             >
                                 <InputNumber<number>
@@ -324,13 +341,13 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                                     parser={(value) => parseFloat(value!.replace('%', '') || '0')}
                                 />
                             </Form.Item>
-                            {/* <Form.Item
+                            <Form.Item
                                 name="fixed_discount_cap"
                                 label="最高折扣限額"
                                 rules={[{ required: true, message: 'Please enter the fixed discount cap' }]}
                             >
                                 <InputNumber min={0} style={{ width: '100%' }} />
-                            </Form.Item> */}
+                            </Form.Item>
                         </>
                     )}
 
@@ -384,8 +401,8 @@ const GetDiscountCodeDetailPage: React.FC = () => {
 
                     <Form.Item
                         name="valid_from"
-                        label="生效日期"
-                        rules={[{ required: true, message: '請選擇生效日期' }]}
+                        label="折扣開始日期"
+                        rules={[{ required: true, message: '請選擇開始日期' }]}
                     >
                         <DatePicker
                             showTime
@@ -398,15 +415,15 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                         {() => (
                             <Form.Item
                                 name="valid_until"
-                                label="到期日期"
+                                label="折扣結束日期"
                                 rules={[
-                                    { required: true, message: '請選擇到期日期' },
+                                    { required: true, message: '請選擇結束日期' },
                                     ({ getFieldValue }) => ({
                                         validator(_, value) {
                                             if (!value || !getFieldValue('valid_from') || value.isAfter(getFieldValue('valid_from'))) {
                                                 return Promise.resolve();
                                             }
-                                            return Promise.reject(new Error('到期日期必須在生效日期之後'));
+                                            return Promise.reject(new Error('結束日期必須在開始日期之後'));
                                         },
                                     }),
                                 ]}
@@ -423,11 +440,11 @@ const GetDiscountCodeDetailPage: React.FC = () => {
 
                     <Form.Item
                         name="discount_code_content"
-                        label="優惠詳情"
-                        rules={[{ required: true, message: '輸入禮物詳情' }]}
+                        label="詳情"
+                        rules={[{ required: true, message: '輸入優惠詳情' }]}
                     >
                         <TextArea
-                            placeholder="輸入禮物詳情"
+                            placeholder="輸入優惠詳情"
                             autoSize={{ minRows: 3, maxRows: 5 }}
                         />
                     </Form.Item>
@@ -436,10 +453,10 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                     <Form.Item
                         name="discount_code_term"
                         label="條款及細則"
-                        rules={[{ required: true, message: '輸入禮物的條款及細則' }]}
+                        rules={[{ required: true, message: '輸入優惠的條款及細則' }]}
                     >
                         <TextArea
-                            placeholder="輸入禮物的條款及細則"
+                            placeholder="輸入優惠的條款及細則"
                             autoSize={{ minRows: 3, maxRows: 5 }}
                         />
                     </Form.Item>
