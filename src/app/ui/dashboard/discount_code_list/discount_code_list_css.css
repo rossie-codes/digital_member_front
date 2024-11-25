@@ -1,53 +1,51 @@
 /* Styling for the Header component */
 
 .ant-layout-header {
-    background-color: #fff; /* Example background color */
-    padding: 0 20px; /* Example padding */
-    border-bottom: 1px solid #eee; /* Example border */
-  }
-  
-  /* Styling for the Menu items */
+  background-color: #fff; /* Example background color */
+  padding: 0 20px; /* Example padding */
+  border-bottom: 1px solid #eee; /* Example border */
+}
+
+/* Styling for the Menu items */
+.ant-menu-horizontal {
+  border-bottom: none; /* Remove default menu border */
+}
+
+.ant-menu-item {
+  font-size: 16px; /* Example font size */
+  margin-right: 20px; /* Example spacing between items */
+}
+
+.ant-menu-item-selected {
+  background-color: #f0f0f0; /* Example background color for selected item */
+  font-weight: bold; /* Example font weight for selected item */
+}
+
+.ant-menu-item a {
+  color: #333; /* Example link color */
+  text-decoration: none; /* Remove underlines from links */
+}
+
+.ant-menu-item-selected a {
+  color: #1890ff; /* Example link color for selected item */
+}
+
+/* Styling for the Logout Button (assuming it's a standard Ant Design button) */
+.ant-btn-primary {
+  background-color: #1890ff; /* Example background color */
+  border-color: #1890ff; /* Example border color */
+}
+
+/* Media query for responsiveness (adjust as needed) */
+@media (max-width: 768px) {
   .ant-menu-horizontal {
-    border-bottom: none; /* Remove default menu border */
+    display: none; /* Hide the horizontal menu on smaller screens */
   }
-  
-  .ant-menu-item {
-    font-size: 16px; /* Example font size */
-    margin-right: 20px; /* Example spacing between items */
-  }
-  
-  .ant-menu-item-selected {
-    background-color: #f0f0f0; /* Example background color for selected item */
-    font-weight: bold; /* Example font weight for selected item */
-  }
-  
-  .ant-menu-item a {
-    color: #333; /* Example link color */
-    text-decoration: none; /* Remove underlines from links */
-  }
-  
-  .ant-menu-item-selected a {
-    color: #1890ff; /* Example link color for selected item */
-  }
-  
-  
-  /* Styling for the Logout Button (assuming it's a standard Ant Design button) */
-  .ant-btn-primary {
-    background-color: #1890ff; /* Example background color */
-    border-color: #1890ff; /* Example border color */
-  }
-  
-  /* Media query for responsiveness (adjust as needed) */
-  @media (max-width: 768px) {
-    .ant-menu-horizontal {
-      display: none;  /* Hide the horizontal menu on smaller screens */
-    }
-    /* Add styles for a mobile menu if needed */
-  }
+  /* Add styles for a mobile menu if needed */
+}
 
- /* header */
+/* header */
 
-/* 菱形圖標 */
 .custom-page-menu .diamondIcon {
   width: 4.243px !important;
   height: 4.243px;
@@ -57,129 +55,153 @@
   position: relative;
 }
 
-/* 框框 */
 .custom-page-menu .icon-box {
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* 菱形靠右 */
+  justify-content: flex-end;
   width: 21px;
   height: 6px;
-  margin-right: 0px; /* 與 CaretRightOutlined 的距離 */
+  margin-right: 0px;
 }
 
-/* 整體容器 */
 .custom-page-menu .menu-item-container {
   display: flex;
   align-items: center;
-  gap: 0px; /* 控制菱形、CaretRight 和文字之間的間距 */
+  gap: 0px;
 }
 
-/* CaretRight 圖標 */
 .custom-page-menu .caret-icon {
-  margin-right: 0px; /* CaretRightOutlined 與文字之間的間距 */
+  margin-right: 0px;
   display: flex;
-  align-items: center; /* 保持內容居中 */
+  align-items: center;
   justify-content: center;
   font-size: 21px !important;
 }
 
-/* 通用文字樣式 */
 .custom-page-menu .menu-item-text {
   font-family: "Noto Sans HK";
   font-size: 16px;
   font-style: normal;
-  line-height: 22px; /* 137.5% */
-  letter-spacing: -0.32px; /* 字母間距 */
+  line-height: 22px;
+  letter-spacing: -0.32px;
 }
 
-/* 黑色文字樣式 */
 .custom-page-menu .menu-item-text {
-  color: var(--key-colors-primary, #131313); /* 黑色 */
-  font-weight: 400; /* 常規字重 */
+  color: var(--key-colors-primary, #131313);
+  font-weight: 400;
 }
 
-/* 橘色文字樣式（選中） */
 .custom-page-menu .menu-item-selected {
-  color: var(--key-colors-tertiary, #D74D03); /* 橘色 */
-  font-weight: 700; /* 加粗 */
+  color: var(--key-colors-tertiary, #d74d03);
+  font-weight: 700;
 }
 
-.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light.ant-menu-horizontal > .ant-menu-item::after,
-.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light > .ant-menu.ant-menu-horizontal > .ant-menu-item::after,
-.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light.ant-menu-horizontal > .ant-menu-submenu::after,
-.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light > .ant-menu.ant-menu-horizontal > .ant-menu-submenu::after {
-  content: none !important; /* 禁用原有的 after 樣式 */
-  border-bottom: none !important; /* 禁用任何底部邊框 */
-}
-
-/* 加強選中項目的覆蓋 */
-.custom-page-menu :where(.ant-menu-light.ant-menu-horizontal) > .ant-menu-item-selected::after,
-.custom-page-menu :where(.ant-menu-light.ant-menu-horizontal) > .ant-menu-submenu-selected::after {
+.custom-page-menu
+  :where(
+    .css-dev-only-do-not-override-ni1kz0
+  ).ant-menu-light.ant-menu-horizontal
+  > .ant-menu-item::after,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light
+  > .ant-menu.ant-menu-horizontal
+  > .ant-menu-item::after,
+.custom-page-menu
+  :where(
+    .css-dev-only-do-not-override-ni1kz0
+  ).ant-menu-light.ant-menu-horizontal
+  > .ant-menu-submenu::after,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light
+  > .ant-menu.ant-menu-horizontal
+  > .ant-menu-submenu::after {
   content: none !important;
   border-bottom: none !important;
 }
 
-
-.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal {
-  line-height: normal !important; /* 重置行高 */
+.custom-page-menu
+  :where(.ant-menu-light.ant-menu-horizontal)
+  > .ant-menu-item-selected::after,
+.custom-page-menu
+  :where(.ant-menu-light.ant-menu-horizontal)
+  > .ant-menu-submenu-selected::after {
+  content: none !important;
+  border-bottom: none !important;
 }
 
-
-
-.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal .ant-menu-item,
-.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal .ant-menu-submenu {
-  padding-inline: 0 !important; /* 移除左右內距 */
-  margin-right: 8px; /* 添加右側間距 */
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal {
+  line-height: normal !important;
 }
 
-.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu .ant-menu-item .ant-menu-item-icon + span,
-.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu .ant-menu-submenu-title .ant-menu-item-icon + span,
-.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu .ant-menu-item .anticon + span,
-.custom-page-menu :where(.css-dev-only-do-not-override-ni1kz0).ant-menu .ant-menu-submenu-title .anticon + span {
-  margin-inline-start: 0 !important; /* 移除開始邊距 */
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal
+  .ant-menu-item,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal
+  .ant-menu-submenu {
+  padding-inline: 0 !important;
+  margin-right: 8px;
+}
+
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu
+  .ant-menu-item
+  .ant-menu-item-icon
+  + span,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu
+  .ant-menu-submenu-title
+  .ant-menu-item-icon
+  + span,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu
+  .ant-menu-item
+  .anticon
+  + span,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu
+  .ant-menu-submenu-title
+  .anticon
+  + span {
+  margin-inline-start: 0 !important;
 }
 
 .custom-page-menu :where(.ant-menu-horizontal) > .ant-menu-item {
-  height: 50px; /* 設定高度 */
-  line-height: 50px; /* 確保文字垂直居中 */
-  display: flex; /* 使用 flex 布局 */
-  align-items: center; /* 垂直居中對齊 */
+  height: 50px;
+  line-height: 50px;
+  display: flex;
+  align-items: center;
 }
- /* header */
+/* header */
 
 /* page */
 
-/* 整個容器的樣式 */
 .promotion-summary {
   display: flex;
   align-items: flex-start;
-  gap: 30px; /* 調整兩個項目間的間距 */
-  margin-bottom: 25px; /* 與下方內容的間距 */
+  gap: 30px;
+  margin-bottom: 25px;
 }
 
-/* 單項目容器 */
 .promotion-item {
   display: flex;
-  align-items: center; /* 確保內容垂直居中 */
-  gap: 10px; /* 圖片與文字區塊的間距 */
+  align-items: center;
+  gap: 10px;
 }
 
-/* 圖片樣式 */
 .promotion-image {
-  width: 82px; /* 圖片寬度 */
-  height: 82px; /* 圖片高度 */
+  width: 82px;
+  height: 82px;
   display: block;
 }
 
-/* 文字與數字的區塊 */
 .promotion-content {
   display: flex;
-  flex-direction: column; /* 垂直排列文字與數字 */
-  align-items: flex-start; /* 左對齊文字與數字 */
-  gap: 4px; /* 文字與數字之間的間距 */
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
 }
 
-/* 文字樣式 */
 .promotion-text {
   color: var(--Text, #272727);
   font-family: "Noto Sans HK";
@@ -190,7 +212,6 @@
   letter-spacing: -0.28px;
 }
 
-/* 數字樣式 */
 .promotion-number {
   color: var(--Text, #272727);
   font-family: "Noto Sans HK";
@@ -200,39 +221,36 @@
   line-height: 30px;
 }
 
-/* 按鈕樣式 */
 .custom-button {
   display: flex;
   justify-content: center;
-  align-items: center; /* 確保文字和圖標垂直居中 */
-  height: 32px; /* 按鈕的固定高度 */
-  padding: 8px 10px; /* 內部邊距 */
-  gap: 5px; /* 文字和圖標之間的間距 */
-  border-radius: 5px; /* 邊角圓角 */
-  border: 3px solid var(--key-colors-primary, #131313); /* 按鈕邊框顏色 */
-  background-color: transparent; /* 按鈕背景透明 */
+  align-items: center;
+  height: 32px;
+  padding: 8px 10px;
+  gap: 5px;
+  border-radius: 5px;
+  border: 3px solid var(--key-colors-primary, #131313);
+  background-color: transparent;
   margin-top: auto;
 }
 
-/* 按鈕文字樣式 */
 .custom-button .button-text {
-  color: var(--key-colors-primary, #131313); /* 文字顏色 */
+  color: var(--key-colors-primary, #131313);
   font-family: "Noto Sans HK";
   font-size: 14px;
   font-style: normal;
   font-weight: 700;
-  line-height: 1; /* 固定行高，防止文字偏移 */
-  letter-spacing: -0.28px; /* 字符間距 */
+  line-height: 1;
+  letter-spacing: -0.28px;
 }
 
-/* 圖標樣式 */
 .custom-button .button-icon {
-  width: 24px; /* 圖標寬度 */
-  height: 24px; /* 圖標高度 */
-  font-size: 24px; /* 圖標大小 */
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
   display: flex;
-  align-items: center; /* 圖標內部垂直居中 */
-  justify-content: center; /* 圖標內部水平居中 */
+  align-items: center;
+  justify-content: center;
 }
 
 .customButton {
@@ -242,7 +260,7 @@
   gap: 7px;
   padding: 8px 10px;
   border-radius: 5px;
-  background: var(--key-colors-secondary, #0B49A0);
+  background: var(--key-colors-secondary, #0b49a0);
   color: white;
   font-family: "Noto Sans HK";
   font-size: 14px;
@@ -251,14 +269,14 @@
 }
 
 .customButton:hover {
-  background: var(--key-colors-secondary-hover, #083D80);
+  background: var(--key-colors-secondary-hover, #083d80);
   color: white !important;
 }
 
 .custom-row-style {
   color: var(--DarkGray, #737277);
 
-/* body small */
+  /* body small */
   font-family: "Noto Sans HK";
   font-size: 14px;
   font-style: normal;
@@ -283,11 +301,11 @@
   font-size: 24px;
   font-style: normal;
   font-weight: 700;
-  line-height: 30px; /* 125% */
+  line-height: 30px;
 }
 
-
-.addButton, .CancelButton {
+.addButton,
+.CancelButton {
   display: flex;
   width: 99px;
   height: 32px;
@@ -299,53 +317,53 @@
 
 .addButton {
   border-radius: 5px;
-  background: var(--key-colors-tertiary, #D74D03);
+  background: var(--key-colors-tertiary, #d74d03);
 }
 
 .addButton:hover {
-  background: var(--key-colors-tertiary, #D74D03)!important;
-  color: #FFFFFF !important;
+  background: var(--key-colors-tertiary, #d74d03) !important;
+  color: #ffffff !important;
 }
-.CancelButton{
+.CancelButton {
   border-radius: 5px;
   background: var(--DarkGray, #737277);
-  color: #FFFFFF;
+  color: #ffffff;
 }
 .CancelButton:hover {
-  background: var(--DarkGray, #737277)!important;
-  color: #FFFFFF !important;
+  background: var(--DarkGray, #737277) !important;
+  color: #ffffff !important;
 }
 
 .two-column-form {
   display: flex;
-  gap: 20px; /* 左右表单间距 */
+  gap: 20px;
   padding-top: 20px;
 }
 
 .form-left,
 .form-right {
-  flex: 1; /* 左右两边等宽 */
+  flex: 1;
   flex-direction: column;
-  gap: 15px; /* 每个表单项的间距 */
+  gap: 15px;
 }
 
-.form-left{
+.form-left {
   height: fit-content;
   padding: 20px 50px;
   flex-direction: column;
   border-radius: 5px;
-  border: 5px solid var(--highlight2, #2989C5);
-  background: var(--key-colors-secondary, #0B49A0);
+  border: 5px solid var(--highlight2, #2989c5);
+  background: var(--key-colors-secondary, #0b49a0);
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
 
 .form-left .form-item-label {
-  color: var(--key-colors-neutral, #FFF);
+  color: var(--key-colors-neutral, #fff);
   font-family: "Noto Sans HK";
   font-size: 14px;
   font-style: normal;
   font-weight: 700;
-  line-height: 19px; /* 135.714% */
+  line-height: 19px;
   letter-spacing: -0.28px;
 }
 
@@ -355,7 +373,7 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 700;
-  line-height: 19px; /* 135.714% */
+  line-height: 19px;
   letter-spacing: -0.28px;
 }
 
@@ -372,69 +390,88 @@
   display: flex;
   height: 44px;
   padding: 12px;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   flex-shrink: 0;
   align-self: stretch;
   border-radius: 5px;
   border: 1px solid var(--key-colors-primary, #131313);
-  background: var(--White, #FFF);
+  background: var(--White, #fff);
 }
 
 .form-left .form-input {
-  width: 100%; 
-  height: 50px; 
+  width: 100%;
+  height: 44px;
   padding: 12px;
   border-radius: 5px;
   border: 1px solid var(--key-colors-primary, #131313);
-  background: var(--White, #FFF);
+  background: var(--White, #fff);
 }
 
 .form-right .form-input {
-  width: 100%; 
-  height: 50px; 
+  width: 100%;
+  height: 44px;
   padding: 12px;
   border-radius: 5px;
   border: 1px solid var(--key-colors-primary, #131313);
-  background: var(--White, #FFF);
-}
-/* 統一 Form.Item 的間距 */
-#custom-modal .ant-form-item {
-  margin-bottom: 15px !important; /* 設置統一的外部間距 */
+  background: var(--White, #fff);
 }
 
-/* 統一 Select 樣式 */
-#custom-modal .ant-select-selector {
+.form-right.ant-form-item {
+  margin-bottom: 15px !important;
+}
+
+.form-right.ant-select-selector {
   border: 1px solid var(--key-colors-primary, #131313) !important;
-  background: var(--White, #FFF) !important;
-  height: 50px !important;
+  background: var(--White, #fff) !important;
+  height: 44px !important;
   display: flex !important;
   align-items: center !important;
-  padding: 0 12px !important;
+  padding: 0px !important;
   border-radius: 5px !important;
 }
 
-/* 統一 InputNumber 樣式 */
-#custom-modal .ant-input-number {
+.form-right.ant-input-number {
   border: 1px solid var(--key-colors-primary, #131313) !important;
-  background: var(--White, #FFF) !important;
-  height: 50px !important;
+  background: var(--White, #fff) !important;
+  height: 44px !important;
   display: flex !important;
   align-items: center !important;
-  padding: 0 12px !important;
+  padding: 0px !important;
   border-radius: 5px !important;
 }
 
-/* 統一 DatePicker 樣式 */
-#custom-modal .ant-picker {
+.form-right.ant-picker {
   width: 100% !important;
-  height: 50px !important;
+  height: 44px !important;
   border: 1px solid var(--key-colors-primary, #131313) !important;
   border-radius: 5px !important;
-  background: var(--White, #FFF) !important;
+  background: var(--White, #fff) !important;
   padding: 0 12px !important;
   display: flex !important;
   align-items: center !important;
+}
+
+.form-right.ant-select-dropdown {
+  max-width: 100% !important;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 5px 0 !important;
+}
+
+.form-right.ant-select-item {
+  max-width: 100% !important;
+  display: flex;
+  align-items: center;
+  padding: 5px 12px;
+}
+
+:where(.css-dev-only-do-not-override-ni1kz0).ant-select-single:not(
+    .ant-select-customize-input
+  )
+  .ant-select-selector,
+:where(.css-dev-only-do-not-override-ni1kz0).ant-input-number
+  .ant-input-number-input {
+  padding: 0 !important;
 }
 /* page */
 
@@ -460,18 +497,81 @@
   align-items: center;
 }
 
-.ant-card-bordered {
-  border: none !important;
+.form-container {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
 }
 
+.form-column {
+  flex: 1;
+}
 
+.hidden {
+  visibility: hidden;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
 
+.custom-select {
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--key-colors-primary, #131313);
+  border-radius: 5px;
+  background: var(--White, #fff);
+  display: flex;
+  align-items: center;
+}
+
+.custom-select .ant-select-selector {
+  width: 100% !important;
+  height: 100%;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.custom-select .ant-select-dropdown {
+  width: auto !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* 調整箭頭的位置 */
+.custom-select .ant-select-selector .ant-select-arrow {
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  position: absolute !important;
+  right: 12px !important;
+}
+
+.readonly-input {
+  height: 44px;
+  padding: 0 12px;
+  border-radius: 5px;
+  border: 1px solid var(--A2, #162593);
+  background: var(--gray, #ededed);
+  display: flex;
+  align-items: center;
+}
+
+.readonly-input .ant-select-selector {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.readonly-input .ant-select-arrow {
+  color: #131313;
+}
+
+.readonly-input .ant-select-disabled .ant-select-selector {
+  cursor: not-allowed;
+}
 
 /* edit */
-
-  
-  
-  
-  
-  
-  

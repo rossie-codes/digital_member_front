@@ -22,6 +22,7 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
 import { red } from '@ant-design/colors';
+import { CloseOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -261,21 +262,39 @@ const GetRedemptionItemDetailPage: React.FC = () => {
 
     return (
         <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Title level={2}>禮遇換領詳情</Title>
-                <Button type="primary" onClick={() => router.back()}>
-                    Back
-                </Button>
+            <div className="modalTitle">
+            <img src="/gift.png" alt="Icon" style={{ width: "24px" }} />
+            <span className="BigcountText">禮物詳情</span>
+
+            <Button
+          type="text"
+          onClick={() => router.back()}
+          icon={<CloseOutlined />}
+          style={{
+            marginLeft: "auto",
+            fontSize: "16px", // 圖標大小
+          }}
+        />
             </div>
 
-            <Form.Item label="狀態">
+            
+
+            <div className="switch-container">
+            <span className="switch-text">{isActive ? "已啟用" : "已停用"}</span>
                 <Switch
-                    checkedChildren="已啟用"
-                    unCheckedChildren="已停用"
                     checked={isActive}
                     onChange={(checked) => handleToggleActive(checked)}
                 />
-            </Form.Item>
+            </div>
+
+            <div className="form-container">
+                <div className="form-column">
+                </div>
+                <div className="form-column">
+                </div>
+            </div>
+
+
 
 
             <Card style={{ marginTop: 16 }}>
@@ -283,19 +302,19 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                     {/* Discount Type */}
                     <Form.Item
                         name="redemption_type"
-                        label="禮遇類別"
+                        label="折扣類別"
                         rules={[{ required: true, message: 'Please select a discount type' }]}
                     >
                         <Select onChange={handleDiscountTypeChange} disabled>
-                            <Option value="fixed_amount">Fixed Amount Discount</Option>
-                            <Option value="percentage">Percentage Discount</Option>
+                            <Option value="fixed_amount">固定金額</Option>
+                            <Option value="percentage">百分比</Option>
                         </Select>
                     </Form.Item>
 
                     {/* Redemption Item Name */}
                     <Form.Item
                         name="redemption_item_name"
-                        label="禮遇名稱"
+                        label="禮物名稱"
                         rules={[{ required: true, message: 'Please enter the redemption item name' }]}
                     >
                         <Input disabled />
@@ -305,7 +324,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                     {selectedDiscountType === 'fixed_amount' && (
                         <Form.Item
                             name="discount_amount"
-                            label="折扣額"
+                            label="折扣金額"
                             rules={[{ required: true, message: 'Please enter the discount amount' }]}
                         >
                             <InputNumber min={0} style={{ width: '100%' }} disabled />
@@ -341,7 +360,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                     {/* Minimum Spending */}
                     <Form.Item
                         name="minimum_spending"
-                        label="最低消費"
+                        label="最低消費金額"
                         rules={[{ required: true, message: 'Please enter the minimum spending' }]}
                     >
                         <InputNumber min={0} style={{ width: '100%' }} disabled />
@@ -350,7 +369,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                     {/* Validity Period */}
                     <Form.Item
                         name="validity_period"
-                        label="折扣券有效期 (月)"
+                        label="有效期 (月)"
                         rules={[{ required: true, message: 'Please enter the validity period' }]}
                     >
                         <InputNumber min={1} style={{ width: '100%' }} disabled />
@@ -367,7 +386,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                     {/* Future Development Fields */}
                     <Form.Item
                         name="quantity_available"
-                        label="可兌換總數"
+                        label="可兌換數目"
                         tooltip="This field is for future development"
                         
                     >
@@ -416,7 +435,7 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                     <Form.Item
                         name="redemption_content"
                         label="禮物詳情"
-                        rules={[{ required: true, message: '輸入禮物詳情' }]}
+                        rules={[{ required: true, message: '輸入禮物的詳情' }]}
                     >
                         <Input />
                     </Form.Item>
