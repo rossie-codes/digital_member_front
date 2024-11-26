@@ -13,9 +13,11 @@ import {
   Spin,
 } from 'antd';
 import type { CheckboxChangeEvent } from 'antd/es/checkbox';
+import { PlusSquareOutlined, CloseOutlined } from "@ant-design/icons";
 import { purple } from '@ant-design/colors';
-
+import { useRouter } from 'next/navigation';
 const { Title } = Typography;
+
 
 interface PurchaseCountRule {
   member_point_rule_id: number;
@@ -116,6 +118,7 @@ const optionInputFields: Record<
 const GetMemberSettingPage: React.FC = () => {
   const [form2] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
 
   const initialCheckedOptions = {
     '購買次數': false,
@@ -235,14 +238,33 @@ const GetMemberSettingPage: React.FC = () => {
   const allChecked = Object.values(checkedOptions).every((value) => value);
   const isIndeterminate = Object.values(checkedOptions).some((value) => value) && !allChecked;
 
-  const handleCheckAllChange = (e: CheckboxChangeEvent) => {
-    const checked = e.target.checked;
+  const handleCheckAllChange = (checked: boolean) => {
     const newCheckedOptions = plainOptions.reduce((options, option) => {
       options[option] = checked;
       return options;
     }, {} as Record<string, boolean>);
     setCheckedOptions(newCheckedOptions);
   };
+
+  const icons = {
+    購買次數: {
+      checked: "/coin.png",
+      unchecked: "/coin_BW.png",
+    },
+    購買金額: {
+      checked: "/coin.png",
+      unchecked: "/coin_BW.png",
+    },
+    會員推薦: {
+      checked: "/like.png",
+      unchecked: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="37" height="34" viewBox="0 0 37 34" fill="none">
+          <path d="M25.0985 2C22.6186 2.01773 20.2465 2.99242 18.4993 4.71157C16.7518 2.9921 14.3791 2.01738 11.8988 2C6.43261 2 2 6.74018 2 12.5885C2 18.4368 13.5499 28.4705 18.4993 32C23.4487 28.4705 35 18.4354 35 12.5939C35 6.75233 30.566 2 25.0985 2Z" fill="#d9d9d9" stroke="#737277" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      ),
+    },
+  };
+  
 
   if (loading) {
     return (
@@ -254,7 +276,29 @@ const GetMemberSettingPage: React.FC = () => {
 
   return (
     <>
-      <Form
+      
+
+        {/* Submit Button */}
+        <Form.Item style={{ marginBottom: "0px" }}>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            {/* 取消按鈕 */}
+            <Button
+              onClick={() => {
+                form2.resetFields();
+                router.back();
+              }}
+              className="CancelButton"
+              style={{ marginRight: "10px" }}
+            >
+              取消
+            </Button>
+          <Button type="primary" htmlType="submit" className="addButton">
+            儲存
+          </Button>
+          </div>
+        </Form.Item>
+        
+        <Form
         form={form2}
         onFinish={onFinishForm2}
         layout="horizontal"
@@ -262,65 +306,175 @@ const GetMemberSettingPage: React.FC = () => {
         wrapperCol={{ span: 14 }}
         style={{ marginTop: '2rem' }}
       >
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Title level={2} style={{ backgroundColor: purple[1], padding: '1rem' }}>
-            獲取積分規則
-          </Title>
+        <Form.Item label="" labelCol={{ span: 6 }} wrapperCol={{ span: 14 }}>
+        <div
+          className={`custom-checkbox ${allChecked ? "checked" : ""}`}
+          onClick={() => handleCheckAllChange(!allChecked)} // 点击切换全选状态
+        >
+          {allChecked ? (
+            <>
+              <span className="checkbox-label">全選</span>
+              <CloseOutlined className="icon" />
+            </>
+          ) : (
+            <>
+              <span className="checkbox-label">全選</span>
+              <PlusSquareOutlined className="icon" />
+            </>
+          )}
+        </div>
+      </Form.Item>
+
+
+        {/* 三欄佈局 */}
+        <div className="three-column-layout">
+          {/* 購買次數 */}
+          <div className={`card ${checkedOptions['購買次數'] ? "active" : ""}`}>
+            <div className="card-header">
+            <div className="card-title">
+            <img
+              src={
+                checkedOptions["購買次數"]
+                  ? icons["購買次數"].checked
+                  : icons["購買次數"].unchecked
+              }
+              alt="icon"
+              style={{
+                width: "20px",
+                height: "20px",
+              }}
+            />
+              <span>購買次數</span>
+              </div>
+              <div
+        className="card-icon"
+        onClick={() => handleOptionChange('購買次數', !checkedOptions['購買次數'])}
+        style={{ cursor: "pointer" }}
+      >
+        {checkedOptions['購買次數'] ? (
+          <CloseOutlined style={{ color: "#737277", fontSize: "16px" }} />
+        ) : (
+          <PlusSquareOutlined style={{ color: "#fff", fontSize: "16px" }} />
+          
+        )}
+      </div>
+            </div>
+
+            <div className="card-body">
+              <Form.Item label="購買次數">
+                <InputNumber placeholder="請輸入購買次數 (整數)" style={{ width: "100%" }} />
+              </Form.Item>
+              <Form.Item label="獲得積分">
+                <InputNumber placeholder="請輸入獲得積分 (整數)" style={{ width: "100%" }} />
+              </Form.Item>
+            </div>
+          </div>
+
+          {/* 購買金額 */}
+          <div className={`card ${checkedOptions['購買金額'] ? "active" : ""}`}>
+            <div className="card-header">
+            <div className="card-title">
+            <div style={{ display: "flex", alignItems: "center" }}>
+            <img
+              src={
+                checkedOptions["購買金額"]
+                  ? icons["購買金額"].checked
+                  : icons["購買金額"].unchecked
+              }
+              alt="icon"
+              style={{
+                width: "20px",
+                height: "20px",
+                marginRight: "8px",
+              }}
+            />
+
+              <span>購買金額</span>
+              </div>
+              </div>
+              <div
+        className="card-icon"
+        onClick={() => handleOptionChange('購買金額', !checkedOptions['購買金額'])}
+        style={{ cursor: "pointer" }}
+      >
+        {checkedOptions['購買金額'] ? (
+          <CloseOutlined style={{ color: "#fff", fontSize: "16px" }} />
+        ) : (
+          <PlusSquareOutlined style={{ color: "#737277", fontSize: "16px" }} />
+        )}
+      </div>
+            </div>
+            <div className="card-body">
+              <Form.Item label="購買金額">
+                <InputNumber placeholder="請輸入購買金額 (整數)" style={{ width: "100%" }} />
+              </Form.Item>
+              <Form.Item label="獲得積分">
+                <InputNumber placeholder="請輸入獲得積分 (整數)" style={{ width: "100%" }} />
+              </Form.Item>
+            </div>
+          </div>
+
+          {/* 會員推薦 */}
+          <div className={`card ${checkedOptions['會員推薦'] ? "active" : ""}`}>
+            <div className="card-header">
+            <div className="card-title">
+            <div style={{ display: "flex", alignItems: "center" }}>
+            {checkedOptions["會員推薦"] ? (
+          <img
+            src={icons["會員推薦"].checked}
+            alt="icon"
+            style={{
+              width: "20px",
+              height: "20px",
+              marginRight: "8px",
+            }}
+          />
+        ) : (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 37 34"
+            fill="none"
+            style={{
+              marginRight: "8px",
+            }}
+          >
+            <path
+              d="M25.0985 2C22.6186 2.01773 20.2465 2.99242 18.4993 4.71157C16.7518 2.9921 14.3791 2.01738 11.8988 2C6.43261 2 2 6.74018 2 12.5885C2 18.4368 13.5499 28.4705 18.4993 32C23.4487 28.4705 35 18.4354 35 12.5939C35 6.75233 30.566 2 25.0985 2Z"
+              fill="#d9d9d9"
+              stroke="#737277"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
+        <span>會員推薦</span>
+      </div>
+    </div>
+              <div
+        className="card-icon"
+        onClick={() => handleOptionChange('會員推薦', !checkedOptions['會員推薦'])}
+        style={{ cursor: "pointer" }}
+      >
+        {checkedOptions['會員推薦'] ? (
+          <CloseOutlined style={{ color: "#fff", fontSize: "16px" }} />
+        ) : (
+          <PlusSquareOutlined style={{ color: "#737277", fontSize: "16px" }} />
+        )}
+      </div>
+            </div>
+            <div className="card-body">
+              <Form.Item label="獲得積分">
+                <InputNumber placeholder="請輸入獲得積分 (整數)" style={{ width: "100%" }} />
+              </Form.Item>
+            </div>
+          </div>
         </div>
 
-        <Form.Item label="全部選擇" labelCol={{ span: 6 }} wrapperCol={{ span: 14 }}>
-          <Checkbox
-            indeterminate={isIndeterminate}
-            onChange={handleCheckAllChange}
-            checked={allChecked}
-          >
-            全部選擇
-          </Checkbox>
-        </Form.Item>
-
-        <Divider />
-
-        {plainOptions.map((option) => (
-          <div key={option} style={{ backgroundColor: checkedOptions[option] ? 'white' : '#f5f5f5' }}>
-            <Form.Item
-              label={option}
-              labelCol={{ span: 6 }}
-              wrapperCol={{ span: 14 }}
-            >
-              <Checkbox
-                checked={checkedOptions[option]}
-                onChange={(e) => handleOptionChange(option, e.target.checked)}
-              />
-            </Form.Item>
-
-            {optionInputFields[option]?.map((field) => (
-              <Form.Item
-                key={field.name}
-                label={field.label}
-                name={field.name}
-                labelCol={{ span: 6 }}
-                wrapperCol={{ span: 14 }}
-                rules={[{ required: checkedOptions[option], message: field.message }]}
-              >
-                {field.type === 'number' ? (
-                  <InputNumber
-                    style={{ width: '100%' }}
-                    placeholder={field.placeholder || ''}
-                  />
-                ) : (
-                  <Input 
-                    placeholder={field.placeholder || ''} />
-                )}
-              </Form.Item>
-            ))}
-          </div>
-        ))}
-
-        <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
+        
+        
       </Form>
     </>
   );

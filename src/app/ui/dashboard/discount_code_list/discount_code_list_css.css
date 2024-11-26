@@ -575,3 +575,90 @@
 }
 
 /* edit */
+
+/* point_setting */
+
+.custom-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px; /* 圓角按鈕的寬度 */
+  height: 32px; /* 圓角按鈕的高度 */
+  background-color: var(--Dark, #737277);
+  border-radius: 24px; /* 圓角 */
+  font-family: "Noto Sans", sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease; /* 平滑過渡 */
+  gap: 3px; /* 圖標與文字間距 */
+  padding: 8px 10px;
+  line-height: 19px;
+  letter-spacing: -0.28px;
+}
+
+/* 選擇狀態樣式 */
+.custom-checkbox.checked {
+  background-color: var(--key-colors-secondary, #0B49A0);
+}
+
+/* 圖標樣式 */
+.custom-checkbox .icon {
+  font-size: 20px; /* 圖標大小 */
+}
+
+/* 文字樣式 */
+.custom-checkbox .checkbox-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 三欄佈局 */
+.three-column-layout {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.card {
+  flex: 1;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #d9d9d9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+}
+
+.card.active {
+  background-color: #0b49a0;
+  color: #fff;
+}
+
+.card-header {
+  display: flex;
+  align-items: center; /* 垂直置中 */
+  justify-content: space-between; /* 左右分佈 */
+  padding: 0 8px; /* 控制內部間距 */
+}
+
+.card-title {
+  display: flex;
+  align-items: center; /* 垂直置中 */
+  gap: 8px; /* 圖片和文字的間距 */
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.card-icon {
+  cursor: pointer;
+  font-size: 16px; /* 調整右邊圖標大小 */
+}
+
+.card-body {
+  margin-top: 16px;
+}
+
+/* point_setting */
