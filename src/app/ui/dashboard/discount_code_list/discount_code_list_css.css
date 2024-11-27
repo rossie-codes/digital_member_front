@@ -620,21 +620,22 @@
 .three-column-layout {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
+  gap: 40px;
 }
 
 .card {
   flex: 1;
   padding: 20px;
-  border-radius: 8px;
-  background-color: #d9d9d9;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  background: var(--DarkGray, #737277);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  color: #ffffff;
   transition: background-color 0.3s;
 }
 
 .card.active {
-  background-color: #0b49a0;
-  color: #fff;
+  background: var(--key-colors-secondary, #0B49A0); /* 深藍色背景 */
+  color: #ffffff; /* 激活時文字保持白色 */
 }
 
 .card-header {
@@ -647,18 +648,121 @@
 .card-title {
   display: flex;
   align-items: center; /* 垂直置中 */
-  gap: 8px; /* 圖片和文字的間距 */
-  font-size: 16px;
+  gap: 4px; /* 圖片和文字的間距 */
+  font-size: 24px;
   font-weight: bold;
 }
 
-.card-icon {
-  cursor: pointer;
-  font-size: 16px; /* 調整右邊圖標大小 */
+.svg-container {
+  width: 33px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* 確保多餘部分被裁剪 */
+  margin-right: 5px;
 }
 
+
+
+.card-icon {
+  cursor: pointer;
+  font-size: 20px; /* 調整右邊圖標大小 */
+}
+
+/* card-body 樣式 */
 .card-body {
-  margin-top: 16px;
+  padding: 0px; /* 卡片內部間距 */
+  display: flex;
+  flex-direction: column; /* 使內容垂直排列 */
+  gap: 0px; /* 每個表單項之間的間距 */
+}
+
+:where(.css-dev-only-do-not-override-ni1kz0).ant-form-item .ant-form-item-label > label {
+  height: auto !important; /* 移除固定高度 */
+  line-height: normal; /* 恢復標籤文字的自然行高 */
+}
+
+/* 自定義的 Form.Item 樣式 */
+.custom-form-item {
+  margin-bottom: 0px; /* 表單項之間的間距 */
+}
+
+/* 自定義標籤文字樣式 */
+.custom-form-item .ant-form-item-label label {
+  color: var(--key-colors-neutral, #FFF);
+
+  /* body small */
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px; /* 157.143% */
+  letter-spacing: -0.28px;
+  display: block; /* 確保文字在輸入框上方換行 */
+  margin-top: 14px;
+}
+
+/* 自定義輸入框樣式 */
+.custom-input-number {
+  width: 100%; /* 輸入框寬度占滿 */
+  height: 44px; /* 調整輸入框高度 */
+  border-radius: 5px;
+  border: 1px solid var(--key-colors-neutral, #FFF);
+  background: var(--White, #FFF);
+  padding: 12px;
+  align-items: flex-start;
+  gap: 12px;
+  align-self: stretch;
+}
+
+/* 修改 InputNumber 的 placeholder 樣式 */
+.custom-input-number::placeholder,
+.custom-input-number input::placeholder {
+  color: var(--DarkGray, #737277); /* Placeholder 顏色 */
+  font-family: "Noto Sans HK"; /* 字體 */
+  font-size: 16px; /* 字體大小 */
+  font-style: normal; /* 樣式正常 */
+  font-weight: 400; /* 字重 */
+  line-height: 22px; /* 行高 */
+  letter-spacing: -0.32px; /* 字距 */
 }
 
 /* point_setting */
+
+
+/* membership_tier */
+
+/* 父容器 */
+.three-column-form {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Row 容器：讓裡面的項目一行排列 */
+.three-column-form .form-row {
+  display: flex;
+  justify-content: space-between; /* 三欄等間距 */
+  gap: 16px; /* 欄間距 */
+}
+
+/* 每個欄位設定等比例寬度 */
+.three-column-form .form-column {
+  flex: 1; /* 平均分配空間 */
+}
+
+/* 確保表單的 Select 或 Input 項目佔滿父容器 */
+.three-column-form .form-column .ant-form-item {
+  width: 100%; /* 填滿父容器 */
+}
+
+.three-column-form .form-column .ant-select {
+  width: 100%; /* 填滿父容器 */
+}
+
+
+
+
+
+/* membership_tier */

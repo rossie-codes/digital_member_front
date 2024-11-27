@@ -1,8 +1,8 @@
 // src/app/dashboard/discount_code_list/membership_tier/page.tsx
 
-'use client';
+"use client";
 
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from "react";
 import {
   Button,
   Form,
@@ -11,10 +11,10 @@ import {
   Typography,
   message,
   Select,
-  FormInstance
-} from 'antd';
-import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { purple } from '@ant-design/colors';
+  FormInstance,
+} from "antd";
+import { PlusOutlined, MinusCircleOutlined } from "@ant-design/icons";
+import { purple } from "@ant-design/colors";
 
 const { Title } = Typography;
 
@@ -32,8 +32,6 @@ interface MembershipTierFormValues {
   membershipTiers: MembershipTier[];
 }
 
-
-
 interface Form1Values {
   admin_setting_id: number;
   membership_period: string; // Assuming the value is a string as per Select options
@@ -42,24 +40,25 @@ interface Form1Values {
 }
 
 const membership_period = [
-  { value: '1', label: '1' },
-  { value: '2', label: '2' },
-  { value: '3', label: '3' },
-  { value: '4', label: '4' },
-  { value: '5', label: '5' },
+  { value: "1", label: "1" },
+  { value: "2", label: "2" },
+  { value: "3", label: "3" },
+  { value: "4", label: "4" },
+  { value: "5", label: "5" },
 ];
 
 const membership_extend_method = [
-  { value: '1', label: '購物滿一定金額，開啟續會按鈕。' },
-  { value: '2', label: '只需詢問顧客意願，無條件續會。' },
+  { value: "1", label: "購物滿一定金額，開啟續會按鈕。" },
+  { value: "2", label: "只需詢問顧客意願，無條件續會。" },
 ];
 
 const membership_end_result = [
-  { value: '1', label: '會員期結束，會員擁有的積分及禮遇會失效' },
-  { value: '2', label: '會員期結束，會員擁有的積分及禮遇不會失效，續會後可繼續使用。' },
+  { value: "1", label: "會員期結束，會員擁有的積分及禮遇會失效" },
+  {
+    value: "2",
+    label: "會員期結束，會員擁有的積分及禮遇不會失效，續會後可繼續使用。",
+  },
 ];
-
-
 
 const MAX_TIERS = 4;
 const MIN_TIERS = 4;
@@ -79,13 +78,11 @@ const GetMembershipTierPage: React.FC = () => {
   const [form] = Form.useForm<MembershipTierFormValues>();
   const [form1] = Form.useForm();
   const [, forceUpdate] = useState({});
-  
 
   // State variables
   const [initialTiers, setInitialTiers] = useState<MembershipTier[]>([]);
   const [loading, setLoading] = useState<boolean>(true); // To handle loading state
   const hasFetched = useRef(false);
-
 
   const onFinishForm1 = async (values: Form1Values) => {
     // Include admin_setting_id in the data
@@ -97,34 +94,35 @@ const GetMembershipTierPage: React.FC = () => {
     };
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin_setting/post_admin_setting`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(dataToSend),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin_setting/post_admin_setting`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(dataToSend),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Server error! status: ${response.status}`);
       }
 
       const responseData = await response.json();
-      console.log('Server Response:', responseData);
+      console.log("Server Response:", responseData);
       // Optionally, display a success message or perform other actions
-      message.success('Settings updated successfully!');
+      message.success("Settings updated successfully!");
     } catch (error: any) {
-      console.error('Error submitting form:', error);
+      console.error("Error submitting form:", error);
       // Optionally, display an error message
       message.error(`Failed to update settings: ${error.message}`);
     }
   };
 
-
   // Fetch current membership tiers when component mounts
   useEffect(() => {
-
     if (hasFetched.current) {
       // If fetch has already been called, do not proceed
       return;
@@ -134,12 +132,17 @@ const GetMembershipTierPage: React.FC = () => {
 
     const fetchTiers = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/membership_tier/get_membership_tier_setting`, {
-          method: 'GET',
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/membership_tier/get_membership_tier_setting`,
+          {
+            method: "GET",
+          }
+        );
 
         if (!response.ok) {
-          throw new Error(`Failed to fetch membership tiers: ${response.status}`);
+          throw new Error(
+            `Failed to fetch membership tiers: ${response.status}`
+          );
         }
 
         let data: MembershipTier[] = await response.json();
@@ -167,8 +170,8 @@ const GetMembershipTierPage: React.FC = () => {
 
         setInitialTiers(data);
       } catch (error) {
-        console.error('Error fetching membership tiers:', error);
-        message.error('Failed to fetch membership tiers');
+        console.error("Error fetching membership tiers:", error);
+        message.error("Failed to fetch membership tiers");
 
         // Initialize with default tiers if fetching fails
         const tiers: MembershipTier[] = [];
@@ -210,46 +213,51 @@ const GetMembershipTierPage: React.FC = () => {
       return;
     }
 
-    const updatedMembershipTiers = values.membershipTiers.map((tier, index) => ({
-      ...tier,
-      membership_tier_sequence: index + 1, // Assign sequence number
-      point_multiplier: tier.point_multiplier * 1000,
-    }));
+    const updatedMembershipTiers = values.membershipTiers.map(
+      (tier, index) => ({
+        ...tier,
+        membership_tier_sequence: index + 1, // Assign sequence number
+        point_multiplier: tier.point_multiplier * 1000,
+      })
+    );
 
-    console.log('Form Submitted Successfully:', updatedMembershipTiers);
+    console.log("Form Submitted Successfully:", updatedMembershipTiers);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/membership_tier/post_membership_tier_setting`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // 'auth': '12345'
-        },
-        body: JSON.stringify(updatedMembershipTiers),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/membership_tier/post_membership_tier_setting`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // 'auth': '12345'
+          },
+          body: JSON.stringify(updatedMembershipTiers),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Server error! status: ${response.status}`);
       }
 
       const responseData = await response.json();
-      console.log('Server Response:', responseData);
-      message.success('Membership tiers updated successfully!');
+      console.log("Server Response:", responseData);
+      message.success("Membership tiers updated successfully!");
     } catch (error: any) {
-      console.error('Error submitting form:', error);
+      console.error("Error submitting form:", error);
       message.error(`Failed to update membership tiers: ${error.message}`);
     }
   };
 
   const onFinishFailed = (errorInfo: any) => {
-    console.log('Form Submission Failed:', errorInfo);
-    message.error('Please check the form for errors and try again.');
+    console.log("Form Submission Failed:", errorInfo);
+    message.error("Please check the form for errors and try again.");
   };
 
   // Handle loading state
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
+      <div style={{ textAlign: "center", padding: "50px" }}>
         <Title level={3}>Loading membership tiers...</Title>
       </div>
     );
@@ -261,87 +269,99 @@ const GetMembershipTierPage: React.FC = () => {
     originalField: string,
     multipliedField: string
   ): number => {
-    const originalPoint = form.getFieldValue(['membershipTiers', index, originalField]) || 0;
-    const multipliedPoint = form.getFieldValue(['membershipTiers', index, multipliedField]) || 0;
-    const pointMultiplier = originalPoint !== 0 ? multipliedPoint / originalPoint : 0;
-    
+    const originalPoint =
+      form.getFieldValue(["membershipTiers", index, originalField]) || 0;
+    const multipliedPoint =
+      form.getFieldValue(["membershipTiers", index, multipliedField]) || 0;
+    const pointMultiplier =
+      originalPoint !== 0 ? multipliedPoint / originalPoint : 0;
+
     // Update the point_multiplier in the form
     form.setFields([
       {
-        name: ['membershipTiers', index, 'point_multiplier'],
+        name: ["membershipTiers", index, "point_multiplier"],
         value: pointMultiplier,
       },
     ]);
-    
+
     return pointMultiplier;
   };
 
-
   return (
-
     <>
+    <Form.Item style={{ marginBottom: "0px" }}>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Button
+              onClick={() => {}}
+              className="CancelButton"
+              style={{ marginRight: "10px" }}
+            >
+              取消
+            </Button>
+            <Button type="primary" htmlType="submit" className="addButton">
+              儲存
+            </Button>
+          </div>
+        </Form.Item>
+      
+        
+        <Title className="BigcountText">
+            會員基本設定
+          </Title>
 
-      <Form
+        <div className="three-column-form">
+         
+          <Form
         form={form1}
         onFinish={onFinishForm1}
         layout="horizontal"
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 14 }}
       >
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Title level={2} style={{ backgroundColor: purple[1], padding: '1rem' }}>
-            會員基本設定
-          </Title>
-        </div>
-
+        <div className="form-row">
+        <div className="form-column">
         <Form.Item
-          label="會員有效年期"
+          label="有效期"
           name="membership_period"
-          rules={[{ required: true, message: '請選擇會員有效年期' }]}
+          rules={[{ required: true, message: "請選擇年期" }]}
         >
           <Select
-            // defaultValue="1"
-            style={{ width: 600 }}
-            // allowClear
             options={membership_period}
-            placeholder="選擇年數"
+            placeholder="選擇年期"
           />
         </Form.Item>
-
+        </div>
+        <div className="form-column">
         <Form.Item
           label="續會方式"
           name="membership_extend_method"
-          rules={[{ required: true, message: '請選擇續會方式' }]}
+          rules={[{ required: true, message: "請選擇續會方式" }]}
         >
           <Select
-            // defaultValue="2"
-            style={{ width: 600 }}
-            // allowClear
             options={membership_extend_method}
             placeholder="選擇續會方式"
           />
         </Form.Item>
-
+        </div>
+        <div className="form-column">
         <Form.Item
-          label="會員期結束的處理"
+          label="逾期積分"
           name="membership_end_result"
-          rules={[{ required: true, message: '請選擇會員期結束的處理' }]}
+          rules={[{ required: true, message: "請選擇無效會籍的積分處理方式" }]}
         >
           <Select
-            // defaultValue="1"
-            style={{ width: 600 }}
-            // allowClear
             options={membership_end_result}
-            placeholder="選擇續會方式"
+            placeholder="選擇無效會籍的積分處理方式"
           />
         </Form.Item>
+        </div>
+        </div>
+        
 
-        <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
+        
+
+        
       </Form>
+        </div>
+      
 
       <Form
         {...formItemLayout}
@@ -351,10 +371,14 @@ const GetMembershipTierPage: React.FC = () => {
         onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{ display: "flex", justifyContent: "center" }}>
           <Title
             level={2}
-            style={{ backgroundColor: '#f0f2f5', padding: '1rem', borderRadius: '4px' }}
+            style={{
+              backgroundColor: "#f0f2f5",
+              padding: "1rem",
+              borderRadius: "4px",
+            }}
           >
             會員層級設定
           </Title>
@@ -372,105 +396,133 @@ const GetMembershipTierPage: React.FC = () => {
                   <div
                     key={`membershipTier_${field.key}`}
                     style={{
-                      border: '1px solid #ccc',
-                      padding: '20px',
-                      marginBottom: '20px',
-                      borderRadius: '4px',
-                      backgroundColor: '#f0f2f5',
+                      border: "1px solid #ccc",
+                      padding: "20px",
+                      marginBottom: "20px",
+                      borderRadius: "4px",
+                      backgroundColor: "#f0f2f5",
                     }}
                   >
                     <Title level={4}>會員層級 {index + 1}</Title>
 
-                    {/* Sequence Number */}
-                    <Form.Item label="層級序號">
-                      <InputNumber value={index + 1} disabled />
-                    </Form.Item>
-
                     {/* Membership Tier Name */}
                     <Form.Item
                       label="會員名稱"
-                      name={[field.name, 'membership_tier_name']}
-                      rules={[{ required: true, message: '請輸入會員名稱' }]}
-                      extra={`當前設定：${currentTier.membership_tier_name || '未設定'}`}
+                      name={[field.name, "membership_tier_name"]}
+                      rules={[{ required: true, message: "請輸入會員名稱" }]}
+                      extra={`現時設定：${
+                        currentTier.membership_tier_name || "未設定"
+                      }`}
                     >
-                      <Input placeholder="例如：Level 1" readOnly={index === 0} />
+                      <Input
+                        placeholder="例如：Level 1"
+                        readOnly={index === 0}
+                      />
                     </Form.Item>
 
                     {/* Require Point */}
                     <Form.Item
                       label="積分下限"
-                      name={[field.name, 'require_point']}
-                      rules={[{ required: true, message: '請輸入積分下限' }]}
-                      extra={`當前設定：${currentTier.require_point || 0}`}
+                      name={[field.name, "require_point"]}
+                      rules={[{ required: true, message: "請輸入積分下限" }]}
+                      extra={`現時設定：${currentTier.require_point || 0}`}
                     >
-                      <InputNumber min={0} style={{ width: '100%' }} disabled={index === 0} />
+                      <InputNumber
+                        min={0}
+                        style={{ width: "100%" }}
+                        disabled={index === 0}
+                      />
                     </Form.Item>
 
                     {/* Extend Membership Point */}
                     <Form.Item
                       label="續會積分下限"
-                      name={[field.name, 'extend_membership_point']}
-                      rules={[{ required: true, message: '請輸入續會積分下限' }]}
-                      extra={`當前設定：${currentTier.extend_membership_point || 0}`}
+                      name={[field.name, "extend_membership_point"]}
+                      rules={[
+                        { required: true, message: "請輸入續會積分下限" },
+                      ]}
+                      extra={`現時設定：${
+                        currentTier.extend_membership_point || 0
+                      }`}
                     >
-                      <InputNumber min={0} style={{ width: '100%' }} disabled={index === 0} />
+                      <InputNumber
+                        min={0}
+                        style={{ width: "100%" }}
+                        disabled={index === 0}
+                      />
+                    </Form.Item>
+
+                    {/* Display Calculated Point Multiplier */}
+                    <Form.Item label="積分倍數">
+                      <Typography.Title level={5}>
+                        {calculatePointMultiplier(
+                          form,
+                          index,
+                          "original_point",
+                          "multiplied_point"
+                        ).toFixed(4)}
+                      </Typography.Title>
                     </Form.Item>
 
                     {/* Original Point */}
                     <Form.Item
-                      label="每賺取"
-                      name={[field.name, 'original_point']}
-                      rules={[{ required: true, message: '請輸入基礎積分', type: 'number', min: 1 }]}
+                      label="$"
+                      name={[field.name, "original_point"]}
+                      rules={[
+                        {
+                          required: true,
+                          message: "請輸入基礎積分",
+                          type: "number",
+                          min: 1,
+                        },
+                      ]}
                       extra={`當前設定：${currentTier.original_point || 0}`}
                     >
                       <InputNumber
                         min={1}
                         max={10000}
-                        style={{ width: '100%' }}
+                        style={{ width: "100%" }}
                         onChange={() => forceUpdate({})}
                       />
                     </Form.Item>
 
                     {/* Multiplied Point */}
                     <Form.Item
-                      label="得到"
-                      name={[field.name, 'multiplied_point']}
-                      rules={[{ required: true, message: '請輸入獲得積分', type: 'number', min: 0 }]}
+                      label="="
+                      name={[field.name, "multiplied_point"]}
+                      rules={[
+                        {
+                          required: true,
+                          message: "請輸入獲得積分",
+                          type: "number",
+                          min: 0,
+                        },
+                      ]}
                       extra={`當前設定：${currentTier.multiplied_point || 0}`}
                     >
                       <InputNumber
                         min={0}
                         max={10000}
-                        style={{ width: '100%' }}
+                        style={{ width: "100%" }}
                         onChange={() => forceUpdate({})}
                       />
                     </Form.Item>
 
-                    {/* Display Calculated Point Multiplier */}
-                    <Form.Item label="專屬積分倍數">
-                      <Typography.Title level={5}>
-                        {calculatePointMultiplier(
-                          form,
-                          index,
-                          'original_point',
-                          'multiplied_point'
-                        ).toFixed(4)}
-                      </Typography.Title>
-                    </Form.Item>
-
                     {/* Hidden Point Multiplier Field */}
-                    <Form.Item name={[field.name, 'point_multiplier']} hidden>
+                    <Form.Item name={[field.name, "point_multiplier"]} hidden>
                       <InputNumber />
                     </Form.Item>
 
                     {/* Membership Period */}
                     <Form.Item
-                      label="會員期限（月）"
-                      name={[field.name, 'membership_period']}
-                      rules={[{ required: true, message: '請輸入會員期限（月）' }]}
-                      extra={`當前設定：${currentTier.membership_period || 0}`}
+                      label="會員期限（年）"
+                      name={[field.name, "membership_period"]}
+                      rules={[
+                        { required: true, message: "請輸入會員期限（年）" },
+                      ]}
+                      extra={`現時設定：${currentTier.membership_period || 0}`}
                     >
-                      <InputNumber min={1} style={{ width: '100%' }} />
+                      <InputNumber min={1} style={{ width: "100%" }} />
                     </Form.Item>
                   </div>
                 );
@@ -478,12 +530,6 @@ const GetMembershipTierPage: React.FC = () => {
             </>
           )}
         </Form.List>
-
-        <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-          <Button type="primary" htmlType="submit">
-            提交
-          </Button>
-        </Form.Item>
       </Form>
     </>
   );
