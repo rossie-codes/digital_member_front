@@ -298,11 +298,11 @@ const GetRedemptionItemDetailPage: React.FC = () => {
           onChange={(checked) => handleToggleActive(checked)}
         />
       </div>
-
+      <Form form={form} onFinish={onFinish} layout="vertical">
       <div className="form-container">
         {/* 左邊列 */}
         <div className="form-column">
-          <Form form={form} onFinish={onFinish} layout="vertical">
+          
             {/* Discount Type */}
             <Form.Item
               name="redemption_type"
@@ -420,10 +420,10 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                 </Form.Item>
               </>
             )}
-          </Form>
+          
         </div>
         <div className="form-column">
-          <Form form={form} onFinish={onFinish} layout="vertical">
+          
             <Form.Item
               name="redeem_point"
               label="所需積分"
@@ -499,11 +499,8 @@ const GetRedemptionItemDetailPage: React.FC = () => {
                 </Form.Item>
               )}
             </Form.Item>
-          </Form>
         </div>
       </div>
-
-      <Form form={form} onFinish={onFinish} layout="vertical">
         <Form.Item
           name="redemption_content"
           label="禮物詳情"

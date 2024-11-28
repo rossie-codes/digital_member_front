@@ -753,8 +753,8 @@ const DiscountCodeListPage: React.FC = () => {
           form={form}
           onFinish={onFinish}
           layout="vertical"
-          className="two-column-form"
         >
+          <div className="two-column-form">
           <div className="form-left">
             <Form.Item
               name="discount_code_name"
@@ -938,8 +938,7 @@ const DiscountCodeListPage: React.FC = () => {
               />
             </Form.Item>
           </div>
-        </Form>
-
+          </div>
         <Form.Item style={{ marginBottom: "0px" }}>
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Button
@@ -963,6 +962,7 @@ const DiscountCodeListPage: React.FC = () => {
             </Button>
           </div>
         </Form.Item>
+        </Form>
       </Modal>
     </div>
   );

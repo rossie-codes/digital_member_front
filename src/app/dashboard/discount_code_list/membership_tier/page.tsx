@@ -18,6 +18,8 @@ import { purple } from "@ant-design/colors";
 
 const { Title } = Typography;
 
+const icons = ["/gray.png", "/blue.png", "/pink.png", "/purple.png"];
+
 interface MembershipTier {
   membership_tier_name: string;
   require_point: number;
@@ -289,7 +291,15 @@ const GetMembershipTierPage: React.FC = () => {
 
   return (
     <>
-    <Form.Item style={{ marginBottom: "0px" }}>
+      <Form
+        layout="vertical"
+        form={form}
+        name="member-tier-form"
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
+      >
+        <Form.Item style={{ marginBottom: "0px" }}>
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Button
               onClick={() => {}}
@@ -303,231 +313,230 @@ const GetMembershipTierPage: React.FC = () => {
             </Button>
           </div>
         </Form.Item>
-      
-        
-        <Title className="BigcountText">
-            會員基本設定
-          </Title>
+
+        <Title className="membership-card-title">會員基本設定</Title>
 
         <div className="three-column-form">
-         
-          <Form
-        form={form1}
-        onFinish={onFinishForm1}
-        layout="horizontal"
-      >
-        <div className="form-row">
-        <div className="form-column">
-        <Form.Item
-          label="有效期"
-          name="membership_period"
-          rules={[{ required: true, message: "請選擇年期" }]}
-        >
-          <Select
-            options={membership_period}
-            placeholder="選擇年期"
-          />
-        </Form.Item>
+          <div className="form-row">
+            <div className="form-column membership-select">
+              <Form.Item label="有效期" name="membership_period">
+                <Select options={membership_period} placeholder="選擇年期" />
+              </Form.Item>
+            </div>
+            <div className="form-column membership-select">
+              <Form.Item label="續會方式" name="membership_extend_method">
+                <Select
+                  options={membership_extend_method}
+                  placeholder="選擇續會方式"
+                />
+              </Form.Item>
+            </div>
+            <div className="form-column membership-select">
+              <Form.Item label="逾期積分" name="membership_end_result">
+                <Select
+                  options={membership_end_result}
+                  placeholder="選擇無效會籍的積分處理方式"
+                />
+              </Form.Item>
+            </div>
+          </div>
         </div>
-        <div className="form-column">
-        <Form.Item
-          label="續會方式"
-          name="membership_extend_method"
-          rules={[{ required: true, message: "請選擇續會方式" }]}
-        >
-          <Select
-            options={membership_extend_method}
-            placeholder="選擇續會方式"
-          />
-        </Form.Item>
-        </div>
-        <div className="form-column">
-        <Form.Item
-          label="逾期積分"
-          name="membership_end_result"
-          rules={[{ required: true, message: "請選擇無效會籍的積分處理方式" }]}
-        >
-          <Select
-            options={membership_end_result}
-            placeholder="選擇無效會籍的積分處理方式"
-          />
-        </Form.Item>
-        </div>
-        </div>
-        
 
-        
-
-        
-      </Form>
-        </div>
-      
-
-      <Form
-        {...formItemLayout}
-        form={form}
-        name="member-tier-form"
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
-        autoComplete="off"
-      >
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <Title
-            level={2}
-            style={{
-              backgroundColor: "#f0f2f5",
-              padding: "1rem",
-              borderRadius: "4px",
-            }}
-          >
-            會員層級設定
-          </Title>
+        <div className="horizontal-line"></div>
+        <div>
+          <Title className="membership-card-title">會員層級設定</Title>
         </div>
 
         {/* <Form.List name="membershipTiers">
           {(fields, { add, remove }) => ( */}
         <Form.List name="membershipTiers">
           {(fields) => (
-            <>
+            <div className="membership-card-container">
               {fields.map((field, index) => {
                 const currentTier = initialTiers[index] || {};
 
                 return (
                   <div
                     key={`membershipTier_${field.key}`}
-                    style={{
-                      border: "1px solid #ccc",
-                      padding: "20px",
-                      marginBottom: "20px",
-                      borderRadius: "4px",
-                      backgroundColor: "#f0f2f5",
-                    }}
+                    className={`membership-card membership-card-${index}`}
                   >
-                    <Title level={4}>會員層級 {index + 1}</Title>
-
-                    {/* Membership Tier Name */}
-                    <Form.Item
-                      label="會員名稱"
-                      name={[field.name, "membership_tier_name"]}
-                      rules={[{ required: true, message: "請輸入會員名稱" }]}
-                      extra={`現時設定：${
-                        currentTier.membership_tier_name || "未設定"
-                      }`}
-                    >
-                      <Input
-                        placeholder="例如：Level 1"
-                        readOnly={index === 0}
+                    <div className="membership-card-subtitle">
+                      <img
+                        src={icons[index]}
+                        alt={`會員層級 ${index} 的圖標`}
+                        className="membership-card-icon"
                       />
-                    </Form.Item>
+                      會員層級 {index + 1}
+                    </div>
+                    <div className="membership-card-body">
+                      {/* Membership Tier Name */}
+                      <Form.Item
+                        label={
+                          <span className="membership-label">會員名稱</span>
+                        }
+                        name={[field.name, "membership_tier_name"]}
+                        rules={[{ required: true, message: "請輸入會員名稱" }]}
+                        extra={
+                          <span className="membership-extra-text">
+                            現時設定：
+                            {currentTier.membership_tier_name || "未設定"}
+                          </span>
+                        }
+                      >
+                        <Input
+                          className="membership-input"
+                          placeholder="例如：Level 1"
+                          readOnly={index === 0}
+                        />
+                      </Form.Item>
 
-                    {/* Require Point */}
-                    <Form.Item
-                      label="積分下限"
-                      name={[field.name, "require_point"]}
-                      rules={[{ required: true, message: "請輸入積分下限" }]}
-                      extra={`現時設定：${currentTier.require_point || 0}`}
-                    >
-                      <InputNumber
-                        min={0}
-                        style={{ width: "100%" }}
-                        disabled={index === 0}
-                      />
-                    </Form.Item>
+                      {/* Require Point */}
+                      <Form.Item
+                        label={
+                          <span className="membership-label">積分下限</span>
+                        }
+                        name={[field.name, "require_point"]}
+                        rules={[{ required: true, message: "請輸入積分下限" }]}
+                        extra={
+                          <span className="membership-extra-text">
+                            現時設定：{currentTier.require_point || 0}
+                          </span>
+                        }
+                      >
+                        <InputNumber
+                          className="membership-input"
+                          min={0}
+                          style={{ width: "100%" }}
+                          disabled={index === 0}
+                        />
+                      </Form.Item>
 
-                    {/* Extend Membership Point */}
-                    <Form.Item
-                      label="續會積分下限"
-                      name={[field.name, "extend_membership_point"]}
-                      rules={[
-                        { required: true, message: "請輸入續會積分下限" },
-                      ]}
-                      extra={`現時設定：${
-                        currentTier.extend_membership_point || 0
-                      }`}
-                    >
-                      <InputNumber
-                        min={0}
-                        style={{ width: "100%" }}
-                        disabled={index === 0}
-                      />
-                    </Form.Item>
+                      {/* Extend Membership Point */}
+                      <Form.Item
+                        label={
+                          <span className="membership-label">續會積分下限</span>
+                        }
+                        name={[field.name, "extend_membership_point"]}
+                        rules={[
+                          { required: true, message: "請輸入續會積分下限" },
+                        ]}
+                        extra={
+                          <span className="membership-extra-text">
+                            現時設定：{currentTier.extend_membership_point || 0}
+                          </span>
+                        }
+                      >
+                        <InputNumber
+                          className="membership-input"
+                          min={0}
+                          style={{ width: "100%" }}
+                          disabled={index === 0}
+                        />
+                      </Form.Item>
 
-                    {/* Display Calculated Point Multiplier */}
-                    <Form.Item label="積分倍數">
-                      <Typography.Title level={5}>
-                        {calculatePointMultiplier(
-                          form,
-                          index,
-                          "original_point",
-                          "multiplied_point"
-                        ).toFixed(4)}
-                      </Typography.Title>
-                    </Form.Item>
+                      {/* Display Calculated Point Multiplier */}
+                      <Form.Item
+                        label={
+                          <span className="membership-label">積分倍數</span>
+                        } // 標籤樣式
+                      >
+                        <Typography.Title
+                          level={5}
+                          className="multiplier-value"
+                        >
+                          {calculatePointMultiplier(
+                            form,
+                            index,
+                            "original_point",
+                            "multiplied_point"
+                          )}
+                        </Typography.Title>
+                      </Form.Item>
 
-                    {/* Original Point */}
-                    <Form.Item
-                      label="$"
-                      name={[field.name, "original_point"]}
-                      rules={[
-                        {
-                          required: true,
-                          message: "請輸入基礎積分",
-                          type: "number",
-                          min: 1,
-                        },
-                      ]}
-                      extra={`當前設定：${currentTier.original_point || 0}`}
-                    >
-                      <InputNumber
-                        min={1}
-                        max={10000}
-                        style={{ width: "100%" }}
-                        onChange={() => forceUpdate({})}
-                      />
-                    </Form.Item>
+                      <div className="input-group">
+                        {/* Original Point */}
+                        
+                          <span className="multiplier-value">$</span>
+                          <Form.Item
+                            name={[field.name, "original_point"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "請輸入基礎積分",
+                                type: "number",
+                                min: 1,
+                              },
+                            ]}
+                            style={{ marginBottom: "0" }}
+                          >
+                            <InputNumber
+                              min={1}
+                              max={10000}
+                              style={{ width: "100%" }}
+                              onChange={() => forceUpdate({})}
+                              className="membership-input"
+                            />
+                          </Form.Item>
+                        
+                        <span className="multiplier-value">=</span>
+                        
+                          {/* Multiplied Point */}
+                          <Form.Item
+                            name={[field.name, "multiplied_point"]}
+                            rules={[
+                              {
+                                required: true,
+                                message: "請輸入獲得積分",
+                                type: "number",
+                                min: 0,
+                              },
+                            ]}
+                            style={{ marginBottom: "0" }}
+                          >
+                            <InputNumber
+                              min={0}
+                              max={10000}
+                              style={{ width: "100%" }}
+                              onChange={() => forceUpdate({})}
+                              className="membership-input"
+                            />
+                          </Form.Item>
+                          <span className="multiplier-value">分</span>
+                        
+                      </div>
+                      {/* Hidden Point Multiplier Field */}
+                      <Form.Item name={[field.name, "point_multiplier"]} hidden>
+                        <InputNumber className="membership-input" />
+                      </Form.Item>
 
-                    {/* Multiplied Point */}
-                    <Form.Item
-                      label="="
-                      name={[field.name, "multiplied_point"]}
-                      rules={[
-                        {
-                          required: true,
-                          message: "請輸入獲得積分",
-                          type: "number",
-                          min: 0,
-                        },
-                      ]}
-                      extra={`當前設定：${currentTier.multiplied_point || 0}`}
-                    >
-                      <InputNumber
-                        min={0}
-                        max={10000}
-                        style={{ width: "100%" }}
-                        onChange={() => forceUpdate({})}
-                      />
-                    </Form.Item>
-
-                    {/* Hidden Point Multiplier Field */}
-                    <Form.Item name={[field.name, "point_multiplier"]} hidden>
-                      <InputNumber />
-                    </Form.Item>
-
-                    {/* Membership Period */}
-                    <Form.Item
-                      label="會員期限（年）"
-                      name={[field.name, "membership_period"]}
-                      rules={[
-                        { required: true, message: "請輸入會員期限（年）" },
-                      ]}
-                      extra={`現時設定：${currentTier.membership_period || 0}`}
-                    >
-                      <InputNumber min={1} style={{ width: "100%" }} />
-                    </Form.Item>
+                      {/* Membership Period */}
+                      <Form.Item
+                        label={
+                          <span className="membership-label">
+                            會員期限（年）
+                          </span>
+                        }
+                        name={[field.name, "membership_period"]}
+                        rules={[
+                          { required: true, message: "請輸入會員期限（年）" },
+                        ]}
+                        extra={
+                          <span className="membership-extra-text">
+                            現時設定：{currentTier.membership_period || 0}
+                          </span>
+                        }
+                      >
+                        <InputNumber
+                          min={1}
+                          style={{ width: "100%" }}
+                          className="membership-input"
+                        />
+                      </Form.Item>
+                    </div>
                   </div>
                 );
               })}
-            </>
+            </div>
           )}
         </Form.List>
       </Form>

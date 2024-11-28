@@ -300,34 +300,27 @@ const GetMemberSettingPage: React.FC = () => {
 
   return (
     <>
-      {/* Submit Button */}
-      <Form.Item style={{ marginBottom: "0px" }}>
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          {/* 取消按鈕 */}
-          <Button
-            onClick={() => {
-              form2.resetFields();
-              router.back();
-            }}
-            className="CancelButton"
-            style={{ marginRight: "10px" }}
-          >
-            取消
-          </Button>
-          <Button type="primary" htmlType="submit" className="addButton">
-            儲存
-          </Button>
-        </div>
-      </Form.Item>
+      <Form form={form2} onFinish={onFinishForm2} layout="horizontal">
+        {/* Submit Button */}
+        <Form.Item style={{ marginBottom: "0px" }}>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            {/* 取消按鈕 */}
+            <Button
+              onClick={() => {
+                form2.resetFields();
+                router.back();
+              }}
+              className="CancelButton"
+              style={{ marginRight: "10px" }}
+            >
+              取消
+            </Button>
+            <Button type="primary" htmlType="submit" className="addButton">
+              儲存
+            </Button>
+          </div>
+        </Form.Item>
 
-      <Form
-        form={form2}
-        onFinish={onFinishForm2}
-        layout="horizontal"
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 14 }}
-        style={{ marginTop: "2rem" }}
-      >
         <Form.Item label="" labelCol={{ span: 6 }} wrapperCol={{ span: 14 }}>
           <div
             className={`custom-checkbox ${allChecked ? "checked" : ""}`}

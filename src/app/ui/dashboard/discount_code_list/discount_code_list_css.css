@@ -735,7 +735,6 @@
 
 /* 父容器 */
 .three-column-form {
-  margin-top: 16px;
   display: flex;
   flex-direction: column;
 }
@@ -744,7 +743,7 @@
 .three-column-form .form-row {
   display: flex;
   justify-content: space-between; /* 三欄等間距 */
-  gap: 16px; /* 欄間距 */
+  gap: 40px !important; /* 欄間距 */
 }
 
 /* 每個欄位設定等比例寬度 */
@@ -761,8 +760,308 @@
   width: 100%; /* 填滿父容器 */
 }
 
+.three-column-form .ant-form-item .ant-form-item-label > label {
+  color: var(--primary, #202124);
+
+  /* body small */
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px; /* 157.143% */
+  letter-spacing: -0.28px;
+}
+
+.horizontal-line {
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin: 24px 0 44px 0;
+  background-color: #ccc;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
 
 
+/* 四欄佈局 */
+.membership-card-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4欄，等寬 */
+  gap: 20px; /* 卡片間距 */
+  
+}
 
+.membership-card-container .ant-form-item {
+  margin-bottom: 14px !important; /* 调整表单项之间的间距 */
+}
+
+.membership-card-container .ant-form-item:last-child {
+  margin-bottom: 0 !important; /* 最后一项移除 margin */
+}
+
+/* 卡片樣式 */
+.membership-card {
+  display: flex;
+  padding: 20px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  flex: 1 0 0;
+  border-radius: 5px;
+  border: 5px solid #4C241D;
+  box-shadow: 4px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.membership-card:hover {
+  transform: translateY(-5px); /* 滑鼠懸停時的上移效果 */
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15); /* 陰影加深 */
+}
+
+/* 卡片不同背景色 */
+.membership-card:nth-child(1) {
+  background: var(--DarkGray, #737277);
+}
+
+.membership-card:nth-child(2) {
+  background: var(--highlight2, #2989C5);
+}
+
+.membership-card:nth-child(3) {
+  background: var(--highligh3, #F275A9);
+}
+
+.membership-card:nth-child(4) {
+  background: var(--highlight1, #855BBF);
+}
+
+/* 標題樣式 */
+.membership-card-title {
+  color: var(--Text, #272727);
+
+  /* H3 */
+  font-family: "Noto Sans HK";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 30px; /* 125% */
+}
+
+/* Icon 的容器 */
+.membership-card-icon {
+  width: 38.699px;
+  height: 39.323px;
+}
+
+/* 卡片內容 */
+.membership-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0px; /* 表單項目間距 */
+}
+
+.membership-card-subtitle{
+  display: flex; /* 使用 Flexbox 排列 */
+  align-items: center; /* 垂直置中 */
+  gap: 8px; /* 圖標與文字的間距 */
+  white-space: nowrap; /* 確保文字不換行 */
+  color: var(--LightGray, #EDEDED);
+
+  /* H3 */
+  font-family: "Noto Sans HK";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 30px; /* 125% */
+}
+
+/* 自定義的表單標籤樣式 */
+.membership-card .custom-form-item .ant-form-item-label label {
+  color: #ffffff; /* 白色標籤文字 */
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  margin-bottom: 8px;
+  display: block; /* 確保換行 */
+}
+
+/* 自定義輸入框 */
+.membership-card .custom-input-number {
+  width: 100%;
+  height: 44px;
+  border-radius: 5px;
+  border: 1px solid #ffffff; /* 白色邊框 */
+  background: #ffffff; /* 白色背景 */
+  padding: 12px;
+  color: #000000; /* 黑色文字 */
+}
+
+/* Placeholder 樣式 */
+.membership-card .custom-input-number::placeholder {
+  color: #737277;
+  font-size: 16px;
+}
+
+.membership-select .ant-select-selector {
+  display: flex !important;
+  padding: 7px 12px !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  gap: 131px !important;
+  align-self: stretch !important;
+  border-radius: 5px !important;
+  border: 1px solid var(--primary, #202124) !important;
+  background: var(--White, #FFF) !important;
+}
+
+.membership-select .ant-select-selector:hover {
+  border-color: inherit; /* 繼承父元素的邊框顏色 */
+  box-shadow: none; /* 移除陰影 */
+}
+
+.membership-select .ant-select-selector:focus-within {
+  border-color: inherit; /* 繼承父元素的邊框顏色 */
+  box-shadow: none; /* 移除陰影 */
+}
+
+.membership-select .ant-select-selection-placeholder {
+  color: var(--primary, #202124);
+
+  /* body */
+  font-family: "Noto Sans HK";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px; /* 137.5% */
+  letter-spacing: -0.32px;
+  
+}
+
+.membership-select .ant-select-single .ant-select-selector {
+  padding: 7px 12px !important;
+}
+
+.membership-select .ant-input-number .ant-input-number-input {
+  padding: 7px 12px !important;
+}
+
+/* 控制會員名稱標籤文字 */
+.membership-label {
+  color: var(--key-colors-neutral, #FFF);
+
+  /* body small */
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px; /* 157.143% */
+  letter-spacing: -0.28px;
+}
+
+/* 控制輸入框樣式 */
+.membership-input {
+  width: 100%;
+  display: flex;
+height: 44px;
+padding: 12px;
+align-items: flex-start;
+gap: 12px;
+align-self: stretch;
+border-radius: 5px;
+border: 1px solid var(--key-colors-neutral, #FFF);
+background: var(--White, #FFF);
+}
+
+/* 覆蓋 InputNumber 背景樣式 */
+.membership-input.ant-input-number {
+  background-color: var(--gray, #EDEDED) !important; /* 白底 */
+  color:var(--DarkGray, #737277) !important; /* 文字顏色 */
+  display: flex;
+  height: 44px;
+  padding: 12px;
+  align-items: flex-start;
+  gap: 12px;
+  align-self: stretch;
+  border-radius: 5px;
+  border: 1px solid var(--key-colors-neutral, #FFF)!important;
+}
+
+/* 控制輸入框的 placeholder 樣式 */
+.membership-input::placeholder {
+  color: var(--key-colors-primary, #131313);
+
+  /* body */
+  font-family: "Noto Sans HK";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px; /* 137.5% */
+  letter-spacing: -0.32px;
+}
+
+/* 控制輸入框下方的文字樣式 (extra 屬性) */
+.membership-extra-text {
+  color: var(--LightGray, #EDEDED);
+  font-family: "Noto Sans HK";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 22px; /* 183.333% */
+  letter-spacing: -0.24px;
+}
+
+.multiplier-value{
+  color: var(--TEST-ref-error-error100, #FFF);
+
+/* H3 */
+font-family: "Noto Sans HK";
+font-size: 24px;
+font-style: normal;
+font-weight: 700;
+line-height: 30px; /* 125% */;
+}
+
+/* 用更高優先級的選擇器覆蓋默認樣式 */
+.multiplier-value.ant-typography, 
+.multiplier-value.ant-typography-h5 {
+  color: var(--TEST-ref-error-error100, #FFF);
+
+/* H3 */
+font-family: "Noto Sans HK";
+font-size: 24px;
+font-style: normal;
+font-weight: 700;
+line-height: 30px; /* 125% */
+}
+
+.input-group {
+  display: flex;
+  align-items: center; /* 垂直置中 */
+  justify-content: center; /* 水平置中 */
+  gap: 8px; /* 控制 $、=、分的間距 */
+}
+
+.membership-card .input-group {
+  display: flex;
+  align-items: center; /* 垂直置中 */
+  justify-content: center; /* 水平置中 */
+  gap: 8px; /* 控制 $、=、分的間距 */
+  flex-wrap: nowrap; /* 確保不換行 */
+}
+
+.membership-card .input-group span,
+.membership-card .input-group .ant-input-number {
+  display: flex;
+  align-items: center; /* 垂直置中 */
+  justify-content: center; /* 水平置中 */
+  height: 44px; /* 與輸入框高度一致 */
+  line-height: 44px; /* 確保文字垂直置中 */
+}
+
+.membership-card .input-group .ant-input-number {
+  flex-shrink: 0; /* 防止輸入框被壓縮 */
+  width: auto; /* 讓輸入框自適應內容 */
+  max-width: 100px; /* 可選，限制最大寬度 */
+}
 
 /* membership_tier */

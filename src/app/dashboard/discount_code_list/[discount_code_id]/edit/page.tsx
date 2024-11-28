@@ -288,10 +288,12 @@ const GetDiscountCodeDetailPage: React.FC = () => {
         />
       </div>
 
-      <div className="form-container">
+      
+      <Form form={form} onFinish={onFinish} layout="vertical">
+        <div className="form-container">
         {/* 左邊列 */}
         <div className="form-column">
-          <Form layout="vertical">
+          
             <Form.Item
               name="discount_type"
               label="折扣類型"
@@ -400,11 +402,11 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                 <Option value="unlimited">優惠碼使用沒有限制</Option>
               </Select>
             </Form.Item>
-          </Form>
+          
         </div>
         {/* 右邊列 */}
         <div className="form-column">
-          <Form layout="vertical">
+          
             <Form.Item
               name="discount_code"
               label="優惠碼"
@@ -507,11 +509,10 @@ const GetDiscountCodeDetailPage: React.FC = () => {
                 </Form.Item>
               )}
             </Form.Item>
-          </Form>
+          
         </div>
-      </div>
-
-      <Form form={form} onFinish={onFinish} layout="vertical">
+        </div>
+        
         {/* Discount Type */}
 
         <Form.Item
@@ -568,6 +569,10 @@ const GetDiscountCodeDetailPage: React.FC = () => {
           </div>
         </Form.Item>
       </Form>
+
+      
+
+      
 
       {/* Non-Editable Fields */}
       {/* <Card title="Additional Information" style={{ marginTop: 16 }}>
