@@ -76,9 +76,7 @@ const GetGiftSettingPage: React.FC = () => {
   const [searchText, setSearchText] = useState<string>(''); // State for search text
 
   const router = useRouter();
-  const handleEdit = (record: RedemptionItem) => {
-    router.push(`/dashboard/discount_code_list/redemption_item/${record.redemption_item_id}/edit`);
-  };
+
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const rowSelection: TableRowSelection<RedemptionItem> = {
@@ -98,7 +96,7 @@ const GetGiftSettingPage: React.FC = () => {
         },
         credentials: 'include',
       });
-  
+
       if (response.status === 404) {
         setRedemptionItems([]);
       } else if (!response.ok) {
@@ -107,7 +105,7 @@ const GetGiftSettingPage: React.FC = () => {
         const responseData = await response.json();
         const data: RedemptionItem[] = responseData.redemption_items;
         setRedemptionItems(data);
-  
+
         // Set filter data
         setRedemptionTypes(responseData.redemption_types || []);
         setRedemptionItemStatuses(responseData.redemption_item_status || []);
