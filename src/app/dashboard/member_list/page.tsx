@@ -8,6 +8,8 @@ import type { ColumnsType, TableProps } from 'antd/es/table';
 import { FormOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation'; // For Next.js 13 with app directory
 
+import Link from 'next/link';
+
 const { Search } = Input;
 
 type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
@@ -16,7 +18,7 @@ interface DataType {
   key: string;
   member_name: string;
   member_phone: string | number;
-  point: string | number;
+  points_balance: string | number;
   membership_tier: string;
   membership_expiry_date: string;
   membership_status: 'expired' | 'active' | 'suspended'; // Updated field
@@ -27,7 +29,7 @@ interface NewMember {
   member_phone: number;
   birthday: string | null;
   referrer_phone: number | null;
-  point: number;
+  points_balance: number;
 }
 
 interface FetchParams {
@@ -45,9 +47,6 @@ const GetMemberListPage: React.FC = () => {
   const hasFetched = useRef(false);
 
   const router = useRouter();
-  const handleEdit = (record: DataType) => {
-    router.push(`/dashboard/member_list/${record.member_phone}/edit`);
-  };
 
   const [data, setData] = useState<DataType[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -145,7 +144,9 @@ const GetMemberListPage: React.FC = () => {
         key: member.member_id ? member.member_id.toString() : Math.random().toString(),
         member_name: member.member_name || 'N/A',
         member_phone: member.member_phone || 'N/A',
-        point: member.point || 'N/A',
+        points_balance: member.points_balance || 'N/A',
+        total_order_amount: member.total_order_amount || 'N/A',
+        birthday: formatDate(member.birthday),
         membership_tier: member.membership_tier
           ? member.membership_tier.membership_tier_name
           : 'N/A',
@@ -260,11 +261,12 @@ const GetMemberListPage: React.FC = () => {
       dataIndex: 'edit',
       key: 'edit',
       render: (_: any, record: DataType) => (
-        <Button
-          type="link"
-          icon={<FormOutlined style={{ color: '#ff4d4f' }} />}
-          onClick={() => handleEdit(record)}
-        />
+        <Link href={`/dashboard/member_list/${record.member_phone}/edit`}>
+          <Button
+            type="link"
+            icon={<FormOutlined style={{ color: '#ff4d4f' }} />}
+          />
+        </Link>
       ),
       width: 50,
     },
@@ -280,15 +282,15 @@ const GetMemberListPage: React.FC = () => {
     },
     {
       title: '積分',
-      dataIndex: 'point',
-      key: 'point',
+      dataIndex: 'points_balance',
+      key: 'points_balance',
       sorter: true, // Enable server-side sorting
       sortDirections: ['ascend', 'descend', 'ascend'],
     },
     {
       title: '累計消費金額',
-      dataIndex: 'point',
-      key: 'total_spent', // Adjusted key if needed
+      dataIndex: 'total_order_amount',
+      key: 'total_order_amount', // Adjusted key if needed
       sorter: true, // Enable server-side sorting
       sortDirections: ['ascend', 'descend', 'ascend'],
     },

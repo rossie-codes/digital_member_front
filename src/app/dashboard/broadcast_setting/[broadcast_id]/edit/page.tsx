@@ -314,7 +314,7 @@ const BroadcastDetailPage: React.FC = () => {
           ? member.membership_tier.membership_tier_name
           : "N/A",
         membership_status: member.membership_status || "Unknown",
-        points_balance: member.point || 0,
+        points_balance: member.points_balance || 0,
         referral_count: member.referral_count || 0,
         order_count: member.order_count || 0,
       }));
