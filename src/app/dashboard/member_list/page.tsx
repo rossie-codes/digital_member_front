@@ -8,8 +8,7 @@ import type { ColumnsType, TableProps } from 'antd/es/table';
 import { FormOutlined, PlusCircleOutlined, WhatsAppOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation'; // For Next.js 13 with app directory
 import styles from './Card.module.css';
-// import { useContext } from 'react';
-// import { AuthContext } from '../../context/AuthContext';
+
 
 import Link from 'next/link';
 
@@ -208,17 +207,17 @@ const GetMemberListPage: React.FC = () => {
     }
   };
 
-  // Fetch membership statistics from the backend on component mount
-  const [stats, setStats] = useState<StatsData | null>(null);
+  // // Fetch membership statistics from the backend on component mount
+  // const [stats, setStats] = useState<StatsData | null>(null);
 
-  interface StatsData {
-    new_members_count: number;
-    membership_tier_counts: {
-      [key: string]: number;
-    };
-    expiring_members_count: number;
-    birthday_members_count: number;
-  }
+  // interface StatsData {
+  //   new_members_count: number;
+  //   membership_tier_counts: {
+  //     [key: string]: number;
+  //   };
+  //   expiring_members_count: number;
+  //   birthday_members_count: number;
+  // }
 
 
   useEffect(() => {
@@ -697,10 +696,6 @@ const GetMemberListPage: React.FC = () => {
           {hasSelected ? `Selected ${selectedRowKeys.length} items` : null}
         </div>
       </div>
-      <Button type="primary" onClick={() => setIsModalVisible(true)}>
-        Add New Member
-      </Button>
-      {hasSelected ? `Selected ${selectedRowKeys.length} items` : null}
 
       <Table
         className="custom-table-header"
