@@ -44,3 +44,475 @@
     }
     /* Add styles for a mobile menu if needed */
   }
+
+/* header */
+
+.custom-page-menu .diamondIcon {
+  width: 4.243px !important;
+  height: 4.243px;
+  background: #d9d9d9;
+  transform: rotate(45deg);
+  display: inline-block;
+  position: relative;
+}
+
+.custom-page-menu .icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 21px;
+  height: 6px;
+  margin-right: 0px;
+}
+
+.custom-page-menu .menu-item-container {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+}
+
+.custom-page-menu .caret-icon {
+  margin-right: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 21px !important;
+}
+
+.custom-page-menu .menu-item-text {
+  font-family: "Noto Sans HK";
+  font-size: 16px;
+  font-style: normal;
+  line-height: 22px;
+  letter-spacing: -0.32px;
+}
+
+.custom-page-menu .menu-item-text {
+  color: var(--key-colors-primary, #131313);
+  font-weight: 400;
+}
+
+.custom-page-menu .menu-item-selected {
+  color: var(--key-colors-tertiary, #d74d03);
+  font-weight: 700;
+}
+
+.custom-page-menu
+  :where(
+    .css-dev-only-do-not-override-ni1kz0
+  ).ant-menu-light.ant-menu-horizontal
+  > .ant-menu-item::after,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light
+  > .ant-menu.ant-menu-horizontal
+  > .ant-menu-item::after,
+.custom-page-menu
+  :where(
+    .css-dev-only-do-not-override-ni1kz0
+  ).ant-menu-light.ant-menu-horizontal
+  > .ant-menu-submenu::after,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light
+  > .ant-menu.ant-menu-horizontal
+  > .ant-menu-submenu::after {
+  content: none !important;
+  border-bottom: none !important;
+}
+
+.custom-page-menu
+  :where(.ant-menu-light.ant-menu-horizontal)
+  > .ant-menu-item-selected::after,
+.custom-page-menu
+  :where(.ant-menu-light.ant-menu-horizontal)
+  > .ant-menu-submenu-selected::after {
+  content: none !important;
+  border-bottom: none !important;
+}
+
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal {
+  line-height: normal !important;
+}
+
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal
+  .ant-menu-item,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal
+  .ant-menu-submenu {
+  padding-inline: 0 !important;
+  margin-right: 8px;
+}
+
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu
+  .ant-menu-item
+  .ant-menu-item-icon
+  + span,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu
+  .ant-menu-submenu-title
+  .ant-menu-item-icon
+  + span,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu
+  .ant-menu-item
+  .anticon
+  + span,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu
+  .ant-menu-submenu-title
+  .anticon
+  + span {
+  margin-inline-start: 0 !important;
+}
+
+.custom-page-menu :where(.ant-menu-horizontal) > .ant-menu-item {
+  height: 50px;
+  line-height: 50px;
+  display: flex;
+  align-items: center;
+}
+/* header */
+
+  /* page */
+
+.promotion-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+  margin-bottom: 25px;
+}
+
+.promotion-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.promotion-image {
+  width: 82px;
+  height: 82px;
+  display: block;
+}
+
+.promotion-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.promotion-text {
+  color: var(--Text, #272727);
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: -0.28px;
+}
+
+.promotion-number {
+  color: var(--Text, #272727);
+  font-family: "Noto Sans HK";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 30px;
+}
+
+.custom-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 32px;
+  padding: 8px 10px;
+  gap: 5px;
+  border-radius: 5px;
+  border: 3px solid var(--key-colors-primary, #131313);
+  background-color: transparent;
+  margin-top: auto;
+}
+
+.custom-button .button-text {
+  color: var(--key-colors-primary, #131313);
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.28px;
+}
+
+.custom-button .button-icon {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.customButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  background: var(--key-colors-secondary, #0b49a0);
+  color: white;
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 19px;
+}
+
+.customButton:hover {
+  background: var(--key-colors-secondary-hover, #083d80);
+  color: white !important;
+}
+
+.custom-row-style {
+  color: var(--DarkGray, #737277);
+
+  /* body small */
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px; /* 157.143% */
+  letter-spacing: -0.28px;
+}
+
+.modalTitle {
+  display: flex;
+  padding-bottom: 0px;
+  align-items: flex-start;
+  gap: 5px;
+  align-self: stretch;
+  border-bottom: 3px solid #000;
+}
+
+.BigcountText {
+  color: var(--Text, #272727);
+  /* H3 */
+  font-family: "Noto Sans HK";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 30px;
+}
+
+.addButton,
+.CancelButton {
+  display: flex;
+  width: 99px;
+  height: 32px;
+  padding: 8px 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+}
+
+.addButton {
+  border-radius: 5px;
+  background: var(--key-colors-tertiary, #d74d03);
+}
+
+.addButton:hover {
+  background: var(--key-colors-tertiary, #d74d03) !important;
+  color: #ffffff !important;
+}
+.CancelButton {
+  border-radius: 5px;
+  background: var(--DarkGray, #737277);
+  color: #ffffff;
+}
+.CancelButton:hover {
+  background: var(--DarkGray, #737277) !important;
+  color: #ffffff !important;
+}
+
+.two-column-form {
+  display: flex;
+  gap: 20px;
+  padding-top: 20px;
+}
+
+.form-left,
+.form-right {
+  flex: 1;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-left {
+  height: fit-content;
+  padding: 20px 50px;
+  flex-direction: column;
+  border-radius: 5px;
+  border: 5px solid var(--highlight2, #2989c5);
+  background: var(--key-colors-secondary, #0b49a0);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.form-left .form-item-label {
+  color: var(--key-colors-neutral, #fff);
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 19px;
+  letter-spacing: -0.28px;
+}
+
+.form-right .form-item-label {
+  color: var(--primary, #202124);
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 19px;
+  letter-spacing: -0.28px;
+}
+
+.form-body-text {
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: -0.28px;
+}
+
+.form-input {
+  display: flex;
+  height: 44px;
+  padding: 12px;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  align-self: stretch;
+  border-radius: 5px;
+  border: 1px solid var(--key-colors-primary, #131313);
+  background: var(--White, #fff);
+}
+
+.form-left .form-input {
+  width: 100%;
+  height: 44px;
+  padding: 12px;
+  border-radius: 5px;
+  border: 1px solid var(--key-colors-primary, #131313);
+  background: var(--White, #fff);
+}
+
+.form-right .form-input {
+  width: 100%;
+  height: 44px;
+  padding: 12px;
+  border-radius: 5px;
+  border: 1px solid var(--key-colors-primary, #131313);
+  background: var(--White, #fff);
+}
+
+.form-right.ant-form-item {
+  margin-bottom: 15px !important;
+}
+
+.form-right.ant-select-selector {
+  border: 1px solid var(--key-colors-primary, #131313) !important;
+  background: var(--White, #fff) !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0px !important;
+  border-radius: 5px !important;
+}
+
+.form-right.ant-input-number {
+  border: 1px solid var(--key-colors-primary, #131313) !important;
+  background: var(--White, #fff) !important;
+  height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0px !important;
+  border-radius: 5px !important;
+}
+
+.form-right.ant-picker {
+  width: 100% !important;
+  height: 44px !important;
+  border: 1px solid var(--key-colors-primary, #131313) !important;
+  border-radius: 5px !important;
+  background: var(--White, #fff) !important;
+  padding: 0 12px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.form-right.ant-select-dropdown {
+  max-width: 100% !important;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 5px 0 !important;
+}
+
+.form-right.ant-select-item {
+  max-width: 100% !important;
+  display: flex;
+  align-items: center;
+  padding: 5px 12px;
+}
+
+:where(.css-dev-only-do-not-override-ni1kz0).ant-select-single:not(
+    .ant-select-customize-input
+  )
+  .ant-select-selector,
+:where(.css-dev-only-do-not-override-ni1kz0).ant-input-number
+  .ant-input-number-input {
+  padding: 0 !important;
+}
+
+.broadcast_title:where(.css-dev-only-do-not-override-ni1kz0).ant-typography,
+.broadcast_title h1:where(.css-dev-only-do-not-override-ni1kz0).ant-typography {
+  color: var(--Text, #272727);
+
+  /* H3 */
+  font-family: "Noto Sans HK";
+  font-size: 24px !important;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 30px; /* 125% */
+}
+
+.broadcast-name-text{
+  color: var(--highlight2, #2989C5) !important;
+
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 19px; /* 135.714% */
+  letter-spacing: -0.28px;
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-skip-ink: none;
+  text-decoration-thickness: auto;
+  text-underline-offset: auto;
+  text-underline-position: from-font;
+}
+
+.custom-recipient-count{
+  color: var(--DarkGray, #737277);
+
+  /* body small */
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px; /* 157.143% */
+  letter-spacing: -0.28px;
+}
+/* page */

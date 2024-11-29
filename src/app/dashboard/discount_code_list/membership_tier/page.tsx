@@ -455,54 +455,53 @@ const GetMembershipTierPage: React.FC = () => {
 
                       <div className="input-group">
                         {/* Original Point */}
-                        
-                          <span className="multiplier-value">$</span>
-                          <Form.Item
-                            name={[field.name, "original_point"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "請輸入基礎積分",
-                                type: "number",
-                                min: 1,
-                              },
-                            ]}
-                            style={{ marginBottom: "0" }}
-                          >
-                            <InputNumber
-                              min={1}
-                              max={10000}
-                              style={{ width: "100%" }}
-                              onChange={() => forceUpdate({})}
-                              className="membership-input"
-                            />
-                          </Form.Item>
-                        
+
+                        <span className="multiplier-value">$</span>
+                        <Form.Item
+                          name={[field.name, "original_point"]}
+                          rules={[
+                            {
+                              required: true,
+                              message: "請輸入基礎積分",
+                              type: "number",
+                              min: 1,
+                            },
+                          ]}
+                          style={{ marginBottom: "0" }}
+                        >
+                          <InputNumber
+                            min={1}
+                            max={10000}
+                            style={{ width: "100%" }}
+                            onChange={() => forceUpdate({})}
+                            className="membership-input"
+                          />
+                        </Form.Item>
+
                         <span className="multiplier-value">=</span>
-                        
-                          {/* Multiplied Point */}
-                          <Form.Item
-                            name={[field.name, "multiplied_point"]}
-                            rules={[
-                              {
-                                required: true,
-                                message: "請輸入獲得積分",
-                                type: "number",
-                                min: 0,
-                              },
-                            ]}
-                            style={{ marginBottom: "0" }}
-                          >
-                            <InputNumber
-                              min={0}
-                              max={10000}
-                              style={{ width: "100%" }}
-                              onChange={() => forceUpdate({})}
-                              className="membership-input"
-                            />
-                          </Form.Item>
-                          <span className="multiplier-value">分</span>
-                        
+
+                        {/* Multiplied Point */}
+                        <Form.Item
+                          name={[field.name, "multiplied_point"]}
+                          rules={[
+                            {
+                              required: true,
+                              message: "請輸入獲得積分",
+                              type: "number",
+                              min: 0,
+                            },
+                          ]}
+                          style={{ marginBottom: "0" }}
+                        >
+                          <InputNumber
+                            min={0}
+                            max={10000}
+                            style={{ width: "100%" }}
+                            onChange={() => forceUpdate({})}
+                            className="membership-input"
+                          />
+                        </Form.Item>
+                        <span className="multiplier-value">分</span>
                       </div>
                       {/* Hidden Point Multiplier Field */}
                       <Form.Item name={[field.name, "point_multiplier"]} hidden>
