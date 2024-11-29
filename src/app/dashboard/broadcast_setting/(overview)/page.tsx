@@ -30,7 +30,7 @@ import {
   DownOutlined,
 } from "@ant-design/icons";
 import Link from 'next/link';
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
 const { Title } = Typography;
 
@@ -88,10 +88,6 @@ const BroadcastSettingPage: React.FC = () => {
   const hasFetched = useRef(false);
 
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const openModal = searchParams.get('openModal') === 'true';
-  const memberIdsParam = searchParams.get('member_ids'); // Fetch member_ids from query
-
 
   const [broadcastData, setBroadcastData] = useState<Broadcast[]>([]);
   const [broadcastSearchText, setBroadcastSearchText] = useState<string>("");
@@ -137,27 +133,6 @@ const BroadcastSettingPage: React.FC = () => {
   const [membershipTierOptions, setMembershipTierOptions] = useState<
     { label: string; value: string }[]
   >([]);
-
-  useEffect(() => {
-    if (openModal) {
-      setIsModalVisible(true);
-      // Optionally, remove the query parameter after opening the modal
-      router.replace('/dashboard/broadcast_setting');
-    }
-  }, [openModal, router]);
-
-  useEffect(() => {
-    if (memberIdsParam) {
-      // Process member_ids as needed
-      const member_ids = memberIdsParam.split(',').map((key) => key.toString());
-      console.log('Member IDs for Broadcast:', member_ids);
-
-    // Ensure that the data is loaded before setting selectedRowKeys
-    // You can move this inside the fetchModalMembers after data is fetched
-    }
-  }, [memberIdsParam]);
-
-
 
   const fetchBroadcastData = async (
     params: BroadcastFetchParams = { page: 1, pageSize: 10 }
@@ -488,10 +463,6 @@ const BroadcastSettingPage: React.FC = () => {
       message.error("Failed to fetch members.");
     } finally {
       setLoadingModalMembers(false);
-      if (memberIdsParam) {
-        const member_ids = memberIdsParam.split(',').map((id) => id.trim());
-        setSelectedMemberRowKeys(member_ids);
-      }
     }
   };
 
