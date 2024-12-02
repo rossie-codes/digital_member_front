@@ -77,12 +77,51 @@ const formItemLayout = {
 };
 
 const GetMembershipTierPage: React.FC = () => {
-  const [form] = Form.useForm<Form1Values & MembershipTierFormValues>();
+  const [form] = Form.useForm<MembershipTierFormValues>();
+  const [form1] = Form.useForm();
   const [, forceUpdate] = useState({});
 
   // State variables
   const [initialTiers, setInitialTiers] = useState<MembershipTier[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true); // To handle loading state
+
+
+  // const onFinishForm1 = async (values: Form1Values) => {
+  //   // Include admin_setting_id in the data
+  //   const dataToSend = {
+  //     admin_setting_id: 1,
+  //     membership_period: values.membership_period,
+  //     membership_extend_method: values.membership_extend_method,
+  //     membership_end_result: values.membership_end_result,
+  //   };
+
+  //   try {
+  //     const response = await fetch(
+  //       `${process.env.NEXT_PUBLIC_API_URL}/admin_setting/post_admin_setting`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         credentials: "include",
+  //         body: JSON.stringify(dataToSend),
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error(`Server error! status: ${response.status}`);
+  //     }
+
+  //     const responseData = await response.json();
+  //     console.log("Server Response:", responseData);
+  //     // Optionally, display a success message or perform other actions
+  //     message.success("Settings updated successfully!");
+  //   } catch (error: any) {
+  //     console.error("Error submitting form:", error);
+  //     // Optionally, display an error message
+  //     message.error(`Failed to update settings: ${error.message}`);
+  //   }
+  // };
 
 
   const fetchTiers = async () => {
@@ -167,7 +206,7 @@ const GetMembershipTierPage: React.FC = () => {
       console.log("Admin Settings:", data);
 
       // Set form values
-      form.setFieldsValue({
+      form1.setFieldsValue({
         membership_period: data.membership_period.toString(),
         membership_extend_method: data.membership_extend_method.toString(),
         membership_end_result: data.membership_end_result.toString(),
@@ -197,8 +236,7 @@ const GetMembershipTierPage: React.FC = () => {
     }
   }, [loading, initialTiers, form]);
 
-  const onFinish = async (values: Form1Values & MembershipTierFormValues) => {
-    // Validate the number of tiers
+  const onFinish = async (values: MembershipTierFormValues) => {
     if (values.membershipTiers.length < MIN_TIERS) {
       message.error(`最少需要 ${MIN_TIERS} 個會員層級。`);
       return;
@@ -209,7 +247,6 @@ const GetMembershipTierPage: React.FC = () => {
       return;
     }
 
-    // Prepare the membership tiers data
     const updatedMembershipTiers = values.membershipTiers.map(
       (tier, index) => ({
         ...tier,
@@ -218,18 +255,8 @@ const GetMembershipTierPage: React.FC = () => {
       })
     );
 
-    // Prepare the full submission payload
-    const submissionPayload = {
-      membership_period: values.membership_period,
-      membership_extend_method: values.membership_extend_method,
-      membership_end_result: values.membership_end_result,
-      membership_tiers: updatedMembershipTiers,
-    };
+    console.log("Form Submitted Successfully:", updatedMembershipTiers);
 
-    console.log("Form Submitted Successfully:", submissionPayload);
-
-    // Send the entire payload to your backend
-    // Adjust the endpoint and method as needed
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/membership_tier/post_membership_tier_setting`,
@@ -237,8 +264,9 @@ const GetMembershipTierPage: React.FC = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            // 'auth': '12345'
           },
-          body: JSON.stringify(submissionPayload),
+          body: JSON.stringify(updatedMembershipTiers),
         }
       );
 
