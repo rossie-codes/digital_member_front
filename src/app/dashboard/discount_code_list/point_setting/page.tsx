@@ -68,6 +68,7 @@ const optionInputFields: Record<
 > = {
   購買次數: [
     {
+      
       label: "購買次數",
       name: "purchase_count",
       type: "number",
@@ -383,6 +384,7 @@ const GetMemberSettingPage: React.FC = () => {
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
                 className="custom-form-item"
+                name="purchase_count"
               >
                 <InputNumber
                   placeholder="請輸入購買次數 (整數)"
@@ -394,6 +396,7 @@ const GetMemberSettingPage: React.FC = () => {
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
                 className="custom-form-item"
+                name="purchase_count_point_awarded"
               >
                 <InputNumber
                   placeholder="請輸入獲得積分 (整數)"
@@ -444,6 +447,7 @@ const GetMemberSettingPage: React.FC = () => {
             <div className="card-body">
               <Form.Item
                 label="購買金額"
+                name="purchase_amount"
                 className="custom-form-item"
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
@@ -456,6 +460,7 @@ const GetMemberSettingPage: React.FC = () => {
               </Form.Item>
               <Form.Item
                 label="獲得積分"
+                name="purchase_amount_point_awarded"
                 className="custom-form-item"
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
@@ -533,6 +538,7 @@ const GetMemberSettingPage: React.FC = () => {
                 className="custom-form-item"
                 labelCol={{ span: 24 }}
                 wrapperCol={{ span: 24 }}
+                name="points_per_referral"
               >
                 <InputNumber
                   placeholder="請輸入獲得積分 (整數)"

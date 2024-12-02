@@ -30,6 +30,8 @@ import {
   DownOutlined,
   FundViewOutlined,
   PlusCircleOutlined,
+  FilterOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -656,12 +658,12 @@ const BroadcastSettingPage: React.FC = () => {
 
   const memberColumns: TableColumnsType<Member> = [
     {
-      title: "Name",
+      title: "姓名",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Phone Number",
+      title: "電話",
       dataIndex: "phone_number",
       key: "phone_number",
     },
@@ -671,9 +673,41 @@ const BroadcastSettingPage: React.FC = () => {
       key: "membership_tier",
     },
     {
-      title: "Membership Status",
+      title: "狀態",
       dataIndex: "membership_status",
       key: "membership_status",
+      render: (status: string) => {
+        // 狀態與顏色映射
+        const statusColorMap: Record<string, string> = {
+          active: "green",
+          expired: "orange",
+          suspended: "red",
+        };
+  
+        // 狀態名稱映射
+        const statusLabelMap: Record<string, string> = {
+          active: "Active",
+          expired: "Expired",
+          suspended: "Suspended",
+        };
+  
+        return (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            {/* 顏色圓點 */}
+            <span
+              style={{
+                width: "10px",
+                height: "10px",
+                backgroundColor: statusColorMap[status.toLowerCase()],
+                borderRadius: "50%",
+                marginRight: "8px",
+              }}
+            />
+            {/* 狀態文字 */}
+            <span>{statusLabelMap[status.toLowerCase()]}</span>
+          </div>
+        );
+      },
     },
     {
       title: "Points Balance",
@@ -846,7 +880,12 @@ const BroadcastSettingPage: React.FC = () => {
 
       {/* Modal for New Broadcast */}
       <Modal
-        title="New Broadcast"
+        title={
+          <div className="modalTitle">
+            <img src="/envelope.png" alt="Icon" style={{ width: "44px" }} />
+            <span className="BigcountText">新廣播</span>
+          </div>
+        }
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         width={800}
@@ -859,19 +898,19 @@ const BroadcastSettingPage: React.FC = () => {
         >
           {/* Broadcast Name */}
           <Form.Item
-            label="Broadcast Name"
+            label="廣播名稱"
             name="broadcast_name"
             rules={[
               { required: true, message: "Please input the broadcast name!" },
             ]}
           >
-            <Input />
+            <Input placeholder="輸入廣播名稱"/>
           </Form.Item>
 
           {/* Template Message Selection */}
           <Form.Item
             name="wati_template"
-            label="WATI Template"
+            label="訊息範本"
             rules={[
               { required: true, message: "Please select a WATI template" },
             ]}
@@ -891,15 +930,15 @@ const BroadcastSettingPage: React.FC = () => {
 
           {/* Schedule Type */}
           <Form.Item
-            label="Schedule Type"
+            label="發送時間"
             name="schedule_type"
             rules={[
               { required: true, message: "Please select a schedule type!" },
             ]}
           >
             <Radio.Group>
-              <Radio value="now">Send Now</Radio>
-              <Radio value="later">Schedule for Later</Radio>
+              <Radio value="now">現在發送</Radio>
+              <Radio value="later">安排特定時間發送</Radio>
             </Radio.Group>
           </Form.Item>
 
@@ -935,10 +974,10 @@ const BroadcastSettingPage: React.FC = () => {
           </Form.Item>
 
           {/* Member Selection */}
-          <Form.Item label="Member Selection" required>
+          
             <Space style={{ marginBottom: 16 }}>
               <Input.Search
-                placeholder="Search members"
+                placeholder="輸入關鍵字"
                 value={modalMemberSearchText}
                 onChange={(e) => setModalMemberSearchText(e.target.value)}
                 onSearch={(value, event) => {
@@ -947,7 +986,7 @@ const BroadcastSettingPage: React.FC = () => {
                 }}
                 enterButton={
                   <Button type="primary" htmlType="button">
-                    Search
+                    <SearchOutlined />
                   </Button>
                 }
                 style={{ width: 300 }}
@@ -957,17 +996,18 @@ const BroadcastSettingPage: React.FC = () => {
                 }}
               />
               <Button onClick={() => setIsFilterModalVisible(true)}>
-                Filters
+              <FilterOutlined />
               </Button>
-              {selectedMemberRowKeys.length > 0 && (
-                <Badge
-                  count={selectedMemberRowKeys.length}
-                  overflowCount={999}
-                />
+
+              {selectedMemberRowKeys.length >= 0 && (
+                <div>
+                  已選：
+                  <span style={{ color: 'blue', fontWeight: 'bold' }}>
+                    {selectedMemberRowKeys.length} 聯絡人
+                  </span>
+                </div>
               )}
-              {selectedMemberRowKeys.length > 0 && (
-                <Tag color="blue">{selectedMemberRowKeys.length} Selected</Tag>
-              )}
+
             </Space>
 
             <Table
@@ -989,13 +1029,28 @@ const BroadcastSettingPage: React.FC = () => {
               onChange={handleModalMembersTableChange}
               // ... other props
             />
-          </Form.Item>
+          
 
           {/* Submit Button */}
           <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Create Broadcast
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button
+              onClick={() => {
+                setIsModalVisible(false);
+              }}
+              className="CancelButton"
+              style={{ marginRight: "10px" }}
+            >
+              取消
             </Button>
+          <Button
+              type="primary"
+              htmlType="submit"
+              className="addButton"
+            >
+              儲存
+            </Button>
+            </div>
           </Form.Item>
         </Form>
       </Modal>
