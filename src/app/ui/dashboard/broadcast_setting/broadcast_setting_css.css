@@ -516,3 +516,51 @@
   letter-spacing: -0.28px;
 }
 /* page */
+
+/* broadcast_history */
+.custom-orange-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 32px;
+  padding: 8px 10px;
+  gap: 5px;
+  border-radius: 5px;
+  border: 3px solid var(--key-colors-tertiary, #D74D03); /* 邊框與背景一致 */
+  background-color: var(--key-colors-tertiary, #D74D03); /* 橘底 */
+  margin-top: auto;
+  cursor: pointer; /* 鼠標樣式 */
+}
+
+.custom-orange-button .button-text {
+  color: #ffffff; /* 白字 */
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.28px;
+}
+
+.custom-orange-button .button-icon {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff; /* 白色圖標 */
+}
+
+/* 鼠標懸停效果 */
+.custom-orange-button:hover {
+  background-color: #c24b02 !important;
+  border-color: #c24b02 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
+
+
+/* broadcast_history */

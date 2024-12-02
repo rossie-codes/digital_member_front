@@ -19,6 +19,7 @@ import {
   Popconfirm,
   Badge,
   Tag,
+  Typography,
 } from "antd";
 import type { TableColumnsType, TableProps, PaginationProps } from "antd";
 import {
@@ -27,11 +28,14 @@ import {
   DeleteOutlined,
   UserOutlined,
   DownOutlined,
+  RollbackOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
-import Link from 'next/link';
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
 
+const { Title } = Typography;
 const { Search } = Input;
 
 interface Broadcast {
@@ -52,7 +56,6 @@ interface BroadcastFetchParams {
   broadcastSearchText?: string;
 }
 
-
 interface MemberFetchParams {
   page: number;
   pageSize: number;
@@ -62,8 +65,6 @@ interface MemberFetchParams {
   memberSearchText?: string;
   modalMemberSearchText?: string;
 }
-
-
 
 interface WatiTemplate {
   id: string;
@@ -109,8 +110,12 @@ const BroadcastHistoryPage: React.FC = () => {
   const [watiTemplates, setWatiTemplates] = useState<WatiTemplate[]>([]);
   const [loadingTemplates, setLoadingTemplates] = useState<boolean>(false);
 
-  const [selectedBroadcastRowKeys, setSelectedBroadcastRowKeys] = useState<React.Key[]>([]);
-  const [selectedMemberRowKeys, setSelectedMemberRowKeys] = useState<React.Key[]>([]);
+  const [selectedBroadcastRowKeys, setSelectedBroadcastRowKeys] = useState<
+    React.Key[]
+  >([]);
+  const [selectedMemberRowKeys, setSelectedMemberRowKeys] = useState<
+    React.Key[]
+  >([]);
 
   // State variables for members
   const [modalMembers, setModalMembers] = useState<Member[]>([]);
@@ -125,8 +130,8 @@ const BroadcastHistoryPage: React.FC = () => {
   const [memberTotalItems, setModalTotalItems] = useState<number>(0);
 
   const [selectedTemplateData, setSelectedTemplateData] = useState<any>(null);
-  const [loadingTemplateData, setLoadingTemplateData] = useState<boolean>(false);
-
+  const [loadingTemplateData, setLoadingTemplateData] =
+    useState<boolean>(false);
 
   // 要將各個 request 集合在一個 request，反正都是打開 modal 時發生
   const [membershipTierOptions, setMembershipTierOptions] = useState<
@@ -138,8 +143,14 @@ const BroadcastHistoryPage: React.FC = () => {
   ) => {
     setLoading(true);
     try {
-      const { page, pageSize, sortField, sortOrder, filters, broadcastSearchText } =
-        params;
+      const {
+        page,
+        pageSize,
+        sortField,
+        sortOrder,
+        filters,
+        broadcastSearchText,
+      } = params;
 
       const queryParams = new URLSearchParams({
         page: page.toString(),
@@ -153,7 +164,8 @@ const BroadcastHistoryPage: React.FC = () => {
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL
+        `${
+          process.env.NEXT_PUBLIC_API_URL
         }/broadcast_setting/get_broadcast_history_list?${queryParams.toString()}`,
         {
           credentials: "include",
@@ -198,7 +210,10 @@ const BroadcastHistoryPage: React.FC = () => {
 
   const broadcastRowSelection = {
     selectedBroadcastRowKeys: selectedBroadcastRowKeys,
-    onChange: (newSelectedBroadcastRowKeys: React.Key[], selectedBroadcastRows: Broadcast[]) => {
+    onChange: (
+      newSelectedBroadcastRowKeys: React.Key[],
+      selectedBroadcastRows: Broadcast[]
+    ) => {
       setSelectedBroadcastRowKeys(newSelectedBroadcastRowKeys);
       // Optionally, you can also store the selectedRows for future use
     },
@@ -209,17 +224,15 @@ const BroadcastHistoryPage: React.FC = () => {
     // }),
   };
 
-
-  const memberRowSelection: TableProps<Member>['rowSelection'] = {
+  const memberRowSelection: TableProps<Member>["rowSelection"] = {
     selectedRowKeys: selectedMemberRowKeys,
     onChange: (selectedRowKeys: React.Key[]) => {
       const keysAsString = selectedRowKeys.map((key) => key.toString());
       setSelectedMemberRowKeys(keysAsString);
-      console.log('Selected members:', keysAsString);
+      console.log("Selected members:", keysAsString);
     },
     preserveSelectedRowKeys: true, // Add this property
   };
-
 
   const formatDate = (isoString: string): string => {
     if (!isoString) return "N/A";
@@ -259,47 +272,131 @@ const BroadcastHistoryPage: React.FC = () => {
     });
   };
 
-
   const broadcastColumns: TableColumnsType<Broadcast> = [
     {
-      title: '',
-      dataIndex: 'edit',
-      key: 'edit',
+      title: "",
+      dataIndex: "edit",
+      key: "edit",
       render: (_: any, record: Broadcast) => (
         <Link href={`/dashboard/broadcast_setting/${record.broadcast_id}/edit`}>
-          <Button type="link" icon={<FormOutlined style={{ color: '#ff4d4f' }} />} />
+          <Button
+            type="link"
+            icon={
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  cursor: "pointer",
+                }}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                >
+                  <g clipPath="url(#clip0_808_5100)">
+                    <path
+                      d="M3.45872 12.284C3.49443 12.284 3.53015 12.2805 3.56586 12.2751L6.56943 11.7483C6.60515 11.7412 6.63908 11.7251 6.66408 11.6983L14.2337 4.12868C14.2503 4.11216 14.2634 4.09254 14.2724 4.07094C14.2813 4.04934 14.2859 4.02618 14.2859 4.00279C14.2859 3.9794 14.2813 3.95625 14.2724 3.93464C14.2634 3.91304 14.2503 3.89342 14.2337 3.8769L11.2659 0.907254C11.2319 0.873326 11.1873 0.855469 11.1391 0.855469C11.0909 0.855469 11.0462 0.873326 11.0123 0.907254L3.44265 8.4769C3.41586 8.50368 3.39979 8.53583 3.39265 8.57154L2.86586 11.5751C2.84849 11.6708 2.8547 11.7692 2.88395 11.862C2.91319 11.9547 2.9646 12.0389 3.03372 12.1073C3.15158 12.2215 3.29979 12.284 3.45872 12.284ZM4.66229 9.16975L11.1391 2.69475L12.448 4.00368L5.97122 10.4787L4.38372 10.759L4.66229 9.16975ZM14.5712 13.784H1.42836C1.11229 13.784 0.856934 14.0394 0.856934 14.3555V14.9983C0.856934 15.0769 0.921219 15.1412 0.999791 15.1412H14.9998C15.0784 15.1412 15.1426 15.0769 15.1426 14.9983V14.3555C15.1426 14.0394 14.8873 13.784 14.5712 13.784Z"
+                      fill="#737277"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_808_5100">
+                      <rect width="16" height="16" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </span>
+            }
+          />
         </Link>
       ),
       width: 50,
     },
     {
-      title: "Broadcast Name",
+      title: "廣播名稱",
       dataIndex: "broadcast_name",
       key: "broadcast_name",
+      render: (text: string, record: Broadcast) => (
+        <Link href={`/dashboard/broadcast_setting/${record.broadcast_id}/edit`}>
+          <span className="broadcast-name-text">{text}</span>
+        </Link>
+      ),
     },
     {
-      title: "WATI Template",
+      title: "廣播範本",
       dataIndex: "wati_template",
       key: "wati_template",
+      render: (text: string) => (
+        <span className="broadcast-name-text">{text}</span>
+      ),
     },
     {
-      title: "Scheduled Start",
+      title: "發送時間",
       dataIndex: "scheduled_start",
       key: "scheduled_start",
       sorter: true,
       sortDirections: ["ascend", "descend"],
+      render: (text: string) => {
+        const [datePart, timePart] = text.split(" ");
+        const [year, month, day] = datePart.split("-");
+        const [hours, minutes] = timePart.split(":");
+
+        const date = new Date(
+          parseInt(year, 10),
+          parseInt(month, 10) - 1,
+          parseInt(day, 10),
+          parseInt(hours, 10),
+          parseInt(minutes, 10)
+        );
+
+        const formattedDate = `${date.getFullYear()}-${String(
+          date.getMonth() + 1
+        ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+        const formattedTime = `${String(date.getHours()).padStart(
+          2,
+          "0"
+        )}:${String(date.getMinutes()).padStart(2, "0")}:${String(
+          date.getSeconds()
+        ).padStart(2, "0")}`;
+        return `${formattedDate} ｜${formattedTime}`;
+      },
     },
     {
-      title: "Recipient Count",
+      title: "收件者數目",
       dataIndex: "recipient_count",
       key: "recipient_count",
       sorter: true,
       sortDirections: ["ascend", "descend"],
-      align: "right",
+      render: (text: number) => (
+        <span className="custom-recipient-count">{text}</span>
+      ),
+    },
+    {
+      title: "",
+      dataIndex: "view",
+      key: "view",
+      render: (_: any, record: Broadcast) => (
+        <Link href={`/dashboard/broadcast_setting/${record.broadcast_id}/edit`}>
+          <Button
+            type="link"
+            icon={
+              <EyeOutlined style={{ fontSize: "16px", color: "#737277" }} />
+            }
+          />
+        </Link>
+      ),
+      width: 50,
     },
   ];
 
-  const handleBroadcastTableChange = (pagination: any, filters: any, sorter: any) => {
+  const handleBroadcastTableChange = (
+    pagination: any,
+    filters: any,
+    sorter: any
+  ) => {
     setBroadcastCurrentPage(pagination.current);
     setBroadcastPageSize(pagination.pageSize);
 
@@ -325,8 +422,14 @@ const BroadcastHistoryPage: React.FC = () => {
   ) => {
     setLoadingModalMembers(true);
     try {
-      const { page, pageSize, sortField, sortOrder, filters, modalMemberSearchText } =
-        params;
+      const {
+        page,
+        pageSize,
+        sortField,
+        sortOrder,
+        filters,
+        modalMemberSearchText,
+      } = params;
 
       const queryParams = new URLSearchParams({
         page: page.toString(),
@@ -353,7 +456,8 @@ const BroadcastHistoryPage: React.FC = () => {
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL
+        `${
+          process.env.NEXT_PUBLIC_API_URL
         }/broadcast_setting/get_broadcast_member_list?${queryParams.toString()}`,
         {
           credentials: "include",
@@ -368,12 +472,12 @@ const BroadcastHistoryPage: React.FC = () => {
 
       const members: any[] = jsonData.data;
       const total: number = jsonData.total;
-      const watiTemplateList: WatiTemplate[] = jsonData.watiTemplateList.map((template: any) => ({
-        id: template,
-        name: template,
-      }));
-
-
+      const watiTemplateList: WatiTemplate[] = jsonData.watiTemplateList.map(
+        (template: any) => ({
+          id: template,
+          name: template,
+        })
+      );
 
       if (!Array.isArray(members)) {
         throw new Error("Invalid data format: 'members' should be an array.");
@@ -417,7 +521,6 @@ const BroadcastHistoryPage: React.FC = () => {
     }
   };
 
-
   const handleFilterApply = (values: any) => {
     setModalMemberFilters(values);
     setIsFilterModalVisible(false);
@@ -443,7 +546,7 @@ const BroadcastHistoryPage: React.FC = () => {
       broadcastForm.resetFields();
       filterForm.resetFields();
       setSelectedMemberRowKeys([]);
-      setModalMemberSearchText('');
+      setModalMemberSearchText("");
       setModalMemberFilters({});
       setModalCurrentPage(1);
       setModalPageSize(10);
@@ -456,11 +559,11 @@ const BroadcastHistoryPage: React.FC = () => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/get_wati_template_detail/${templateId}`,
         {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          credentials: 'include',
+          credentials: "include",
         }
       );
 
@@ -474,13 +577,13 @@ const BroadcastHistoryPage: React.FC = () => {
       // Optionally, update form fields with the fetched data
       broadcastForm.setFieldsValue({
         // Example: Assuming the fetched data has a 'description' field
-        description: data.description || '',
+        description: data.description || "",
         // Add other fields as needed
       });
 
-      message.success('Template details loaded successfully!');
+      message.success("Template details loaded successfully!");
     } catch (error: any) {
-      console.error('Error fetching template details:', error);
+      console.error("Error fetching template details:", error);
       message.error(`Error fetching template details: ${error.message}`);
     } finally {
       setLoadingTemplateData(false);
@@ -527,7 +630,6 @@ const BroadcastHistoryPage: React.FC = () => {
       sorter: (a, b) => a.order_count - b.order_count,
     },
   ];
-
 
   const onModalMemberSearch = (value: string) => {
     const trimmedValue = value.trim().toLowerCase();
@@ -586,13 +688,16 @@ const BroadcastHistoryPage: React.FC = () => {
 
     try {
       // Submit broadcast creation (replace with actual API call)
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/post_new_broadcast`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSubmit),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/post_new_broadcast`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSubmit),
+        }
+      );
       if (!response.ok) {
         throw new Error(`Error creating broadcast: ${response.status}`);
       }
@@ -619,38 +724,49 @@ const BroadcastHistoryPage: React.FC = () => {
 
   return (
     <div>
+      <Title className="broadcast_title">廣播歷史</Title>
+      <div className="promotion-summary">
+        <div className="promotion-item">
+          <img src="/sent.png" alt="Promotion" className="promotion-image" />
+          <div className="promotion-content">
+            <div className="promotion-text">已發送廣播</div>
+            <div className="promotion-number">20</div>
+          </div>
+        </div>
+
+        <div className="promotion-item">
+          <img src="/received.png" alt="Pending" className="promotion-image" />
+          <div className="promotion-content">
+            <div className="promotion-text">累計接受廣播人次</div>
+            <div className="promotion-number">1028</div>
+          </div>
+        </div>
+
+        <Button
+          onClick={() => router.push("/dashboard/broadcast_setting/")}
+          className="custom-orange-button"
+        >
+          <RollbackOutlined className="button-icon" />
+          <span className="button-text">預定廣播</span>
+        </Button>
+      </div>
+
       <div
         style={{
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          width: "100%",
         }}
       >
-        <Space direction="horizontal" style={{ marginBottom: "20px" }}>
-          <Search
-            placeholder="Search broadcasts"
-            allowClear
-            onSearch={onBroadcastSearch}
-            onChange={(e) => setBroadcastSearchText(e.target.value)}
-            style={{ width: 300 }}
-          />
-          <Button type="primary" onClick={() => setIsModalVisible(true)}>
-            New Broadcast
-          </Button>
-
-          <Dropdown menu={menuProps} disabled={selectedBroadcastRowKeys.length === 0}>
-            <Button>
-              Bulk Actions <DownOutlined />
-            </Button>
-          </Dropdown>
-
-          <Button
-            onClick={() => router.push('/dashboard/broadcast_setting/')}
-          >
-            預定廣播
-          </Button>
-        </Space>
-      </div>  
+        <Search
+          placeholder="輸入關鍵字"
+          allowClear
+          onSearch={onBroadcastSearch}
+          onChange={(e) => setBroadcastSearchText(e.target.value)}
+          style={{ width: 232 }}
+        />
+      </div>
 
       {/* Modal for New Broadcast */}
       <Modal
@@ -680,7 +796,9 @@ const BroadcastHistoryPage: React.FC = () => {
           <Form.Item
             name="wati_template"
             label="WATI Template"
-            rules={[{ required: true, message: 'Please select a WATI template' }]}
+            rules={[
+              { required: true, message: "Please select a WATI template" },
+            ]}
           >
             <Select
               loading={loadingTemplates}
@@ -710,20 +828,29 @@ const BroadcastHistoryPage: React.FC = () => {
           </Form.Item>
 
           {/* Conditional Scheduled Time */}
-          <Form.Item shouldUpdate={(prevValues, currentValues) => prevValues.schedule_type !== currentValues.schedule_type}>
+          <Form.Item
+            shouldUpdate={(prevValues, currentValues) =>
+              prevValues.schedule_type !== currentValues.schedule_type
+            }
+          >
             {({ getFieldValue }) => {
-              return getFieldValue('schedule_type') === 'later' ? (
+              return getFieldValue("schedule_type") === "later" ? (
                 <Form.Item
                   label="Scheduled Time"
                   name="scheduled_time"
-                  rules={[{ required: true, message: 'Please select a scheduled time!' }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select a scheduled time!",
+                    },
+                  ]}
                 >
                   <DatePicker
                     showTime
                     format="YYYY-MM-DD HH:mm"
-                    style={{ width: '100%' }}
+                    style={{ width: "100%" }}
                     disabledDate={(current) =>
-                      current && dayjs(current).isBefore(dayjs().startOf('day'))
+                      current && dayjs(current).isBefore(dayjs().startOf("day"))
                     }
                   />
                 </Form.Item>
@@ -742,7 +869,11 @@ const BroadcastHistoryPage: React.FC = () => {
                   event?.preventDefault(); // Prevent form submission
                   onModalMemberSearch(value);
                 }}
-                enterButton={<Button type="primary" htmlType="button">Search</Button>}
+                enterButton={
+                  <Button type="primary" htmlType="button">
+                    Search
+                  </Button>
+                }
                 style={{ width: 300 }}
                 onPressEnter={(e) => {
                   e.preventDefault(); // Prevent form submission on Enter key press
@@ -753,18 +884,18 @@ const BroadcastHistoryPage: React.FC = () => {
                 Filters
               </Button>
               {selectedMemberRowKeys.length > 0 && (
-                <Badge count={selectedMemberRowKeys.length} overflowCount={999} />
+                <Badge
+                  count={selectedMemberRowKeys.length}
+                  overflowCount={999}
+                />
               )}
               {selectedMemberRowKeys.length > 0 && (
-                <Tag color="blue">
-                  {selectedMemberRowKeys.length} Selected
-                </Tag>
+                <Tag color="blue">{selectedMemberRowKeys.length} Selected</Tag>
               )}
-
-
             </Space>
 
             <Table
+              className="custom-table-header"
               dataSource={modalMembers}
               columns={memberColumns}
               rowKey="id"
@@ -780,7 +911,7 @@ const BroadcastHistoryPage: React.FC = () => {
                 position: ["bottomRight"],
               }}
               onChange={handleModalMembersTableChange}
-            // ... other props
+              // ... other props
             />
           </Form.Item>
 
@@ -824,34 +955,33 @@ const BroadcastHistoryPage: React.FC = () => {
           <Form.Item
             name="membership_expiry_date"
             label="會籍到期月份"
-            rules={[{ required: false, message: '選擇日期' }]}
+            rules={[{ required: false, message: "選擇日期" }]}
           >
             <DatePicker
               picker="month"
               format="YYYY-MM"
-              style={{ width: '100%' }} />
+              style={{ width: "100%" }}
+            />
           </Form.Item>
 
           <Form.Item
             name="birthday"
             label="生日月份"
-            rules={[{ required: false, message: '選擇日期' }]}
+            rules={[{ required: false, message: "選擇日期" }]}
           >
-            <DatePicker
-              picker="month"
-              format="MM"
-              style={{ width: '100%' }} />
+            <DatePicker picker="month" format="MM" style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item
             name="created_at"
             label="加入日期"
-            rules={[{ required: false, message: '選擇日期' }]}
+            rules={[{ required: false, message: "選擇日期" }]}
           >
             <DatePicker
               // showTime
               format="YYYY-MM-DD"
-              style={{ width: '100%' }} />
+              style={{ width: "100%" }}
+            />
           </Form.Item>
 
           {/* Points Balance Filter */}
@@ -898,6 +1028,8 @@ const BroadcastHistoryPage: React.FC = () => {
 
       {/* Existing Table */}
       <Table
+        className="custom-table-header"
+        style={{ marginTop: 16 }}
         rowSelection={broadcastRowSelection}
         dataSource={broadcastData}
         columns={broadcastColumns}

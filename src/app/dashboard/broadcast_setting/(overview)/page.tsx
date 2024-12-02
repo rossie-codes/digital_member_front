@@ -29,13 +29,12 @@ import {
   UserOutlined,
   DownOutlined,
   FundViewOutlined,
-  PlusCircleOutlined
+  PlusCircleOutlined,
 } from "@ant-design/icons";
-import Link from 'next/link';
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
 const { Title } = Typography;
-
 
 const { Search } = Input;
 
@@ -111,8 +110,12 @@ const BroadcastSettingPage: React.FC = () => {
   const [watiTemplates, setWatiTemplates] = useState<WatiTemplate[]>([]);
   const [loadingTemplates, setLoadingTemplates] = useState<boolean>(false);
 
-  const [selectedBroadcastRowKeys, setSelectedBroadcastRowKeys] = useState<React.Key[]>([]);
-  const [selectedMemberRowKeys, setSelectedMemberRowKeys] = useState<React.Key[]>([]);
+  const [selectedBroadcastRowKeys, setSelectedBroadcastRowKeys] = useState<
+    React.Key[]
+  >([]);
+  const [selectedMemberRowKeys, setSelectedMemberRowKeys] = useState<
+    React.Key[]
+  >([]);
 
   // State variables for members
   const [modalMembers, setModalMembers] = useState<Member[]>([]);
@@ -127,9 +130,8 @@ const BroadcastSettingPage: React.FC = () => {
   const [memberTotalItems, setModalTotalItems] = useState<number>(0);
 
   const [selectedTemplateData, setSelectedTemplateData] = useState<any>(null);
-  const [loadingTemplateData, setLoadingTemplateData] = useState<boolean>(false);
-
-
+  const [loadingTemplateData, setLoadingTemplateData] =
+    useState<boolean>(false);
 
   // 要將各個 request 集合在一個 request，反正都是打開 modal 時發生
   const [membershipTierOptions, setMembershipTierOptions] = useState<
@@ -141,8 +143,14 @@ const BroadcastSettingPage: React.FC = () => {
   ) => {
     setLoading(true);
     try {
-      const { page, pageSize, sortField, sortOrder, filters, broadcastSearchText } =
-        params;
+      const {
+        page,
+        pageSize,
+        sortField,
+        sortOrder,
+        filters,
+        broadcastSearchText,
+      } = params;
 
       const queryParams = new URLSearchParams({
         page: page.toString(),
@@ -156,7 +164,8 @@ const BroadcastSettingPage: React.FC = () => {
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL
+        `${
+          process.env.NEXT_PUBLIC_API_URL
         }/broadcast_setting/get_broadcast_list?${queryParams.toString()}`,
         {
           credentials: "include",
@@ -201,7 +210,10 @@ const BroadcastSettingPage: React.FC = () => {
 
   const broadcastRowSelection = {
     selectedBroadcastRowKeys,
-    onChange: (newSelectedBroadcastRowKeys: React.Key[], selectedBroadcastRows: Broadcast[]) => {
+    onChange: (
+      newSelectedBroadcastRowKeys: React.Key[],
+      selectedBroadcastRows: Broadcast[]
+    ) => {
       setSelectedBroadcastRowKeys(newSelectedBroadcastRowKeys);
       // Optionally, you can also store the selectedRows for future use
     },
@@ -212,17 +224,15 @@ const BroadcastSettingPage: React.FC = () => {
     // }),
   };
 
-
-  const memberRowSelection: TableProps<Member>['rowSelection'] = {
+  const memberRowSelection: TableProps<Member>["rowSelection"] = {
     selectedRowKeys: selectedMemberRowKeys,
     onChange: (selectedRowKeys: React.Key[]) => {
       const keysAsString = selectedRowKeys.map((key) => key.toString());
       setSelectedMemberRowKeys(keysAsString);
-      console.log('Selected members:', keysAsString);
+      console.log("Selected members:", keysAsString);
     },
     preserveSelectedRowKeys: true, // Add this property
   };
-
 
   const formatDate = (isoString: string): string => {
     if (!isoString) return "N/A";
@@ -348,7 +358,7 @@ const BroadcastSettingPage: React.FC = () => {
         </Link>
       ),
     },
-    
+
     {
       title: "廣播範本",
       dataIndex: "wati_template",
@@ -367,7 +377,7 @@ const BroadcastSettingPage: React.FC = () => {
         const [datePart, timePart] = text.split(" ");
         const [year, month, day] = datePart.split("-");
         const [hours, minutes] = timePart.split(":");
-    
+
         const date = new Date(
           parseInt(year, 10),
           parseInt(month, 10) - 1,
@@ -375,17 +385,20 @@ const BroadcastSettingPage: React.FC = () => {
           parseInt(hours, 10),
           parseInt(minutes, 10)
         );
-    
+
         const formattedDate = `${date.getFullYear()}-${String(
           date.getMonth() + 1
         ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-        const formattedTime = `${String(date.getHours()).padStart(2, "0")}:${String(
-          date.getMinutes()
-        ).padStart(2, "0")}:${String(date.getSeconds()).padStart(2, "0")}`;
+        const formattedTime = `${String(date.getHours()).padStart(
+          2,
+          "0"
+        )}:${String(date.getMinutes()).padStart(2, "0")}:${String(
+          date.getSeconds()
+        ).padStart(2, "0")}`;
         return `${formattedDate} ｜${formattedTime}`;
       },
     },
-    
+
     {
       title: "收件者數目",
       dataIndex: "recipient_count",
@@ -406,14 +419,21 @@ const BroadcastSettingPage: React.FC = () => {
           okText="Yes"
           cancelText="No"
         >
-          <Button type="link" icon={<DeleteOutlined style={{ color: "#737277" }} />} />
+          <Button
+            type="link"
+            icon={<DeleteOutlined style={{ color: "#737277" }} />}
+          />
         </Popconfirm>
       ),
       width: 50,
     },
   ];
 
-  const handleBroadcastTableChange = (pagination: any, filters: any, sorter: any) => {
+  const handleBroadcastTableChange = (
+    pagination: any,
+    filters: any,
+    sorter: any
+  ) => {
     setBroadcastCurrentPage(pagination.current);
     setBroadcastPageSize(pagination.pageSize);
 
@@ -439,8 +459,14 @@ const BroadcastSettingPage: React.FC = () => {
   ) => {
     setLoadingModalMembers(true);
     try {
-      const { page, pageSize, sortField, sortOrder, filters, modalMemberSearchText } =
-        params;
+      const {
+        page,
+        pageSize,
+        sortField,
+        sortOrder,
+        filters,
+        modalMemberSearchText,
+      } = params;
 
       const queryParams = new URLSearchParams({
         page: page.toString(),
@@ -467,7 +493,8 @@ const BroadcastSettingPage: React.FC = () => {
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL
+        `${
+          process.env.NEXT_PUBLIC_API_URL
         }/broadcast_setting/get_broadcast_member_list?${queryParams.toString()}`,
         {
           credentials: "include",
@@ -482,12 +509,12 @@ const BroadcastSettingPage: React.FC = () => {
 
       const members: any[] = jsonData.data;
       const total: number = jsonData.total;
-      const watiTemplateList: WatiTemplate[] = jsonData.watiTemplateList.map((template: any) => ({
-        id: template,
-        name: template,
-      }));
-
-
+      const watiTemplateList: WatiTemplate[] = jsonData.watiTemplateList.map(
+        (template: any) => ({
+          id: template,
+          name: template,
+        })
+      );
 
       if (!Array.isArray(members)) {
         throw new Error("Invalid data format: 'members' should be an array.");
@@ -531,7 +558,6 @@ const BroadcastSettingPage: React.FC = () => {
     }
   };
 
-
   const handleFilterApply = (values: any) => {
     setModalMemberFilters(values);
     setIsFilterModalVisible(false);
@@ -557,13 +583,12 @@ const BroadcastSettingPage: React.FC = () => {
       broadcastForm.resetFields();
       filterForm.resetFields();
       setSelectedMemberRowKeys([]); // Only reset when modal is closed
-      setModalMemberSearchText('');
+      setModalMemberSearchText("");
       setModalMemberFilters({});
       setModalCurrentPage(1);
       setModalPageSize(10);
     }
   }, [isModalVisible]);
-
 
   const handleWatiTemplateChange = async (templateId: string) => {
     setLoadingTemplateData(true);
@@ -571,11 +596,11 @@ const BroadcastSettingPage: React.FC = () => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/get_wati_template_detail/${templateId}`,
         {
-          method: 'GET',
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          credentials: 'include',
+          credentials: "include",
         }
       );
 
@@ -589,19 +614,18 @@ const BroadcastSettingPage: React.FC = () => {
       // Optionally, update form fields with the fetched data
       broadcastForm.setFieldsValue({
         // Example: Assuming the fetched data has a 'description' field
-        description: data.description || '',
+        description: data.description || "",
         // Add other fields as needed
       });
 
-      message.success('Template details loaded successfully!');
+      message.success("Template details loaded successfully!");
     } catch (error: any) {
-      console.error('Error fetching template details:', error);
+      console.error("Error fetching template details:", error);
       message.error(`Error fetching template details: ${error.message}`);
     } finally {
       setLoadingTemplateData(false);
     }
   };
-
 
   const memberColumns: TableColumnsType<Member> = [
     {
@@ -643,7 +667,6 @@ const BroadcastSettingPage: React.FC = () => {
       sorter: (a, b) => a.order_count - b.order_count,
     },
   ];
-
 
   const onModalMemberSearch = (value: string) => {
     const trimmedValue = value.trim().toLowerCase();
@@ -702,13 +725,16 @@ const BroadcastSettingPage: React.FC = () => {
 
     try {
       // Submit broadcast creation (replace with actual API call)
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/post_new_broadcast`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSubmit),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/post_new_broadcast`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSubmit),
+        }
+      );
       if (!response.ok) {
         throw new Error(`Error creating broadcast: ${response.status}`);
       }
@@ -733,18 +759,12 @@ const BroadcastSettingPage: React.FC = () => {
     // onClick: handleMenuClick,
   };
 
-
-
   return (
     <div>
-<Title className="broadcast_title">已編定時間等廣播</Title>
-<div className="promotion-summary">
+      <Title className="broadcast_title">已編定時間等廣播</Title>
+      <div className="promotion-summary">
         <div className="promotion-item">
-          <img
-            src="/pending.png"
-            alt="Promotion"
-            className="promotion-image"
-          />
+          <img src="/pending.png" alt="Promotion" className="promotion-image" />
           <div className="promotion-content">
             <div className="promotion-text">預定廣播</div>
             <div className="promotion-number">8</div>
@@ -761,23 +781,14 @@ const BroadcastSettingPage: React.FC = () => {
 
         <Button
           onClick={() =>
-            router.push('/dashboard/broadcast_setting/broadcast_history')
+            router.push("/dashboard/broadcast_setting/broadcast_history")
           }
           className="custom-button"
         >
           <span className="button-text">廣播歷史</span>
           <FundViewOutlined className="button-icon" />
         </Button>
-
-
-
-       
       </div>
-
-
-
-
-
 
       <div
         style={{
@@ -787,24 +798,23 @@ const BroadcastSettingPage: React.FC = () => {
           width: "100%",
         }}
       >
-        
-        
-          <Search
-            placeholder="輸入關鍵字"
-            allowClear
-            onSearch={onBroadcastSearch}
-            onChange={(e) => setBroadcastSearchText(e.target.value)}
-            style={{ width: 232 }}
-          />
-          <Button type="primary" onClick={() => setIsModalVisible(true)} className="customButton">
+        <Search
+          placeholder="輸入關鍵字"
+          allowClear
+          onSearch={onBroadcastSearch}
+          onChange={(e) => setBroadcastSearchText(e.target.value)}
+          style={{ width: 232 }}
+        />
+        <Button
+          type="primary"
+          onClick={() => setIsModalVisible(true)}
+          className="customButton"
+        >
           <PlusCircleOutlined
             style={{ fontSize: "16px", marginRight: "5px" }}
           />{" "}
-            新廣播
-          </Button>
-
-          
-
+          新廣播
+        </Button>
       </div>
 
       {/* Modal for New Broadcast */}
@@ -835,7 +845,9 @@ const BroadcastSettingPage: React.FC = () => {
           <Form.Item
             name="wati_template"
             label="WATI Template"
-            rules={[{ required: true, message: 'Please select a WATI template' }]}
+            rules={[
+              { required: true, message: "Please select a WATI template" },
+            ]}
           >
             <Select
               loading={loadingTemplates}
@@ -865,20 +877,29 @@ const BroadcastSettingPage: React.FC = () => {
           </Form.Item>
 
           {/* Conditional Scheduled Time */}
-          <Form.Item shouldUpdate={(prevValues, currentValues) => prevValues.schedule_type !== currentValues.schedule_type}>
+          <Form.Item
+            shouldUpdate={(prevValues, currentValues) =>
+              prevValues.schedule_type !== currentValues.schedule_type
+            }
+          >
             {({ getFieldValue }) => {
-              return getFieldValue('schedule_type') === 'later' ? (
+              return getFieldValue("schedule_type") === "later" ? (
                 <Form.Item
                   label="Scheduled Time"
                   name="scheduled_time"
-                  rules={[{ required: true, message: 'Please select a scheduled time!' }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select a scheduled time!",
+                    },
+                  ]}
                 >
                   <DatePicker
                     showTime
                     format="YYYY-MM-DD HH:mm"
-                    style={{ width: '100%' }}
+                    style={{ width: "100%" }}
                     disabledDate={(current) =>
-                      current && dayjs(current).isBefore(dayjs().startOf('day'))
+                      current && dayjs(current).isBefore(dayjs().startOf("day"))
                     }
                   />
                 </Form.Item>
@@ -897,7 +918,11 @@ const BroadcastSettingPage: React.FC = () => {
                   event?.preventDefault(); // Prevent form submission
                   onModalMemberSearch(value);
                 }}
-                enterButton={<Button type="primary" htmlType="button">Search</Button>}
+                enterButton={
+                  <Button type="primary" htmlType="button">
+                    Search
+                  </Button>
+                }
                 style={{ width: 300 }}
                 onPressEnter={(e) => {
                   e.preventDefault(); // Prevent form submission on Enter key press
@@ -908,19 +933,18 @@ const BroadcastSettingPage: React.FC = () => {
                 Filters
               </Button>
               {selectedMemberRowKeys.length > 0 && (
-                <Badge count={selectedMemberRowKeys.length} overflowCount={999} />
+                <Badge
+                  count={selectedMemberRowKeys.length}
+                  overflowCount={999}
+                />
               )}
               {selectedMemberRowKeys.length > 0 && (
-                <Tag color="blue">
-                  {selectedMemberRowKeys.length} Selected
-                </Tag>
+                <Tag color="blue">{selectedMemberRowKeys.length} Selected</Tag>
               )}
-
-
             </Space>
 
             <Table
-            className="custom-table-header"
+              className="custom-table-header"
               dataSource={modalMembers}
               columns={memberColumns}
               rowKey="id"
@@ -936,7 +960,7 @@ const BroadcastSettingPage: React.FC = () => {
                 position: ["bottomRight"],
               }}
               onChange={handleModalMembersTableChange}
-            // ... other props
+              // ... other props
             />
           </Form.Item>
 
@@ -946,7 +970,6 @@ const BroadcastSettingPage: React.FC = () => {
               Create Broadcast
             </Button>
           </Form.Item>
-
         </Form>
       </Modal>
 
@@ -981,34 +1004,33 @@ const BroadcastSettingPage: React.FC = () => {
           <Form.Item
             name="membership_expiry_date"
             label="會籍到期月份"
-            rules={[{ required: false, message: '選擇日期' }]}
+            rules={[{ required: false, message: "選擇日期" }]}
           >
             <DatePicker
               picker="month"
               format="YYYY-MM"
-              style={{ width: '100%' }} />
+              style={{ width: "100%" }}
+            />
           </Form.Item>
 
           <Form.Item
             name="birthday"
             label="生日月份"
-            rules={[{ required: false, message: '選擇日期' }]}
+            rules={[{ required: false, message: "選擇日期" }]}
           >
-            <DatePicker
-              picker="month"
-              format="MM"
-              style={{ width: '100%' }} />
+            <DatePicker picker="month" format="MM" style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item
             name="created_at"
             label="加入日期"
-            rules={[{ required: false, message: '選擇日期' }]}
+            rules={[{ required: false, message: "選擇日期" }]}
           >
             <DatePicker
               // showTime
               format="YYYY-MM-DD"
-              style={{ width: '100%' }} />
+              style={{ width: "100%" }}
+            />
           </Form.Item>
 
           {/* Points Balance Filter */}

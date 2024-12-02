@@ -149,7 +149,7 @@ const LoginPage = () => {
     <StyledContainer>
       <Image src="/WATI_logo_full.png" alt="logo" width={200} height={100} style={{ marginBottom: 20 }} />
       <div style={{ width: '100%', maxWidth: '400px', backgroundColor: '#131313', padding: '10px', borderRadius: '8px', display: 'flex', justifyContent: 'space-between' }}>
-        <a href="/login" style={{ color: '#D74D03', fontWeight: 'bold', textDecoration: 'none' }}>Login</a>
+        <a href="/login" style={{ color: '#D74D03', fontWeight: 'bold', textDecoration: 'none' }}>登入</a>
         <a href="/signup" style={{ color: '#FFFFFF', textDecoration: 'none' }}>Sign Up</a>
       </div>
       <StyledAnchor
