@@ -96,22 +96,24 @@ const Copyright = styled.div`
 
 
 
-const LoginPage = () => {
+const LoginPage: React.FC = () => {
   const router = useRouter();
   // const { login } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [form] = Form.useForm();
 
+
   const onFinish = async (values: any) => {
+
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin_auth/login`, {
         method: 'POST',
         body: JSON.stringify({
-          admin_phone: values.admin_phone,
-          password: values.password,
+          admin_name: values.admin_name,
+          admin_password: values.admin_password,
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -119,24 +121,16 @@ const LoginPage = () => {
         credentials: 'include', // Include cookies in the request
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || 'Login failed');
-        setLoading(false);
-        return;
+      console.log('response:', response.ok);
+      if (response.ok == true) {
+        router.push('/dashboard');
+      } else {
+        // Handle login error
+        const errorData = await response.json();
+        console.error('Login error:', errorData.error);
+        // Display error message to the user as needed
       }
 
-      // No need to store the token manually
-      // The cookie is handled by the browser
-
-      console.log('going to dashboard')
-
-      // Redirect to the dashboard
-      console.log('before router.push');
-      router.push('/dashboard');
-      console.log('after router.push');
-      
     } catch (err) {
       console.error('Login error:', err);
       setError('Login failed due to an unexpected error');
@@ -178,7 +172,7 @@ const LoginPage = () => {
         {error && <div style={{ color: 'red', marginBottom: 16 }}>{error}</div>}
 
         <Form.Item
-          name="admin_phone"
+          name="admin_name"
           rules={[{ required: true, message: '請輸入您的帳戶!' }]}
           style={{ marginBottom: '16px' }}
         >
@@ -186,7 +180,7 @@ const LoginPage = () => {
         </Form.Item>
 
         <Form.Item
-          name="password"
+          name="admin_password"
           rules={[{ required: true, message: '請輸入您的密碼!' }]}
           style={{ marginBottom: '16px' }}
         >

@@ -3,7 +3,6 @@ import Footer from '@/app/ui/dashboard/footer';
 import Header from '@/app/ui/dashboard/header';
 // import '@/app/ui/dashboard/dashboard.css';
 import LogoutButton from '../components/LogoutButton';
-import ProtectedRoute from '../components/ProtextedRoute';
 import '@/app/ui/dashboard/dashboard_css.css';
 
 // export const experimental_ppr = true;
@@ -14,6 +13,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="container">
                 <div className="header">
                     <Header />        
+                    {/* <LogoutButton /> */}
                 </div>
                 
                 <div className="content">
