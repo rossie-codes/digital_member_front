@@ -20,6 +20,7 @@ import {
   Typography,
   Badge,
   Tag,
+  Spin,
 } from "antd";
 import type { TableColumnsType, TableProps, PaginationProps } from "antd";
 import {
@@ -92,8 +93,8 @@ const BroadcastSettingPage: React.FC = () => {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const openModal = searchParams.get('openModal') === 'true';
-  const memberIdsParam = searchParams.get('member_ids'); // Fetch member_ids from query
+  const openModal = searchParams.get("openModal") === "true";
+  const memberIdsParam = searchParams.get("member_ids"); // Fetch member_ids from query
 
   const [broadcastData, setBroadcastData] = useState<Broadcast[]>([]);
   const [broadcastSearchText, setBroadcastSearchText] = useState<string>("");
@@ -147,21 +148,20 @@ const BroadcastSettingPage: React.FC = () => {
     if (openModal) {
       setIsModalVisible(true);
       // Optionally, remove the query parameter after opening the modal
-      router.replace('/dashboard/broadcast_setting');
+      router.replace("/dashboard/broadcast_setting");
     }
   }, [openModal, router]);
 
   useEffect(() => {
     if (memberIdsParam) {
       // Process member_ids as needed
-      const member_ids = memberIdsParam.split(',').map((key) => key.toString());
-      console.log('Member IDs for Broadcast:', member_ids);
+      const member_ids = memberIdsParam.split(",").map((key) => key.toString());
+      console.log("Member IDs for Broadcast:", member_ids);
 
-    // Ensure that the data is loaded before setting selectedRowKeys
-    // You can move this inside the fetchModalMembers after data is fetched
+      // Ensure that the data is loaded before setting selectedRowKeys
+      // You can move this inside the fetchModalMembers after data is fetched
     }
   }, [memberIdsParam]);
-
 
   const fetchBroadcastData = async (
     params: BroadcastFetchParams = { page: 1, pageSize: 10 }
@@ -581,7 +581,7 @@ const BroadcastSettingPage: React.FC = () => {
     } finally {
       setLoadingModalMembers(false);
       if (memberIdsParam) {
-        const member_ids = memberIdsParam.split(',').map((id) => id.trim());
+        const member_ids = memberIdsParam.split(",").map((id) => id.trim());
         setSelectedMemberRowKeys(member_ids);
       }
     }
@@ -668,11 +668,6 @@ const BroadcastSettingPage: React.FC = () => {
       key: "phone_number",
     },
     {
-      title: "Membership Tier",
-      dataIndex: "membership_tier",
-      key: "membership_tier",
-    },
-    {
       title: "狀態",
       dataIndex: "membership_status",
       key: "membership_status",
@@ -683,14 +678,14 @@ const BroadcastSettingPage: React.FC = () => {
           expired: "orange",
           suspended: "red",
         };
-  
+
         // 狀態名稱映射
         const statusLabelMap: Record<string, string> = {
           active: "Active",
           expired: "Expired",
           suspended: "Suspended",
         };
-  
+
         return (
           <div style={{ display: "flex", alignItems: "center" }}>
             {/* 顏色圓點 */}
@@ -708,24 +703,6 @@ const BroadcastSettingPage: React.FC = () => {
           </div>
         );
       },
-    },
-    {
-      title: "Points Balance",
-      dataIndex: "points_balance",
-      key: "points_balance",
-      sorter: (a, b) => a.points_balance - b.points_balance,
-    },
-    {
-      title: "Referral Count",
-      dataIndex: "referral_count",
-      key: "referral_count",
-      sorter: (a, b) => a.referral_count - b.referral_count,
-    },
-    {
-      title: "Order Count",
-      dataIndex: "order_count",
-      key: "order_count",
-      sorter: (a, b) => a.order_count - b.order_count,
     },
   ];
 
@@ -820,6 +797,25 @@ const BroadcastSettingPage: React.FC = () => {
     // onClick: handleMenuClick,
   };
 
+  const [previewData, setPreviewData] = useState<any>(null);
+  const handleTemplateChange = async (value: string) => {
+    setLoading(true); // 顯示載入狀態
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/get_template/${value}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch template data");
+      }
+      const data = await response.json();
+      setPreviewData(data); // 更新預覽區域內容
+    } catch (error) {
+      console.error("Error fetching template:", error);
+    } finally {
+      setLoading(false); // 隱藏載入狀態
+    }
+  };
+
   return (
     <div>
       <Title className="broadcast_title">已編定時間等廣播</Title>
@@ -888,171 +884,230 @@ const BroadcastSettingPage: React.FC = () => {
         }
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
-        width={800}
+        width={1000}
         footer={null}
       >
-        <Form
-          form={broadcastForm}
-          layout="vertical"
-          onFinish={handleCreateBroadcast}
-        >
-          {/* Broadcast Name */}
-          <Form.Item
-            label="廣播名稱"
-            name="broadcast_name"
-            rules={[
-              { required: true, message: "Please input the broadcast name!" },
-            ]}
-          >
-            <Input placeholder="輸入廣播名稱"/>
-          </Form.Item>
-
-          {/* Template Message Selection */}
-          <Form.Item
-            name="wati_template"
-            label="訊息範本"
-            rules={[
-              { required: true, message: "Please select a WATI template" },
-            ]}
-          >
-            <Select
-              loading={loadingTemplates}
-              onChange={handleWatiTemplateChange} // Add this line
-              placeholder="Select a WATI Template"
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          {/* 左側：表單區域 */}
+          <div style={{ width: "60%", paddingRight: "16px" }}>
+            <Form
+              form={broadcastForm}
+              layout="vertical"
+              onFinish={handleCreateBroadcast}
             >
-              {watiTemplates.map((template) => (
-                <Select.Option key={template.id} value={template.id}>
-                  {template.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
+              {/* Broadcast Name */}
+              <Form.Item
+                label={<span className="form-label">廣播名稱</span>}
+                name="broadcast_name"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the broadcast name!",
+                  },
+                ]}
+              >
+                <Input placeholder="輸入廣播名稱" className="custom-input" />
+              </Form.Item>
 
-          {/* Schedule Type */}
-          <Form.Item
-            label="發送時間"
-            name="schedule_type"
-            rules={[
-              { required: true, message: "Please select a schedule type!" },
-            ]}
-          >
-            <Radio.Group>
-              <Radio value="now">現在發送</Radio>
-              <Radio value="later">安排特定時間發送</Radio>
-            </Radio.Group>
-          </Form.Item>
-
-          {/* Conditional Scheduled Time */}
-          <Form.Item
-            shouldUpdate={(prevValues, currentValues) =>
-              prevValues.schedule_type !== currentValues.schedule_type
-            }
-          >
-            {({ getFieldValue }) => {
-              return getFieldValue("schedule_type") === "later" ? (
-                <Form.Item
-                  label="Scheduled Time"
-                  name="scheduled_time"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select a scheduled time!",
-                    },
-                  ]}
+              {/* Template Message Selection */}
+              <Form.Item
+                name="wati_template"
+                label={<span className="form-label">訊息範本</span>}
+                rules={[
+                  { required: true, message: "Please select a WATI template" },
+                ]}
+              >
+                <Select
+                  loading={loadingTemplates}
+                  onChange={handleWatiTemplateChange} // Add this line
+                  placeholder="選擇一個訊息範本"
+                  className="custom-select"
                 >
-                  <DatePicker
-                    showTime
-                    format="YYYY-MM-DD HH:mm"
-                    style={{ width: "100%" }}
-                    disabledDate={(current) =>
-                      current && dayjs(current).isBefore(dayjs().startOf("day"))
-                    }
-                  />
-                </Form.Item>
-              ) : null;
-            }}
-          </Form.Item>
+                  {watiTemplates.map((template) => (
+                    <Select.Option key={template.id} value={template.id}>
+                      {template.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
 
-          {/* Member Selection */}
-          
-            <Space style={{ marginBottom: 16 }}>
-              <Input.Search
-                placeholder="輸入關鍵字"
-                value={modalMemberSearchText}
-                onChange={(e) => setModalMemberSearchText(e.target.value)}
-                onSearch={(value, event) => {
-                  event?.preventDefault(); // Prevent form submission
-                  onModalMemberSearch(value);
-                }}
-                enterButton={
-                  <Button type="primary" htmlType="button">
-                    <SearchOutlined />
-                  </Button>
+              {/* Schedule Type */}
+              <Form.Item
+                label={<span className="form-label">發送時間</span>}
+                name="schedule_type"
+                rules={[
+                  { required: true, message: "Please select a schedule type!" },
+                ]}
+              >
+                <Radio.Group>
+                  <Radio value="now" className="custom-radio">
+                    現在發送
+                  </Radio>
+                  <Radio value="later" className="custom-radio">
+                    安排特定時間發送
+                  </Radio>
+                </Radio.Group>
+              </Form.Item>
+
+              {/* Conditional Scheduled Time */}
+              <Form.Item
+                shouldUpdate={(prevValues, currentValues) =>
+                  prevValues.schedule_type !== currentValues.schedule_type
                 }
-                style={{ width: 300 }}
-                onPressEnter={(e) => {
-                  e.preventDefault(); // Prevent form submission on Enter key press
-                  onModalMemberSearch(modalMemberSearchText);
+              >
+                {({ getFieldValue }) => {
+                  return getFieldValue("schedule_type") === "later" ? (
+                    <Form.Item
+                      label={<span className="form-label">預定時間</span>}
+                      name="scheduled_time"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select a scheduled time!",
+                        },
+                      ]}
+                    >
+                      <DatePicker
+                        showTime
+                        format="YYYY-MM-DD HH:mm"
+                        style={{ width: "100%" }}
+                        disabledDate={(current) =>
+                          current &&
+                          dayjs(current).isBefore(dayjs().startOf("day"))
+                        }
+                      />
+                    </Form.Item>
+                  ) : null;
                 }}
+              </Form.Item>
+
+              {/* Member Selection */}
+
+              <div
+                style={{
+                  marginBottom: 16,
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Input.Search
+                  placeholder="輸入關鍵字"
+                  value={modalMemberSearchText}
+                  onChange={(e) => setModalMemberSearchText(e.target.value)}
+                  onSearch={(value, event) => {
+                    event?.preventDefault(); // Prevent form submission
+                    onModalMemberSearch(value);
+                  }}
+                  enterButton={
+                    <Button className="custom-search-button" htmlType="button">
+                      <SearchOutlined />
+                    </Button>
+                  }
+                  style={{ width: 300 }}
+                  onPressEnter={(e) => {
+                    e.preventDefault(); // Prevent form submission on Enter key press
+                    onModalMemberSearch(modalMemberSearchText);
+                  }}
+                />
+                <Button
+                  className="filter-button"
+                  onClick={() => setIsFilterModalVisible(true)}
+                  style={{
+                    position: "relative",
+                    left: "-15px", // 強制往左移
+                  }}
+                >
+                  <FilterOutlined />
+                </Button>
+
+                {selectedMemberRowKeys.length >= 0 && (
+                  <div style={{ textAlign: "right" }}>
+                    已選：
+                    <span style={{ color: "blue", fontWeight: "bold" }}>
+                      {selectedMemberRowKeys.length} 聯絡人
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <Table
+                className="custom-table-header"
+                dataSource={modalMembers}
+                columns={memberColumns}
+                rowKey="id"
+                rowSelection={memberRowSelection}
+                loading={loadingModalMembers}
+                pagination={{
+                  current: memberCurrentPage,
+                  pageSize: 5,
+                  total: memberTotalItems,
+                  showTotal: (total) => `Total ${total} items`,
+                  showSizeChanger: true,
+                  showQuickJumper: true,
+                  position: ["bottomRight"],
+                }}
+                onChange={handleModalMembersTableChange}
               />
-              <Button onClick={() => setIsFilterModalVisible(true)}>
-              <FilterOutlined />
-              </Button>
+            </Form>
+          </div>
 
-              {selectedMemberRowKeys.length >= 0 && (
-                <div>
-                  已選：
-                  <span style={{ color: 'blue', fontWeight: 'bold' }}>
-                    {selectedMemberRowKeys.length} 聯絡人
-                  </span>
-                </div>
-              )}
-
-            </Space>
-
-            <Table
-              className="custom-table-header"
-              dataSource={modalMembers}
-              columns={memberColumns}
-              rowKey="id"
-              rowSelection={memberRowSelection}
-              loading={loadingModalMembers}
-              pagination={{
-                current: memberCurrentPage,
-                pageSize: memberPageSize,
-                total: memberTotalItems,
-                showTotal: (total) => `Total ${total} items`,
-                showSizeChanger: true,
-                showQuickJumper: true,
-                position: ["bottomRight"],
-              }}
-              onChange={handleModalMembersTableChange}
-              // ... other props
-            />
-          
-
-          {/* Submit Button */}
-          <Form.Item>
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button
-              onClick={() => {
-                setIsModalVisible(false);
-              }}
-              className="CancelButton"
-              style={{ marginRight: "10px" }}
-            >
-              取消
-            </Button>
-          <Button
-              type="primary"
-              htmlType="submit"
-              className="addButton"
-            >
-              儲存
-            </Button>
+          {/* 右側：動態預覽區域 */}
+          <div className="previewWrapper">
+            <div className="previewHeader">
+              <h3>預覽</h3>
             </div>
-          </Form.Item>
-        </Form>
+
+            <div className="previewContent">
+              <div className="imageContainer">
+                <img
+                  src="/phone.png"
+                  alt="Preview Background"
+                  className="previewImage"
+                />
+                <div className="messageBox">
+                  {loadingTemplateData ? (
+                    <Spin />
+                  ) : selectedTemplateData ? (
+                    <div>
+                      <p>{selectedTemplateData.body.replace("{{1}}")}</p>
+                      {selectedTemplateData.footer && (
+                        <p>{selectedTemplateData.footer}</p>
+                      )}
+                    </div>
+                  ) : (
+                    <p>請選擇範本以預覽內容</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="previewFooter">
+              {/* Submit Button */}
+
+              <Form.Item>
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                  <Button
+                    onClick={() => {
+                      setIsModalVisible(false);
+                    }}
+                    className="CancelButton"
+                    style={{ marginRight: "10px" }}
+                  >
+                    取消
+                  </Button>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="addButton"
+                  >
+                    儲存
+                  </Button>
+                </div>
+              </Form.Item>
+            </div>
+          </div>
+        </div>
       </Modal>
 
       <Modal

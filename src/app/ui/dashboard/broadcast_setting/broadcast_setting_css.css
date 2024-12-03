@@ -1,49 +1,48 @@
 /* Styling for the Header component */
 
 .ant-layout-header {
-    background-color: #fff; /* Example background color */
-    padding: 0 20px; /* Example padding */
-    border-bottom: 1px solid #eee; /* Example border */
-  }
-  
-  /* Styling for the Menu items */
+  background-color: #fff; /* Example background color */
+  padding: 0 20px; /* Example padding */
+  border-bottom: 1px solid #eee; /* Example border */
+}
+
+/* Styling for the Menu items */
+.ant-menu-horizontal {
+  border-bottom: none; /* Remove default menu border */
+}
+
+.ant-menu-item {
+  font-size: 16px; /* Example font size */
+  margin-right: 20px; /* Example spacing between items */
+}
+
+.ant-menu-item-selected {
+  background-color: #f0f0f0; /* Example background color for selected item */
+  font-weight: bold; /* Example font weight for selected item */
+}
+
+.ant-menu-item a {
+  color: #333; /* Example link color */
+  text-decoration: none; /* Remove underlines from links */
+}
+
+.ant-menu-item-selected a {
+  color: #1890ff; /* Example link color for selected item */
+}
+
+/* Styling for the Logout Button (assuming it's a standard Ant Design button) */
+.ant-btn-primary {
+  background-color: #1890ff; /* Example background color */
+  border-color: #1890ff; /* Example border color */
+}
+
+/* Media query for responsiveness (adjust as needed) */
+@media (max-width: 768px) {
   .ant-menu-horizontal {
-    border-bottom: none; /* Remove default menu border */
+    display: none; /* Hide the horizontal menu on smaller screens */
   }
-  
-  .ant-menu-item {
-    font-size: 16px; /* Example font size */
-    margin-right: 20px; /* Example spacing between items */
-  }
-  
-  .ant-menu-item-selected {
-    background-color: #f0f0f0; /* Example background color for selected item */
-    font-weight: bold; /* Example font weight for selected item */
-  }
-  
-  .ant-menu-item a {
-    color: #333; /* Example link color */
-    text-decoration: none; /* Remove underlines from links */
-  }
-  
-  .ant-menu-item-selected a {
-    color: #1890ff; /* Example link color for selected item */
-  }
-  
-  
-  /* Styling for the Logout Button (assuming it's a standard Ant Design button) */
-  .ant-btn-primary {
-    background-color: #1890ff; /* Example background color */
-    border-color: #1890ff; /* Example border color */
-  }
-  
-  /* Media query for responsiveness (adjust as needed) */
-  @media (max-width: 768px) {
-    .ant-menu-horizontal {
-      display: none;  /* Hide the horizontal menu on smaller screens */
-    }
-    /* Add styles for a mobile menu if needed */
-  }
+  /* Add styles for a mobile menu if needed */
+}
 
 /* header */
 
@@ -175,7 +174,7 @@
 }
 /* header */
 
-  /* page */
+/* page */
 
 .promotion-summary {
   display: flex;
@@ -487,8 +486,8 @@
   line-height: 30px; /* 125% */
 }
 
-.broadcast-name-text{
-  color: var(--highlight2, #2989C5) !important;
+.broadcast-name-text {
+  color: var(--highlight2, #2989c5) !important;
 
   font-family: "Noto Sans HK";
   font-size: 14px;
@@ -504,7 +503,7 @@
   text-underline-position: from-font;
 }
 
-.custom-recipient-count{
+.custom-recipient-count {
   color: var(--DarkGray, #737277);
 
   /* body small */
@@ -526,8 +525,8 @@
   padding: 8px 10px;
   gap: 5px;
   border-radius: 5px;
-  border: 3px solid var(--key-colors-tertiary, #D74D03); /* 邊框與背景一致 */
-  background-color: var(--key-colors-tertiary, #D74D03); /* 橘底 */
+  border: 3px solid var(--key-colors-tertiary, #d74d03); /* 邊框與背景一致 */
+  background-color: var(--key-colors-tertiary, #d74d03); /* 橘底 */
   margin-top: auto;
   cursor: pointer; /* 鼠標樣式 */
 }
@@ -561,6 +560,223 @@
   transform: scale(1.05);
 }
 
-
-
 /* broadcast_history */
+
+/* new Broadcast */
+
+.previewContainer {
+  position: relative;
+  width: 428px;
+  height: 804px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.previewContainer img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.messageBox {
+  position: absolute;
+  top: 20%;
+  left: 9%; /* 調整水平偏移 */
+  width: 80%; /* 訊息框寬度 */
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 16px;
+  border-radius: 8px;
+  text-align: left;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.previewWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.previewHeader {
+  text-align: center;
+
+  color: var(--key-colors-secondary, #0b49a0);
+
+  /* H3 */
+  font-family: "Noto Sans HK";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 30px; /* 125% */
+}
+
+.previewContent {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.imageContainer {
+  position: relative;
+  width: 428px;
+  height: 804px;
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.previewFooter {
+  text-align: right;
+  margin-top: 16px;
+}
+
+.footerText {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #888888;
+}
+
+.form-label {
+  color: var(--key-colors-primary, #131313);
+
+  /* body small */
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+  letter-spacing: -0.28px;
+}
+
+.custom-input {
+  display: flex;
+  height: 44px;
+  padding: 12px;
+  align-items: flex-start;
+  gap: 12px;
+  align-self: stretch;
+  border-radius: 5px;
+  border: 1px solid var(--key-colors-primary, #131313);
+  background: var(--White, #fff);
+}
+
+.custom-input:focus {
+  border-color: #4096ff;
+  box-shadow: 0 0 4px rgba(64, 150, 255, 0.5);
+}
+
+.custom-select {
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--key-colors-primary, #131313);
+  border-radius: 5px;
+  background: var(--White, #fff);
+  display: flex;
+  align-items: center;
+}
+
+.custom-select .ant-select-selector {
+  width: 100% !important;
+  height: 100%;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.custom-select .ant-select-dropdown {
+  width: auto !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+}
+
+.custom-radio {
+  color: var(--key-colors-primary, #131313);
+
+  /* body */
+  font-family: "Noto Sans HK";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px; /* 137.5% */
+  letter-spacing: -0.32px;
+}
+
+.custom-search-button {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.custom-search-button:hover {
+  background-color: #f5f5f5 !important;
+}
+
+.filter-button {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.filter-button:hover {
+  background: transparent !important;
+}
+
+:where(.ant-space-gap-col-small) {
+  column-gap: 0 !important;
+}
+
+.custom-search-input {
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 8px 12px;
+}
+
+.custom-search-input:focus {
+  border-color: #40a9ff;
+}
+
+.submit-button {
+  background-color: #1890ff;
+  border: none;
+  color: white;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+  background-color: #40a9ff;
+}
+
+.cancel-button {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #d9d9d9;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cancel-button:hover {
+  background-color: #e6e6e6;
+}
+
+/* new Broadcast */
