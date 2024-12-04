@@ -11,11 +11,16 @@ const AppSettingPage: React.FC = () => {
     // Fetch admin_name from the database
     const fetchAdminName = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin_setting/get_admin_profile`, {
+          method: 'GET',
           credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         });
 
-        const data = await response.json();
+        const data = await response.json()
+        ;
         setAdminName(data.admin_name);
       } catch (error) {
         console.error("Failed to fetch admin name:", error);
@@ -24,10 +29,43 @@ const AppSettingPage: React.FC = () => {
     fetchAdminName();
   }, []);
 
-  const onFinish = (values: any) => {
-    console.log("Form values:", values);
-    // Handle form submission
-    message.success("Account settings updated successfully.");
+  const onFinish = async (values: any) => {
+    try {
+      // Prepare the payload
+      const payload = {
+        admin_name: adminName, // Include admin_name from state
+        current_password: values.admin_password,
+        new_password: values.new_admin_password,
+      };
+  
+      // Send the request to your backend
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/admin_setting/put_admin_update_profile_detail`,
+        {
+          method: 'PUT',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      console.log(response);
+  
+      if (response.ok) {
+        // Handle successful response
+        message.success('Account settings updated successfully.');
+        form.resetFields();
+      } else {
+        // Handle errors
+        const errorData = await response.json();
+        message.error(errorData.message || 'Failed to update account settings.');
+      }
+    } catch (error) {
+      console.error('Failed to update account settings:', error);
+      message.error('Failed to update account settings.');
+    }
   };
 
   const onCancel = () => {
@@ -40,7 +78,7 @@ const AppSettingPage: React.FC = () => {
       <Divider />
       <Form form={form} onFinish={onFinish} layout="vertical">
         <Form.Item label="Admin Name">
-          <Input value={adminName} readOnly />
+          <Input value={adminName} disabled />
         </Form.Item>
         <Form.Item
           label="Current Password"
