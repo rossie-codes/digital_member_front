@@ -14,21 +14,21 @@ const items: MenuItem[] = [
   {
     label: (
       <Link href="/dashboard/app_setting">
-         admin 設定 {/* The <a> tag is still needed for styling and accessibility */}
+         帳戶設定 {/* The <a> tag is still needed for styling and accessibility */}
       </Link>
     ),
     key: 'app_setting',
     icon: <MailOutlined />,
   },
-  {
-    label: (
-      <Link href="/dashboard/app_setting/customer_side">
-        會員頁面設定 {/* The <a> tag is still needed for styling and accessibility */}
-      </Link>
-    ),
-    key: 'gift_setting',
-    icon: <MailOutlined />,
-  },
+  // {
+  //   label: (
+  //     <Link href="/dashboard/app_setting/customer_side">
+  //       會員頁面設定 {/* The <a> tag is still needed for styling and accessibility */}
+  //     </Link>
+  //   ),
+  //   key: 'gift_setting',
+  //   icon: <MailOutlined />,
+  // },
   {
     label: (
       <Link href="/dashboard/app_setting/wati">
