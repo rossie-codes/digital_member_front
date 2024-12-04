@@ -693,7 +693,7 @@ const BroadcastDetailPage: React.FC = () => {
               <div style={{ display: "flex", justifyContent: "flex-end" }}>
                 <Button
                   onClick={() => {
-                    setIsModalVisible(false);
+                    router.back();
                   }}
                   className="CancelButton"
                   style={{ marginRight: "10px" }}
