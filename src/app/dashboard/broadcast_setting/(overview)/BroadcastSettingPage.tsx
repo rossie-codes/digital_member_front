@@ -792,30 +792,6 @@ const BroadcastSettingPage: React.FC = () => {
 
   if (error) return <p>Error: {error.message}</p>;
 
-  const menuProps = {
-    // items,
-    // onClick: handleMenuClick,
-  };
-
-  const [previewData, setPreviewData] = useState<any>(null);
-  const handleTemplateChange = async (value: string) => {
-    setLoading(true); // 顯示載入狀態
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/get_template/${value}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch template data");
-      }
-      const data = await response.json();
-      setPreviewData(data); // 更新預覽區域內容
-    } catch (error) {
-      console.error("Error fetching template:", error);
-    } finally {
-      setLoading(false); // 隱藏載入狀態
-    }
-  };
-
   return (
     <div>
       <Title className="broadcast_title">已編定時間等廣播</Title>
@@ -991,36 +967,48 @@ const BroadcastSettingPage: React.FC = () => {
                   alignItems: "center",
                 }}
               >
-                <Input.Search
-                  placeholder="輸入關鍵字"
-                  value={modalMemberSearchText}
-                  onChange={(e) => setModalMemberSearchText(e.target.value)}
-                  onSearch={(value, event) => {
-                    event?.preventDefault(); // Prevent form submission
-                    onModalMemberSearch(value);
-                  }}
-                  enterButton={
-                    <Button className="custom-search-button" htmlType="button">
-                      <SearchOutlined />
-                    </Button>
-                  }
-                  style={{ width: 300 }}
-                  onPressEnter={(e) => {
-                    e.preventDefault(); // Prevent form submission on Enter key press
-                    onModalMemberSearch(modalMemberSearchText);
-                  }}
-                />
-                <Button
-                  className="filter-button"
-                  onClick={() => setIsFilterModalVisible(true)}
-                  style={{
-                    position: "relative",
-                    left: "-15px", // 強制往左移
-                  }}
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "0px" }}
                 >
-                  <FilterOutlined />
-                </Button>
-
+                  <Input.Search
+                    placeholder="輸入關鍵字"
+                    value={modalMemberSearchText}
+                    onChange={(e) => setModalMemberSearchText(e.target.value)}
+                    onSearch={(value, event) => {
+                      event?.preventDefault(); // Prevent form submission
+                      onModalMemberSearch(value);
+                    }}
+                    enterButton={
+                      <Button
+                        className="custom-search-button"
+                        htmlType="button"
+                      >
+                        <SearchOutlined />
+                      </Button>
+                    }
+                    style={{ width: 300 }}
+                    onPressEnter={(e) => {
+                      e.preventDefault(); // Prevent form submission on Enter key press
+                      onModalMemberSearch(modalMemberSearchText);
+                    }}
+                  />
+                  <Button
+                    className="filter-button"
+                    style={{
+                      width: "25px",
+                      height: "25px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginLeft: "7px",
+                    }}
+                    onClick={() => setIsFilterModalVisible(true)}
+                  >
+                    <FilterOutlined
+                      style={{ fontSize: "25px", color: "#737277" }}
+                    />
+                  </Button>
+                </div>
                 {selectedMemberRowKeys.length >= 0 && (
                   <div style={{ textAlign: "right" }}>
                     已選：
@@ -1098,7 +1086,7 @@ const BroadcastSettingPage: React.FC = () => {
                   </Button>
                   <Button
                     type="primary"
-                    htmlType="submit"
+                    onClick={() => broadcastForm.submit()}
                     className="addButton"
                   >
                     儲存

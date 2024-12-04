@@ -20,6 +20,7 @@ import {
   Typography,
   Badge,
   Tag,
+  Spin,
 } from "antd";
 import type { TableColumnsType, TableProps, PaginationProps } from "antd";
 import {
@@ -28,13 +29,16 @@ import {
   DeleteOutlined,
   UserOutlined,
   DownOutlined,
+  FundViewOutlined,
+  PlusCircleOutlined,
+  FilterOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
-import Link from 'next/link';
+import Link from "next/link";
 import { useRouter, useParams } from "next/navigation";
 import dayjs from "dayjs";
-
+const { Title } = Typography;
 const { Search } = Input;
-
 
 interface MemberFetchParams {
   page: number;
@@ -45,7 +49,6 @@ interface MemberFetchParams {
   memberSearchText?: string;
   modalMemberSearchText?: string;
 }
-
 
 interface WatiTemplate {
   id: string;
@@ -65,6 +68,7 @@ interface Member {
 }
 
 const BroadcastDetailPage: React.FC = () => {
+  const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingTemplates, setLoadingTemplates] = useState<boolean>(false);
 
@@ -76,7 +80,6 @@ const BroadcastDetailPage: React.FC = () => {
   const [isFilterModalVisible, setIsFilterModalVisible] =
     useState<boolean>(false);
 
-
   const [error, setError] = useState<Error | null>(null);
   const hasFetched = useRef(false);
 
@@ -86,7 +89,9 @@ const BroadcastDetailPage: React.FC = () => {
   const [broadcastForm] = Form.useForm(); // Form instance for the modal
   const [filterForm] = Form.useForm();
 
-  const [selectedMemberRowKeys, setSelectedMemberRowKeys] = useState<React.Key[]>([]);
+  const [selectedMemberRowKeys, setSelectedMemberRowKeys] = useState<
+    React.Key[]
+  >([]);
   // State variables for members
   const [modalMembers, setModalMembers] = useState<Member[]>([]);
 
@@ -99,107 +104,112 @@ const BroadcastDetailPage: React.FC = () => {
   const [memberPageSize, setModalPageSize] = useState<number>(10);
   const [memberTotalItems, setModalTotalItems] = useState<number>(0);
 
-
   const [selectedTemplateData, setSelectedTemplateData] = useState<any>(null);
-  const [loadingTemplateData, setLoadingTemplateData] = useState<boolean>(false);
+  const [loadingTemplateData, setLoadingTemplateData] =
+    useState<boolean>(false);
 
   // 要將各個 request 集合在一個 request，反正都是打開 modal 時發生
   const [membershipTierOptions, setMembershipTierOptions] = useState<
     { label: string; value: string }[]
   >([]);
 
+  const handleWatiTemplateChange = useCallback(
+    async (templateId: string) => {
+      setLoadingTemplateData(true);
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/get_wati_template_detail/${templateId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
 
-
-  const handleWatiTemplateChange = useCallback(async (templateId: string) => {
-    setLoadingTemplateData(true);
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/get_wati_template_detail/${templateId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch template details: ${response.status}`
+          );
         }
-      );
-  
-      if (!response.ok) {
-        throw new Error(`Failed to fetch template details: ${response.status}`);
-      }
-  
-      const data = await response.json();
-      setSelectedTemplateData(data);
-  
-      // Optionally, update form fields with the fetched data
-      broadcastForm.setFieldsValue({
-        // Example: Assuming the fetched data has a 'description' field
-        description: data.description || '',
-        // Add other fields as needed
-      });
-  
-      message.success('Template details loaded successfully!');
-    } catch (error: any) {
-      console.error('Error fetching template details:', error);
-      message.error(`Error fetching template details: ${error.message}`);
-    } finally {
-      setLoadingTemplateData(false);
-    }
-  }, [broadcastForm]);
 
+        const data = await response.json();
+        setSelectedTemplateData(data);
+
+        // Optionally, update form fields with the fetched data
+        broadcastForm.setFieldsValue({
+          // Example: Assuming the fetched data has a 'description' field
+          description: data.description || "",
+          // Add other fields as needed
+        });
+
+        message.success("Template details loaded successfully!");
+      } catch (error: any) {
+        console.error("Error fetching template details:", error);
+        message.error(`Error fetching template details: ${error.message}`);
+      } finally {
+        setLoadingTemplateData(false);
+      }
+    },
+    [broadcastForm]
+  );
 
   useEffect(() => {
     const fetchBroadcastDetail = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/get_broadcast_detail/${broadcast_id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-        });
-  
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/get_broadcast_detail/${broadcast_id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+          }
+        );
+
         if (!response.ok) {
           throw new Error(`Failed to fetch broadcast: ${response.status}`);
         }
-  
+
         const data = await response.json();
         // Assume data contains the broadcast details
-  
+
         // Set form fields
         broadcastForm.setFieldsValue({
           broadcast_name: data.broadcast_name,
           wati_template: data.wati_template,
-          schedule_type: data.broadcast_now ? 'now' : 'later',
-          scheduled_time: data.scheduled_start ? dayjs(data.scheduled_start) : null,
+          schedule_type: data.broadcast_now ? "now" : "later",
+          scheduled_time: data.scheduled_start
+            ? dayjs(data.scheduled_start)
+            : null,
           // Other fields if any
         });
-  
+
         // Set selected members if available
         if (data.member_ids && Array.isArray(data.member_ids)) {
-          setSelectedMemberRowKeys(data.member_ids.map((id: number) => id.toString()));
+          setSelectedMemberRowKeys(
+            data.member_ids.map((id: number) => id.toString())
+          );
         }
-  
+
         // Fetch template data if wati_template is present
         if (data.wati_template) {
           handleWatiTemplateChange(data.wati_template);
         }
-  
       } catch (error: any) {
-        console.error('Error fetching broadcast detail:', error);
+        console.error("Error fetching broadcast detail:", error);
         message.error(`Error fetching broadcast detail: ${error.message}`);
       } finally {
         setLoading(false);
       }
     };
-  
+
     if (broadcast_id) {
       fetchBroadcastDetail();
     }
   }, [broadcast_id, broadcastForm, handleWatiTemplateChange]);
-
-
-
 
   const handleEditBroadcast = async (values: any) => {
     const memberIds = selectedMemberRowKeys;
@@ -216,13 +226,16 @@ const BroadcastDetailPage: React.FC = () => {
 
     try {
       // Submit broadcast creation (replace with actual API call)
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/put_edit_broadcast_detail/${broadcast_id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dataToSubmit),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/put_edit_broadcast_detail/${broadcast_id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSubmit),
+        }
+      );
       if (!response.ok) {
         throw new Error(`Error creating broadcast: ${response.status}`);
       }
@@ -233,16 +246,19 @@ const BroadcastDetailPage: React.FC = () => {
     }
   };
 
-
-
-
   const fetchModalMembers = async (
     params: MemberFetchParams = { page: 1, pageSize: 10 }
   ) => {
     setLoadingModalMembers(true);
     try {
-      const { page, pageSize, sortField, sortOrder, filters, modalMemberSearchText } =
-        params;
+      const {
+        page,
+        pageSize,
+        sortField,
+        sortOrder,
+        filters,
+        modalMemberSearchText,
+      } = params;
 
       const queryParams = new URLSearchParams({
         page: page.toString(),
@@ -269,7 +285,8 @@ const BroadcastDetailPage: React.FC = () => {
       }
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL
+        `${
+          process.env.NEXT_PUBLIC_API_URL
         }/broadcast_setting/get_broadcast_member_list?${queryParams.toString()}`,
         {
           credentials: "include",
@@ -284,12 +301,12 @@ const BroadcastDetailPage: React.FC = () => {
 
       const members: any[] = jsonData.data;
       const total: number = jsonData.total;
-      const watiTemplateList: WatiTemplate[] = jsonData.watiTemplateList.map((template: any) => ({
-        id: template,
-        name: template,
-      }));
-
-
+      const watiTemplateList: WatiTemplate[] = jsonData.watiTemplateList.map(
+        (template: any) => ({
+          id: template,
+          name: template,
+        })
+      );
 
       if (!Array.isArray(members)) {
         throw new Error("Invalid data format: 'members' should be an array.");
@@ -346,20 +363,13 @@ const BroadcastDetailPage: React.FC = () => {
 
   // Fetch WATI templates and members when modal opens
   useEffect(() => {
-
     fetchModalMembers({
       page: memberCurrentPage,
       pageSize: memberPageSize,
       filters: modalMemberFilters,
       modalMemberSearchText: modalMemberSearchText,
     });
-
   }, []);
-
-
-  
-
-
 
   const onModalMemberSearch = (value: string) => {
     const trimmedValue = value.trim().toLowerCase();
@@ -377,12 +387,12 @@ const BroadcastDetailPage: React.FC = () => {
   };
 
   // Define the rowSelection object
-  const memberRowSelection: TableProps<Member>['rowSelection'] = {
+  const memberRowSelection: TableProps<Member>["rowSelection"] = {
     selectedRowKeys: selectedMemberRowKeys,
     onChange: (selectedRowKeys: React.Key[]) => {
       const keysAsString = selectedRowKeys.map((key) => key.toString());
       setSelectedMemberRowKeys(keysAsString);
-      console.log('Selected members:', keysAsString);
+      console.log("Selected members:", keysAsString);
     },
     preserveSelectedRowKeys: true, // Add this property
   };
@@ -414,188 +424,294 @@ const BroadcastDetailPage: React.FC = () => {
     });
   };
 
-
-
-
-
-
   const memberColumns: TableColumnsType<Member> = [
     {
-      title: "Name",
+      title: "姓名",
       dataIndex: "name",
       key: "name",
     },
     {
-      title: "Phone Number",
+      title: "電話",
       dataIndex: "phone_number",
       key: "phone_number",
     },
     {
-      title: "Membership Tier",
-      dataIndex: "membership_tier",
-      key: "membership_tier",
-    },
-    {
-      title: "Membership Status",
+      title: "狀態",
       dataIndex: "membership_status",
       key: "membership_status",
-    },
-    {
-      title: "Points Balance",
-      dataIndex: "points_balance",
-      key: "points_balance",
-      sorter: (a, b) => a.points_balance - b.points_balance,
-    },
-    {
-      title: "Referral Count",
-      dataIndex: "referral_count",
-      key: "referral_count",
-      sorter: (a, b) => a.referral_count - b.referral_count,
-    },
-    {
-      title: "Order Count",
-      dataIndex: "order_count",
-      key: "order_count",
-      sorter: (a, b) => a.order_count - b.order_count,
+      render: (status: string) => {
+        // 狀態與顏色映射
+        const statusColorMap: Record<string, string> = {
+          active: "green",
+          expired: "orange",
+          suspended: "red",
+        };
+
+        // 狀態名稱映射
+        const statusLabelMap: Record<string, string> = {
+          active: "Active",
+          expired: "Expired",
+          suspended: "Suspended",
+        };
+
+        return (
+          <div style={{ display: "flex", alignItems: "center" }}>
+            {/* 顏色圓點 */}
+            <span
+              style={{
+                width: "10px",
+                height: "10px",
+                backgroundColor: statusColorMap[status.toLowerCase()],
+                borderRadius: "50%",
+                marginRight: "8px",
+              }}
+            />
+            {/* 狀態文字 */}
+            <span>{statusLabelMap[status.toLowerCase()]}</span>
+          </div>
+        );
+      },
     },
   ];
 
-
   return (
     <div>
+      <div className="modalTitle">
+        <img src="/envelope.png" alt="Icon" style={{ width: "44px" }} />
+        <span className="BigcountText">廣播詳情</span>
+      </div>
 
-
-      <Form
-        form={broadcastForm}
-        layout="vertical"
-        onFinish={handleEditBroadcast}
-      >
-        {/* Broadcast Name */}
-        <Form.Item
-          label="Broadcast Name"
-          name="broadcast_name"
-          rules={[
-            { required: true, message: "Please input the broadcast name!" },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-
-        {/* Template Message Selection */}
-        <Form.Item
-          name="wati_template"
-          label="WATI Template"
-          rules={[{ required: true, message: 'Please select a WATI template' }]}
-        >
-          <Select
-            loading={loadingTemplates}
-            onChange={handleWatiTemplateChange} // Add this line
-            placeholder="Select a WATI Template"
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        {/* 左側：表單區域 */}
+        <div style={{ width: "60%", paddingRight: "16px" }}>
+          <Form
+            form={broadcastForm}
+            layout="vertical"
+            onFinish={handleEditBroadcast}
           >
-            {watiTemplates.map((template) => (
-              <Select.Option key={template.id} value={template.id}>
-                {template.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
+            {/* Broadcast Name */}
+            <Form.Item
+              style={{ marginTop: "19px", display: "block" }}
+              label={<span className="form-label">廣播名稱</span>}
+              name="broadcast_name"
+              rules={[
+                { required: true, message: "Please input the broadcast name!" },
+              ]}
+            >
+              <Input placeholder="輸入廣播名稱" className="custom-input" />
+            </Form.Item>
 
-        {/* Schedule Type */}
-        <Form.Item
-          label="Schedule Type"
-          name="schedule_type"
-          rules={[
-            { required: true, message: "Please select a schedule type!" },
-          ]}
-        >
-          <Radio.Group>
-            <Radio value="now">Send Now</Radio>
-            <Radio value="later">Schedule for Later</Radio>
-          </Radio.Group>
-        </Form.Item>
-
-        {/* Conditional Scheduled Time */}
-        <Form.Item shouldUpdate={(prevValues, currentValues) => prevValues.schedule_type !== currentValues.schedule_type}>
-          {({ getFieldValue }) => {
-            return getFieldValue('schedule_type') === 'later' ? (
-              <Form.Item
-                label="Scheduled Time"
-                name="scheduled_time"
-                rules={[{ required: true, message: 'Please select a scheduled time!' }]}
+            {/* Template Message Selection */}
+            <Form.Item
+              name="wati_template"
+              label={<span className="form-label">訊息範本</span>}
+              rules={[
+                { required: true, message: "Please select a WATI template" },
+              ]}
+            >
+              <Select
+                loading={loadingTemplates}
+                onChange={handleWatiTemplateChange} // Add this line
+                placeholder="選擇一個訊息範本"
+                className="custom-select"
               >
-                <DatePicker
-                  showTime
-                  format="YYYY-MM-DD HH:mm"
-                  style={{ width: '100%' }}
-                  disabledDate={(current) =>
-                    current && dayjs(current).isBefore(dayjs().startOf('day'))
+                {watiTemplates.map((template) => (
+                  <Select.Option key={template.id} value={template.id}>
+                    {template.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+
+            {/* Schedule Type */}
+            <Form.Item
+              label={<span className="form-label">發送時間</span>}
+              name="schedule_type"
+              rules={[
+                { required: true, message: "Please select a schedule type!" },
+              ]}
+            >
+              <Radio.Group>
+                <Radio value="now" className="custom-radio">
+                  現在發送
+                </Radio>
+                <Radio value="later" className="custom-radio">
+                  安排特定時間發送
+                </Radio>
+              </Radio.Group>
+            </Form.Item>
+
+            {/* Conditional Scheduled Time */}
+            <Form.Item
+              shouldUpdate={(prevValues, currentValues) =>
+                prevValues.schedule_type !== currentValues.schedule_type
+              }
+            >
+              {({ getFieldValue }) => {
+                return getFieldValue("schedule_type") === "later" ? (
+                  <Form.Item
+                    label={<span className="form-label">預定時間</span>}
+                    name="scheduled_time"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select a scheduled time!",
+                      },
+                    ]}
+                  >
+                    <DatePicker
+                      showTime
+                      format="YYYY-MM-DD HH:mm"
+                      style={{ width: "100%" }}
+                      disabledDate={(current) =>
+                        current &&
+                        dayjs(current).isBefore(dayjs().startOf("day"))
+                      }
+                    />
+                  </Form.Item>
+                ) : null;
+              }}
+            </Form.Item>
+
+            {/* Member Selection */}
+
+            <div
+              style={{
+                marginBottom: 16,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "0px" }}
+              >
+                <Input.Search
+                  placeholder="Search members"
+                  value={modalMemberSearchText}
+                  onChange={(e) => setModalMemberSearchText(e.target.value)}
+                  onSearch={(value, event) => {
+                    event?.preventDefault(); // Prevent form submission
+                    onModalMemberSearch(value);
+                  }}
+                  enterButton={
+                    <Button className="custom-search-button" htmlType="button">
+                      <SearchOutlined />
+                    </Button>
                   }
+                  style={{ width: 300 }}
+                  onPressEnter={(e) => {
+                    e.preventDefault(); // Prevent form submission on Enter key press
+                    onModalMemberSearch(modalMemberSearchText);
+                  }}
                 />
-              </Form.Item>
-            ) : null;
-          }}
-        </Form.Item>
 
-        {/* Member Selection */}
-        <Form.Item label="Member Selection" required>
-          <Space style={{ marginBottom: 16 }}>
-            <Input.Search
-              placeholder="Search members"
-              value={modalMemberSearchText}
-              onChange={(e) => setModalMemberSearchText(e.target.value)}
-              onSearch={(value, event) => {
-                event?.preventDefault(); // Prevent form submission
-                onModalMemberSearch(value);
+                <Button
+                  onClick={() => setIsFilterModalVisible(true)}
+                  className="filter-button"
+                  style={{
+                    width: "25px",
+                    height: "25px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginLeft: "7px",
+                  }}
+                >
+                  <FilterOutlined
+                    style={{ fontSize: "25px", color: "#737277" }}
+                  />
+                </Button>
+              </div>
+
+              {selectedMemberRowKeys.length > 0 && (
+                <div style={{ textAlign: "right" }}>
+                  已選：
+                  <span style={{ color: "blue", fontWeight: "bold" }}>
+                    {selectedMemberRowKeys.length} 聯絡人
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <Table
+              className="custom-table-header"
+              dataSource={modalMembers}
+              columns={memberColumns}
+              rowKey="id"
+              rowSelection={memberRowSelection}
+              loading={loadingModalMembers}
+              pagination={{
+                current: memberCurrentPage,
+                pageSize: memberPageSize,
+                total: memberTotalItems,
+                showTotal: (total) => `Total ${total} items`,
+                showSizeChanger: true,
+                showQuickJumper: true,
+                position: ["bottomRight"],
               }}
-              enterButton={<Button type="primary" htmlType="button">Search</Button>}
-              style={{ width: 300 }}
-              onPressEnter={(e) => {
-                e.preventDefault(); // Prevent form submission on Enter key press
-                onModalMemberSearch(modalMemberSearchText);
-              }}
+              onChange={handleModalMembersTableChange}
+              // ... other props
             />
-            <Button onClick={() => setIsFilterModalVisible(true)}>
-              Filters
-            </Button>
-            {selectedMemberRowKeys.length > 0 && (
-              <Badge count={selectedMemberRowKeys.length} overflowCount={999} />
-            )}
-            {selectedMemberRowKeys.length > 0 && (
-              <Tag color="blue">
-                {selectedMemberRowKeys.length} Selected
-              </Tag>
-            )}
+          </Form>
+        </div>
 
+        {/* 右側：動態預覽區域 */}
+        <div className="previewWrapper">
+          <div className="previewHeader">
+            <h3>預覽</h3>
+          </div>
 
-          </Space>
+          <div className="previewContent">
+            <div className="imageContainer">
+              <img
+                src="/phone.png"
+                alt="Preview Background"
+                className="previewImage"
+              />
+              <div className="messageBox">
+                {loadingTemplateData ? (
+                  <Spin />
+                ) : selectedTemplateData ? (
+                  <div>
+                    <p>{selectedTemplateData.body.replace("{{1}}")}</p>
+                    {selectedTemplateData.footer && (
+                      <p>{selectedTemplateData.footer}</p>
+                    )}
+                  </div>
+                ) : (
+                  <p>請選擇範本以預覽內容</p>
+                )}
+              </div>
+            </div>
+          </div>
 
-          <Table
-            dataSource={modalMembers}
-            columns={memberColumns}
-            rowKey="id"
-            rowSelection={memberRowSelection}
-            loading={loadingModalMembers}
-            pagination={{
-              current: memberCurrentPage,
-              pageSize: memberPageSize,
-              total: memberTotalItems,
-              showTotal: (total) => `Total ${total} items`,
-              showSizeChanger: true,
-              showQuickJumper: true,
-              position: ["bottomRight"],
-            }}
-            onChange={handleModalMembersTableChange}
-          // ... other props
-          />
-        </Form.Item>
+          <div className="previewFooter">
+            {/* Submit Button */}
 
-        {/* Submit Button */}
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            update Broadcast
-          </Button>
-        </Form.Item>
-      </Form>
+            <Form.Item>
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Button
+                  onClick={() => {
+                    setIsModalVisible(false);
+                  }}
+                  className="CancelButton"
+                  style={{ marginRight: "10px" }}
+                >
+                  取消
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={() => broadcastForm.submit()}
+                  className="addButton"
+                >
+                  儲存
+                </Button>
+              </div>
+            </Form.Item>
+          </div>
+        </div>
+      </div>
 
       <Modal
         title="Filter Members"
@@ -628,34 +744,33 @@ const BroadcastDetailPage: React.FC = () => {
           <Form.Item
             name="membership_expiry_date"
             label="會籍到期月份"
-            rules={[{ required: false, message: '選擇日期' }]}
+            rules={[{ required: false, message: "選擇日期" }]}
           >
             <DatePicker
               picker="month"
               format="YYYY-MM"
-              style={{ width: '100%' }} />
+              style={{ width: "100%" }}
+            />
           </Form.Item>
 
           <Form.Item
             name="birthday"
             label="生日月份"
-            rules={[{ required: false, message: '選擇日期' }]}
+            rules={[{ required: false, message: "選擇日期" }]}
           >
-            <DatePicker
-              picker="month"
-              format="MM"
-              style={{ width: '100%' }} />
+            <DatePicker picker="month" format="MM" style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item
             name="created_at"
             label="加入日期"
-            rules={[{ required: false, message: '選擇日期' }]}
+            rules={[{ required: false, message: "選擇日期" }]}
           >
             <DatePicker
               // showTime
               format="YYYY-MM-DD"
-              style={{ width: '100%' }} />
+              style={{ width: "100%" }}
+            />
           </Form.Item>
 
           {/* Points Balance Filter */}
@@ -699,11 +814,8 @@ const BroadcastDetailPage: React.FC = () => {
           </Form.Item>
         </Form>
       </Modal>
-
     </div>
   );
-
-
 };
 
 export default BroadcastDetailPage;
