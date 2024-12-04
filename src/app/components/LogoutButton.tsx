@@ -1,14 +1,25 @@
-"use client";
+// src/components/LogoutButton.tsx
+'use client';
 
-import { useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import React, { useContext } from 'react';
 
-export default function LogoutButton() {
-  const { logout } = useContext(AuthContext);
+import { useRouter } from 'next/navigation';
+import { cookies } from 'next/headers';
 
-  return (
-    <button onClick={logout} className="px-4 py-2 text-white bg-red-500">
-      Logout
-    </button>
-  );
-}
+const LogoutButton: React.FC = () => {
+
+  const router = useRouter();
+
+  const handleLogout = async () => {
+
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin_auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+    router.push('/login');
+  };
+
+  return <button onClick={handleLogout}>Logout</button>;
+};
+
+export default LogoutButton;
