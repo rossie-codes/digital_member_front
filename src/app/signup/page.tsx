@@ -89,6 +89,8 @@ const Copyright = styled.div`
   text-align: center;
   width: 100%;
 `;
+
+
 const SignupPage = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -102,8 +104,7 @@ const SignupPage = () => {
         method: 'POST',
         body: JSON.stringify({
           admin_name: values.admin_name,
-          admin_phone: values.admin_phone,
-          password: values.password,
+          admin_password: values.admin_password,
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -158,16 +159,29 @@ const SignupPage = () => {
           <StyledInput placeholder="Admin Name" />
         </Form.Item>
         <Form.Item
-          name="admin_phone"
-          rules={[{ required: true, message: 'Please input your phone number!' }]}
+          label="Admin Password"
+          name="admin_password"
+          rules={[{ required: true, message: "Please enter a new password" }]}
         >
-          <StyledInput placeholder="Phone Number" />
+          <Input.Password placeholder="Enter new password" />
         </Form.Item>
         <Form.Item
-          name="password"
-          rules={[{ required: true, message: 'Please input your password!' }]}
+          label="Confirm Admin Password"
+          name="confirm_admin_password"
+          dependencies={["new_admin_password"]}
+          rules={[
+            { required: true, message: "Please confirm your new password" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue("new_admin_password") === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error("Passwords do not match."));
+              },
+            }),
+          ]}
         >
-          <StyledInput.Password placeholder="Password" />
+          <Input.Password placeholder="Confirm new password" />
         </Form.Item>
         <Form.Item>
           <StyledButton type="primary" htmlType="submit" loading={loading}>
