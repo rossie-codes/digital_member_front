@@ -2,95 +2,222 @@
 
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { Spin, Alert, Row, Col, Card, Typography, List } from "antd";
-import { GiftOutlined,CaretUpOutlined,TagOutlined,NotificationOutlined,CaretDownOutlined} from "@ant-design/icons";
+import {
+  GiftOutlined,
+  CaretUpOutlined,
+  TagOutlined,
+  NotificationOutlined,
+  CaretDownOutlined,
+  RightOutlined,
+} from "@ant-design/icons";
 import "./DashboardPage.css"; // 引入 CSS 文件
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
-
-
-const { Title, Text } = Typography;
-
-// Dynamic icons array
-const dynamicIcons = ['/1st.png', '/2nd.png', '/3rd.png', '/renew.png', '/Amount.png', '/expired.png'];
-
-const memberData = {
-  totalMembers: 1270,
-  levels: [
-    { type: "第一级別會員", value: 487, expiringSoon: 33, color: "#4c8bf5" },
-    { type: "第二級別會員", value: 152, expiringSoon: 28, color: "#ec6f8b" },
-    { type: "第三级別會員", value: 631, expiringSoon: 53, color: "#9966cc" },
-  ],
-};
-
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, index }: any) => {
-  const RADIAN = Math.PI / 180;
-  const radius = outerRadius + 30; // 增加距離以保持標籤位置
-  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-  const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-  const { type, value, expiringSoon } = memberData.levels[index];
-  return (
-    <g>
-      <line x1={cx + (outerRadius - 10) * Math.cos(-midAngle * RADIAN)}
-            y1={cy + (outerRadius - 10) * Math.sin(-midAngle * RADIAN)}
-            x2={x} y2={y} stroke="#ccc" strokeWidth={1} />
-      
-      <text x={x} y={y - 10} textAnchor={x > cx ? "start" : "end"} fill="#333" fontSize="14">
-        {type} ({value})
-      </text>
-      <text x={x} y={y + 10} textAnchor={x > cx ? "start" : "end"} fill="red" fontSize="12">
-        即將到期 <CaretDownOutlined /> {expiringSoon}
-      </text>
-    </g>
-  );
-};
-
-const DonutChart = () => (
-  <ResponsiveContainer width="100%" height={400}>
-    <PieChart>
-      <Pie
-        data={memberData.levels}
-        dataKey="value"
-        nameKey="type"
-        cx="50%"
-        cy="50%"
-        innerRadius={80}
-        outerRadius={100}
-        labelLine={false}
-        label={renderCustomizedLabel} // 使用自定義標籤
-      >
-        {memberData.levels.map((entry, index) => (
-          <Cell key={`cell-${index}`} fill={entry.color} />
-        ))}
-      </Pie>
-      <Tooltip />
-    </PieChart>
-  </ResponsiveContainer>
-);
-
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+} from "recharts";
 
 interface DashboardInfo {
   userCount: number;
   sales: number;
   // Add other relevant fields as needed
+  new_member_count: number; // 新會員數目
+  expiring_member_count: number; // 即將到期會員數目
+  active_member_count: number; // 總會員數目
+  membership_tiers: string[]; // 會員等級名稱 (新會員、銅會員等)
+  membership_tier_counts: Record<string, number>; // 各會員等級的人數
+  membership_tier_expiring_member_count: Record<string, number>; // 各等級即將到期會員數目
+  membership_tier_upgrade_member_counts: Record<string, number>; // 各等級升級會員數目
+  membership_tier_change_percentage: Record<string, number>; // 各等級會員變化百分比
+  upcoming_broadcasts: {
+    broadcast_name: string;
+    scheduled_start: string;
+  }[]; // 即將傳送廣播列表
+  active_discounts: {
+    discount_code_name: string;
+    valid_from: string;
+  }[]; // 活動中的折扣列表
 }
 
+const { Title, Text } = Typography;
+
+// Dynamic icons array
+const dynamicIcons = [
+  "/new.png",
+  "/1st.png",
+  "/2nd.png",
+  "/3rd.png",
+  "/Amount.png",
+  "/expired.png",
+  "/renew.png",
+];
+const dynamicColors = ["#2989C5", "#F275A9", "#855BBF", "#FFA500"]; // 根據等級設置顏色
+
+const data = [
+  { channel: "門市", members: 100 },
+  { channel: "WhatsApp", members: 80 },
+  { channel: "推薦", members: 20 },
+];
+
+const MemberChannelsChart = () => (
+  <ResponsiveContainer width="100%" height={500}>
+    <BarChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 10 }}>
+      <CartesianGrid vertical={false} />
+      <XAxis dataKey="channel" axisLine={false} tickLine={false} />
+      <YAxis
+        type="number"
+        domain={[0, 200]} // 設定範圍 0 到 200
+        ticks={[0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200]} // 自訂刻度
+        axisLine={false}
+        tickLine={false}
+      />
+      <Tooltip />
+      <Bar
+        dataKey="members"
+        fill="#D74D03"
+        barSize={30}
+        radius={[5, 5, 0, 0]}
+      />
+    </BarChart>
+  </ResponsiveContainer>
+);
+
+const renderCustomizedLabel = ({
+  cx,
+  cy,
+  midAngle,
+  innerRadius,
+  outerRadius,
+  index,
+  type,
+  value,
+  expiringSoon,
+}: any) => {
+  const RADIAN = Math.PI / 180;
+  const radius = outerRadius + 20; // 調整標籤距離
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  // 計算文字位置
+  const offset = 20; // 垂直偏移量
+  const isLeftSide = x < cx; // 判斷是否在左側
+
+  return (
+    <g>
+      {/* 連接線 */}
+      <line
+        x1={cx + (outerRadius - 10) * Math.cos(-midAngle * RADIAN)}
+        y1={cy + (outerRadius - 10) * Math.sin(-midAngle * RADIAN)}
+        x2={x}
+        y2={y}
+        stroke="#ccc"
+        strokeWidth={1}
+      />
+      {/* 水平線 */}
+      <line
+        x1={x}
+        y1={y}
+        x2={x + (isLeftSide ? -100 : 100)} // 左右側決定水平線方向
+        y2={y}
+        stroke="#ccc"
+        strokeWidth={1}
+      />
+      {/* 數量文字 */}
+      <text
+        x={x + (isLeftSide ? -40 : 40)} // 左右側控制文字的水平位置
+        y={y - offset / 2}
+        textAnchor={isLeftSide ? "end" : "start"}
+        fill="#333"
+        fontSize="14"
+        fontWeight="bold"
+      >
+        {value}
+      </text>
+      {/* 即將到期文字 */}
+      <text
+        x={x + (isLeftSide ? -40 : 40)} // 左右側控制文字的水平位置
+        y={y + offset / 2}
+        textAnchor={isLeftSide ? "end" : "start"}
+        fill="red"
+        fontSize="12"
+      >
+        即將到期 {expiringSoon}
+      </text>
+    </g>
+  );
+};
+
+const DonutChart = ({
+  dashboardData,
+}: {
+  dashboardData: DashboardInfo | null;
+}) => {
+  if (!dashboardData) return null;
+
+  const data =
+    dashboardData.membership_tiers.map((tier: string, index: number) => ({
+      type: tier,
+      value: dashboardData.membership_tier_counts[tier],
+      expiringSoon: dashboardData.membership_tier_expiring_member_count[tier],
+    })) || [];
+
+  return (
+    <ResponsiveContainer width="100%" height={400}>
+      <PieChart>
+        <Pie
+          data={data}
+          dataKey="value"
+          nameKey="type"
+          cx="50%"
+          cy="50%"
+          innerRadius={80}
+          outerRadius={100}
+          labelLine={false}
+          label={renderCustomizedLabel}
+          minAngle={35} // 最小角度限制
+        >
+          {data.map((_, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={dynamicColors[index] || "#ccc"} // 使用預設顏色避免超出範圍錯誤
+            />
+          ))}
+        </Pie>
+        <Tooltip />
+      </PieChart>
+    </ResponsiveContainer>
+  );
+};
+
 export default function DashboardPage() {
-  const [dashboardData, setDashboardData] = useState<DashboardInfo | null>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardInfo | null>(
+    null
+  );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchDashboardInfo = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/dashboard/get_dashboard_info`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Include cookies if needed
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/get_dashboard_info`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Include cookies if needed
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Error: ${response.status} ${response.statusText}`);
@@ -99,8 +226,8 @@ export default function DashboardPage() {
       const data: DashboardInfo = await response.json();
       setDashboardData(data);
     } catch (err: any) {
-      console.error('Fetch error:', err);
-      setError(err.message || 'An unexpected error occurred.');
+      console.error("Fetch error:", err);
+      setError(err.message || "An unexpected error occurred.");
     } finally {
       setLoading(false);
     }
@@ -112,7 +239,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
+      <div style={{ textAlign: "center", padding: "50px" }}>
         <Spin tip="Loading Dashboard..." size="large" />
       </div>
     );
@@ -125,7 +252,7 @@ export default function DashboardPage() {
         description={error}
         type="error"
         showIcon
-        style={{ margin: '20px' }}
+        style={{ margin: "20px" }}
       />
     );
   }
@@ -133,85 +260,97 @@ export default function DashboardPage() {
   return (
     <div className="dashboard-container">
       <div className="custom-title-width">
-      <Row gutter={[16, 16]}>
-        {/* 各級新會員數目區塊 */}
-        <Col span={24}>
-        <Card title={<span className="custom-title-center">各級新會員數目</span>}>
-
-            <div className="member-level-item">
-              <div className="icon-container"><img src={dynamicIcons[0]} alt="第一级別新會員" /></div>
-              <div className="text-container">
-              <Title className="level-text">第一级別新會員</Title>
-              <Text className="count-text">11</Text>
-              <Text className="growth-text"><CaretUpOutlined className="growth-icon"/>18.7%</Text>
-              </div>
-            </div>
-            <div className="member-level-item">
-              <div className="icon-container"><img src={dynamicIcons[1]} alt="第二級別新會員" /></div>
-              <div className="text-container">
-              <Title className="level-text">第二级別新會員</Title>
-              <Text className="count-text">52</Text>
-              <Text className="growth-text"><CaretUpOutlined className="growth-icon"/>22.8%</Text>
-              </div>
-            </div>
-            <div className="member-level-item">
-              <div className="icon-container"><img src={dynamicIcons[2]} alt="第三級別新會員" /></div>
-              <div className="text-container">
-              <Title className="level-text">第三级別新會員</Title>
-              <Text className="count-text">34</Text>
-              <Text className="growth-text"><CaretUpOutlined className="growth-icon"/>29.4%</Text>
-            </div>
-            
-            </div>
-          </Card>
-        </Col>
-            
-      </Row>
+        <Row>
+          {/* 各級新會員數目區塊 */}
+          <Col span={24}>
+            <Card
+              bordered={false}
+              title={
+                <span className="custom-title-center">各級新會員數目</span>
+              }
+            >
+              {dashboardData?.membership_tiers.map(
+                (tier: string, index: number) => (
+                  <div className="member-level-item" key={tier}>
+                    
+                    <div className="icon-container">
+                      <img src={dynamicIcons[index]} alt={`${tier} 圖標`} />
+                    </div>
+                    <div className="text-container">
+                      <Title className="level-text">{tier}</Title>
+                      <Text className="count-text">
+                        {dashboardData.membership_tier_counts[tier] || 0}
+                      </Text>
+                      <Text className="growth-text">
+                        <CaretUpOutlined className="growth-icon" />
+                        {(
+                          (dashboardData.membership_tier_change_percentage[
+                            tier
+                          ] || 0) * 100
+                        ).toFixed(2)}
+                        %
+                      </Text>
+                    </div>
+                    
+                  </div>
+                )
+              )}
+            </Card>
+          </Col>
+        </Row>
       </div>
       <Row gutter={[16, 16]}>
-          
         {/* 新會員數目、到期會籍、總會員數量等卡片 */}
         <Col span={8}>
-          <Card>
-          <div className="content-container">
-          <div className="icon-container"><img src={dynamicIcons[4]} alt="新會員數目"className="member-icon"/></div>
-            <div className="text-container">
-            <Title className="level-text">新會員數目</Title>
-            <div className="count-growth-container">
-            <Text className="count-text">178</Text>
-            <Text className="growth-text"><CaretUpOutlined className="growth-icon"/>22.8%</Text>
+        <Card >
+            <div className="special-card">
+              <div className="icon-container">
+                <img
+                  src={dynamicIcons[4]} alt="新會員數目"/>
+              </div>
+              <div className="text-container">
+                <Title className="level-text">新會員數目</Title>
+                <Text className="count-text">
+                    {dashboardData?.new_member_count || 0}
+                    </Text>
+              </div>
             </div>
-            </div>
-          </div>
           </Card>
         </Col>
         <Col span={8}>
           <Card>
-          <div className="content-container">
-          <div className="icon-container"><img src={dynamicIcons[5]} alt="到期會籍"/></div>
-          <div className="text-container">
-            <Title className="level-text">到期會籍</Title>
-            <Text className="count-text">114</Text>
+            <div className="content-container">
+              <div className="icon-container">
+                <img src={dynamicIcons[5]} alt="到期會籍" />
+              </div>
+              <div className="text-container">
+                <Title className="level-text">到期會籍</Title>
+                <Text className="count-text">
+                  {dashboardData?.expiring_member_count || 0}
+                </Text>
+              </div>
             </div>
-          </div>
           </Card>
         </Col>
         <Col span={8}>
           <Card>
-          <div className="content-container">
-          <div className="icon-container"><img src={dynamicIcons[3]} alt="總會員人數" /></div>
-          <div className="text-container">
-            <Title className="level-text">總會員人數</Title>
-            <Text className="count-text">88</Text>
+            <div className="content-container">
+              <div className="icon-container">
+                <img src={dynamicIcons[6]} alt="總會員人數" />
+              </div>
+              <div className="text-container">
+                <Title className="level-text">總會員人數</Title>
+                <Text className="count-text">
+                  {dashboardData?.active_member_count || 0}
+                </Text>
+              </div>
             </div>
-          </div>
           </Card>
         </Col>
         {/* 會員總數圖表 */}
         <Col span={12}>
           <Card title={<span className="custom-title-center">會員總數</span>}>
-          
-            <DonutChart />
+            <DonutChart dashboardData={dashboardData} />
             <div
               style={{
                 textAlign: "center",
@@ -221,29 +360,31 @@ export default function DashboardPage() {
                 color: "#000",
               }}
             >
-              {memberData.totalMembers}
+              {dashboardData?.active_member_count || 0}
             </div>
             <div className="legend-container">
-              {memberData.levels.map((level, index) => (
-                <div key={index} className="legend-item">
-                  <span
-                    className="legend-color"
-                    style={{ backgroundColor: level.color }}
-                  ></span>
-                  <span className="legend-text">{level.type}</span>
-                </div>
-              ))}
+              {dashboardData?.membership_tiers.map(
+                (tier: string, index: number) => (
+                  <div key={tier} className="legend-item">
+                    <span
+                      className="legend-color"
+                      style={{ backgroundColor: dynamicColors[index] }}
+                    ></span>
+                    <span className="legend-text">{tier}</span>
+                  </div>
+                )
+              )}
             </div>
           </Card>
         </Col>
-            {/* 放置實際的圖表 */}
-          
-        
+        {/* 放置實際的圖表 */}
 
         {/* 會員加入渠道圖表 */}
         <Col span={12}>
-          <Card title={<span className="custom-title-center">會員加入渠道</span>}>
-            {/* 放置實際的圖表 */}
+          <Card
+            title={<span className="custom-title-center">會員加入渠道</span>}
+          >
+            <MemberChannelsChart />
           </Card>
         </Col>
       </Row>
@@ -251,53 +392,84 @@ export default function DashboardPage() {
       <Row gutter={[16, 16]}>
         {/* 現正進行推廣 */}
         <Col span={24}>
-        
-          <Card title={
-            <span className="custom-title-left">
-              <GiftOutlined style={{ marginRight: 8 }} />
-              現正進行推廣
-            </span>
-          }>
+          <Card
+            title={
+              <span className="custom-title-left">
+                <GiftOutlined style={{ marginRight: 8 }} />
+                現正進行推廣
+              </span>
+            }
+          >
             <List
-              dataSource={["會員感謝祭", "網店免運費", "網店先訂費", "網店免運費"]}
+              dataSource={dashboardData?.active_discounts || []}
               renderItem={(item) => (
-                <List.Item>
-                  <TagOutlined />
-                  {item}
+                <List.Item
+                  actions={[
+                    <a href="/dashboard/discount_code_list" key="link">
+                      <RightOutlined />
+                    </a>,
+                  ]}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={{ transform: "scaleX(-1)" }}>
+                    <TagOutlined />
+                    </div>
+                    <span>{item.discount_code_name}</span>
+                  </div>
                 </List.Item>
               )}
             />
           </Card>
         </Col>
 
-        {/* 即將送傳廣播 */}
+        {/* 即將傳送廣播 */}
         <Col span={24}>
-          <Card title={
-              <span  className="custom-title-left">
-              <NotificationOutlined style={{ marginRight: 8 }} />即將送傳廣播
+          <Card
+            title={
+              <span className="custom-title-left" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <img
+          src="/Megaphone.png"
+          alt="Megaphone Icon"
+          style={{ width: "32px", height: "32px" }}
+        />
+                即將傳送廣播
               </span>
-            }>
+            }
+          >
             <List
-              dataSource={[
-                { name: "Broadcast_new_member1", date: "2024-10-30 15:00" },
-                { name: "Broadcast_new_member2", date: "2024-10-30 15:00" },
-                { name: "Broadcast_new_member3", date: "2024-10-30 15:00" },
-              ]}
-              renderItem={(item) => (
-                <List.Item>
-                  {item.name} - <Text>{item.date}</Text>
-                </List.Item>
-              )}
-            />
+      dataSource={dashboardData?.upcoming_broadcasts || []}
+      renderItem={(item) => (
+        <List.Item
+          actions={[
+            <a href="/dashboard/broadcast_setting" key="link">
+              <RightOutlined />
+            </a>,
+          ]}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <span style={{ fontWeight: "bold" }}>{item.broadcast_name}</span>
+            <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <img
+                src="/Alarm.png"
+                alt="Alarm"
+                style={{ width: "16px", height: "16px" }}
+              />
+              {new Date(item.scheduled_start).toLocaleString("zh-TW", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              })}
+            </span>
+          </div>
+        </List.Item>
+      )}
+    />
           </Card>
         </Col>
       </Row>
-
     </div>
   );
-}
-interface DashboardInfo {
-  userCount: number;
-  sales: number;
-  // Add other relevant fields as needed
 }
