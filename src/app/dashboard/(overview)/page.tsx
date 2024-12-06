@@ -171,7 +171,7 @@ const DonutChart = ({
     })) || [];
 
   return (
-    <ResponsiveContainer width="100%" height={400}>
+    <ResponsiveContainer width="100%" height={350}>
       <PieChart>
         <Pie
           data={data}
@@ -272,7 +272,6 @@ export default function DashboardPage() {
               {dashboardData?.membership_tiers.map(
                 (tier: string, index: number) => (
                   <div className="member-level-item" key={tier}>
-                    
                     <div className="icon-container">
                       <img src={dynamicIcons[index]} alt={`${tier} 圖標`} />
                     </div>
@@ -291,7 +290,6 @@ export default function DashboardPage() {
                         %
                       </Text>
                     </div>
-                    
                   </div>
                 )
               )}
@@ -299,26 +297,25 @@ export default function DashboardPage() {
           </Col>
         </Row>
       </div>
-      <Row gutter={[16, 16]}>
+      <Row className="custom-row">
         {/* 新會員數目、到期會籍、總會員數量等卡片 */}
         <Col span={8}>
-        <Card >
-            <div className="special-card">
+          <Card className="custom-card">
+            <div className="special-content-container">
               <div className="icon-container">
-                <img
-                  src={dynamicIcons[4]} alt="新會員數目"/>
+                <img src={dynamicIcons[4]} alt="新會員數目" />
               </div>
               <div className="text-container">
                 <Title className="level-text">新會員數目</Title>
                 <Text className="count-text">
-                    {dashboardData?.new_member_count || 0}
-                    </Text>
+                  {dashboardData?.new_member_count || 0}
+                </Text>
               </div>
             </div>
           </Card>
         </Col>
         <Col span={8}>
-          <Card>
+          <Card className="custom-card">
             <div className="content-container">
               <div className="icon-container">
                 <img src={dynamicIcons[5]} alt="到期會籍" />
@@ -333,7 +330,7 @@ export default function DashboardPage() {
           </Card>
         </Col>
         <Col span={8}>
-          <Card>
+          <Card className="custom-card">
             <div className="content-container">
               <div className="icon-container">
                 <img src={dynamicIcons[6]} alt="總會員人數" />
@@ -349,14 +346,16 @@ export default function DashboardPage() {
         </Col>
         {/* 會員總數圖表 */}
         <Col span={12}>
-          <Card title={<span className="custom-title-center">會員總數</span>}>
+          <Card
+            className="custom-card"
+            title={<span className="custom-title-center">會員總數</span>}
+          >
             <DonutChart dashboardData={dashboardData} />
             <div
               style={{
                 textAlign: "center",
                 fontSize: "24px",
                 fontWeight: "bold",
-                marginTop: "-170px",
                 color: "#000",
               }}
             >
@@ -382,6 +381,7 @@ export default function DashboardPage() {
         {/* 會員加入渠道圖表 */}
         <Col span={12}>
           <Card
+            className="custom-card"
             title={<span className="custom-title-center">會員加入渠道</span>}
           >
             <MemberChannelsChart />
@@ -392,81 +392,101 @@ export default function DashboardPage() {
       <Row gutter={[16, 16]}>
         {/* 現正進行推廣 */}
         <Col span={24}>
-          <Card
-            title={
-              <span className="custom-title-left">
-                <GiftOutlined style={{ marginRight: 8 }} />
-                現正進行推廣
-              </span>
-            }
-          >
-            <List
-              dataSource={dashboardData?.active_discounts || []}
-              renderItem={(item) => (
-                <List.Item
-                  actions={[
-                    <a href="/dashboard/discount_code_list" key="link">
-                      <RightOutlined />
-                    </a>,
-                  ]}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <div style={{ transform: "scaleX(-1)" }}>
-                    <TagOutlined />
+          <Card className="promotion-card" bordered={false}>
+            <span
+              className="custom-title-left"
+              style={{
+                textAlign: "left",
+                display: "block",
+                marginBottom: "12px",
+              }}
+            >
+              <GiftOutlined style={{ marginRight: 8 }} />
+              現正進行推廣
+            </span>
+            <div className="list-item-container list-container">
+              {dashboardData?.active_discounts.map((item, index) => (
+                <div key={item.discount_code_name}>
+                  <div className="right-section">
+                    <div className="left-section">
+                      <TagOutlined className="list-item-icon" />
+                      <span className="list-item-text">
+                        {item.discount_code_name}
+                      </span>
                     </div>
-                    <span>{item.discount_code_name}</span>
+
+                    <a
+                      href="/dashboard/discount_code_list"
+                      style={{ marginLeft: "auto" }}
+                    >
+                      <RightOutlined />
+                    </a>
                   </div>
-                </List.Item>
-              )}
-            />
+                  {index !== dashboardData?.active_discounts.length - 1 && (
+                    <hr />
+                  )}
+                </div>
+              ))}
+            </div>
           </Card>
         </Col>
 
         {/* 即將傳送廣播 */}
         <Col span={24}>
-          <Card
-            title={
-              <span className="custom-title-left" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-        <img
-          src="/Megaphone.png"
-          alt="Megaphone Icon"
-          style={{ width: "32px", height: "32px" }}
-        />
-                即將傳送廣播
-              </span>
-            }
-          >
-            <List
-      dataSource={dashboardData?.upcoming_broadcasts || []}
-      renderItem={(item) => (
-        <List.Item
-          actions={[
-            <a href="/dashboard/broadcast_setting" key="link">
-              <RightOutlined />
-            </a>,
-          ]}
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-            <span style={{ fontWeight: "bold" }}>{item.broadcast_name}</span>
-            <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Card className="broadcast-card" bordered={false}>
+            <span
+              className="custom-title-left"
+              style={{
+                textAlign: "left",
+                display: "block",
+                marginBottom: "12px",
+              }}
+            >
               <img
-                src="/Alarm.png"
-                alt="Alarm"
-                style={{ width: "16px", height: "16px" }}
+                src="/Megaphone.png"
+                alt="Megaphone Icon"
+                className="megaphone-icon"
               />
-              {new Date(item.scheduled_start).toLocaleString("zh-TW", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-              })}
+              即將傳送廣播
             </span>
-          </div>
-        </List.Item>
-      )}
-    />
+            <div className="list-item-container list-container">
+              {dashboardData?.upcoming_broadcasts.map((item, index) => (
+                <div key={item.broadcast_name}>
+                  {/* 右侧区域 */}
+                  <div className="right-section">
+                    {/* 左侧区域 */}
+                    <div className="left-section">
+                      <span className="list-item-title">
+                        {item.broadcast_name}
+                      </span>
+                    </div>
+
+                    <a
+                      href="/dashboard/broadcast_setting"
+                      className="list-item-link"
+                    >
+                      <RightOutlined />
+                    </a>
+                  </div>
+
+                  <div className="list-item-date">
+                    <img src="/Alarm.png" alt="Alarm" className="alarm-icon" />
+                    {new Date(item.scheduled_start).toLocaleString("zh-TW", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    })}
+                  </div>
+                  {/* 添加分隔线 */}
+                  {index !== dashboardData?.upcoming_broadcasts.length - 1 && (
+                    <hr />
+                  )}
+                </div>
+              ))}
+            </div>
           </Card>
         </Col>
       </Row>
