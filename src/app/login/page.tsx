@@ -112,18 +112,18 @@ const LoginPage: React.FC = () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin_auth/login`, {
         method: 'POST',
-        body: JSON.stringify({
-          admin_name: values.admin_name,
-          admin_password: values.admin_password,
-        }),
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include', // Include cookies in the request
+        body: JSON.stringify({
+          admin_name: values.admin_name,
+          admin_password: values.admin_password,
+        }),
       });
 
       console.log('response:', response.ok);
-      if (response.ok == true) {
+      if (response.ok) {
         router.push('/dashboard');
       } else {
         // Handle login error
