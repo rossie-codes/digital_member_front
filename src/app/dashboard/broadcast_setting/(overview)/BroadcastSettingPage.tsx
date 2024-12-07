@@ -104,6 +104,7 @@ const BroadcastSettingPage: React.FC = () => {
   const [broadcastCurrentPage, setBroadcastCurrentPage] = useState<number>(1);
   const [broadcastPageSize, setBroadcastPageSize] = useState<number>(10);
   const [broadcastTotalItems, setBroadcastTotalItems] = useState<number>(0);
+  const [broadcastTotalRecipientCount, setBroadcastTotalRecipientCount] = useState<number>(0);
 
   // State variables for modal and form
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -204,7 +205,8 @@ const BroadcastSettingPage: React.FC = () => {
       const jsonData = await response.json();
 
       const broadcasts: any[] = jsonData.data;
-      const total: number = jsonData.total;
+      const total_broadcast: number = jsonData.total_broadcast;
+      const total_recipient_count: number = jsonData.total_recipient_count;
 
       if (!Array.isArray(broadcasts)) {
         throw new Error(
@@ -224,7 +226,8 @@ const BroadcastSettingPage: React.FC = () => {
       }));
 
       setBroadcastData(formattedData);
-      setBroadcastTotalItems(total);
+      setBroadcastTotalItems(total_broadcast);
+      setBroadcastTotalRecipientCount(total_recipient_count);
     } catch (err: any) {
       console.error("Fetch error:", err);
       setError(err);
@@ -800,7 +803,7 @@ const BroadcastSettingPage: React.FC = () => {
           <img src="/pending.png" alt="Promotion" className="promotion-image" />
           <div className="promotion-content">
             <div className="promotion-text">預定廣播</div>
-            <div className="promotion-number">8</div>
+            <div className="promotion-number">{broadcastTotalItems}</div>
           </div>
         </div>
 
@@ -808,7 +811,7 @@ const BroadcastSettingPage: React.FC = () => {
           <img src="/receiving.png" alt="Pending" className="promotion-image" />
           <div className="promotion-content">
             <div className="promotion-text">預計接受廣播人次</div>
-            <div className="promotion-number">300</div>
+            <div className="promotion-number">{broadcastTotalRecipientCount}</div>
           </div>
         </div>
 
