@@ -1,6 +1,7 @@
 .dashboard-container {
   display: flex;
   gap: 22px;
+  height: 100%;
 }
 
 /* left area */
@@ -60,6 +61,11 @@
   padding: 15px 0;
   border-bottom: 1px solid #f0f0f0;
   gap: 11px !important;
+}
+
+/* 移除最後一個 .member-level-item 的邊框 */
+.member-level-item:last-child {
+  border-bottom: none;
 }
 
 .icon-container {
@@ -123,6 +129,35 @@
 /* left area */
 
 /* middle area */
+.middle-section {
+  flex: 1; /* 撐滿中間區塊 */
+  display: grid; /* 使用 Grid 布局 */
+  grid-auto-rows: auto; /* 行高度根據內容動態調整 */
+  grid-gap: 25px; /* 卡片之間的間距 */
+  justify-items: start;
+  align-items: stretch !important;
+}
+
+.middle-section > .ant-card:nth-child(4),
+.middle-section > .ant-card:nth-child(5) {
+  grid-column: span 2; /* 下方兩個卡片跨兩欄 */
+}
+
+@media (max-width: 768px) {
+  .middle-section {
+    grid-template-columns: repeat(2, 1fr); /* 改為兩列布局 */
+  }
+  .middle-section > .ant-card:nth-child(4),
+  .middle-section > .ant-card:nth-child(5) {
+    grid-column: span 1; /* 每個卡片獨占一行 */
+  }
+}
+
+@media (max-width: 480px) {
+  .middle-section {
+    grid-template-columns: 1fr; /* 單列布局 */
+  }
+}
 
 .content-container {
   display: flex;
@@ -146,21 +181,70 @@
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 }
 
-.custom-row .ant-row {
-  display: grid; /* 使用 grid 布局更精準 */
-  grid-template-columns: repeat(3, 1fr); /* 上三列 */
+.custom-row {
+  display: grid; /* 使用 Grid 布局來精準控制 */
+  grid-template-columns: repeat(3, 1fr); /* 上三列，每列寬度相等 */
+  grid-gap: 25px; /* 控制卡片之間的間距，對應 gutter */
+  margin: 0 auto; /* 使內容居中 */
+  width: 100%; /* 撐滿容器 */
+}
+.bottom-row {
+  display: grid; /* 單獨處理下方的區塊 */
+  grid-template-columns: repeat(2, 1fr); /* 下二，每行 2 個 */
+  grid-gap: 25px; /* 卡片之間的間距 */
+  margin-top: auto; /* 與上方保持間距 */
+}
+
+.chart-card {
+  display: flex;
+  flex-direction: column !important; /* 確保內容垂直排列 */
+
+  padding: 16px;
+  height: auto; /* 撐滿行高 */
+  width: 447px;
+  overflow: visible;
+  flex: 1; /* 確保子項按比例分配空間 */
+  min-width: 0; /* 防止內容溢出 */
+  flex-shrink: 0;
+
+  border-radius: 10px;
+  border: 1px solid var(--key-colors-secondary, #0b49a0);
+  background: #fff;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.chart-container {
+  width: 100%; /* 撐滿卡片寬度 */
+  max-width: 500px; /* 設定最大寬度 */
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
 }
 
 @media (max-width: 768px) {
-  .custom-row .ant-row {
-    grid-template-columns: repeat(2, 1fr); /* 螢幕寬度較窄時自動變為兩列 */
+  .custom-row {
+    grid-template-columns: repeat(2, 1fr); /* 中等螢幕調整為兩列 */
   }
 }
 
 @media (max-width: 480px) {
-  .custom-row .ant-row {
-    grid-template-columns: 1fr; /* 手機螢幕時一列 */
+  .custom-row {
+    grid-template-columns: 1fr; /* 手機顯示時單列 */
   }
+}
+
+.custom-title {
+  color: var(--Text, #272727);
+
+  /* H3 */
+  font-family: "Noto Sans HK";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 30px; /* 125% */
+  text-align: left;
 }
 
 /* 確保 Col 元素的內部間距 */
@@ -176,7 +260,7 @@
 
 .custom-row .custom-card {
   display: flex;
-  flex-direction: column;
+  flex-direction: column !important;
   justify-content: space-between;
   padding: 16px;
   border-radius: 8px;
@@ -188,34 +272,14 @@
   padding: 0 !important; /* 移除內邊距 */
 }
 
-.custom-row {
-  display: grid; /* 使用 Grid 布局來精準控制 */
-  grid-template-columns: repeat(3, 1fr); /* 上三列，每列寬度相等 */
-  grid-gap: 25px; /* 控制卡片之間的間距，對應 gutter */
-  margin: 0 auto; /* 使內容居中 */
-  width: 100%; /* 撐滿容器 */
+.chart-card .ant-card-head {
+  border-bottom: none !important; /* 移除標題下的水平線 */
+  padding: 0 !important; /* 移除內邊距 */
 }
-
-@media (max-width: 768px) {
-  .custom-row {
-    grid-template-columns: repeat(2, 1fr); /* 中等螢幕調整為兩列 */
-  }
-}
-
-@media (max-width: 480px) {
-  .custom-row {
-    grid-template-columns: 1fr; /* 手機顯示時單列 */
-  }
-}
-
-/* middle area */
-
-/* right area */
 
 .legend-container {
   display: flex;
   justify-content: center;
-  margin-top: 150px;
 }
 
 .legend-item {
@@ -225,16 +289,38 @@
 }
 
 .legend-color {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
+  width: 15px;
+  height: 15px;
+  border-radius: 5px;
   margin-right: 5px;
 }
 
 .legend-text {
-  font-size: 12px;
+  color: var(--Text, #272727);
+
+  /* body small */
+  font-family: "Noto Sans HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px; /* 157.143% */
+  letter-spacing: -0.28px;
 }
 
+.middle-section .ant-row {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 25px;
+  margin: 0;
+  
+}
+
+/* middle area */
+
+/* right area */
+:where(.css-dev-only-do-not-override-ni1kz0).ant-row {
+  min-width: unset !important;
+}
 /* Promotion and Broadcast cards */
 .promotion-card,
 .broadcast-card {
@@ -355,7 +441,18 @@
 hr {
   border: none;
   border-top: 1px solid #ddd; /* 水平线样式 */
-  margin: 9px 0; /* 上下间距 */
+  margin: 10px 0; /* 上下间距 */
 }
 
+.broadcast-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 左右对齐 */
+}
+.broadcast-row-left {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 调整图标和日期之间的间距 */
+  justify-content: flex-start; /* 第二行：全部靠左 */
+}
 /* right area */

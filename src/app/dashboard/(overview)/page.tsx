@@ -69,7 +69,7 @@ const data = [
 ];
 
 const MemberChannelsChart = () => (
-  <ResponsiveContainer width="100%" height={500}>
+  <ResponsiveContainer width="100%" height={400}>
     <BarChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 10 }}>
       <CartesianGrid vertical={false} />
       <XAxis dataKey="channel" axisLine={false} tickLine={false} />
@@ -115,43 +115,96 @@ const renderCustomizedLabel = ({
     <g>
       {/* 連接線 */}
       <line
-        x1={cx + (outerRadius - 10) * Math.cos(-midAngle * RADIAN)}
-        y1={cy + (outerRadius - 10) * Math.sin(-midAngle * RADIAN)}
+        x1={cx + (outerRadius) * Math.cos(-midAngle * RADIAN)}
+        y1={cy + (outerRadius) * Math.sin(-midAngle * RADIAN)}
         x2={x}
         y2={y}
-        stroke="#ccc"
+        stroke="#737277"
         strokeWidth={1}
       />
       {/* 水平線 */}
       <line
         x1={x}
         y1={y}
-        x2={x + (isLeftSide ? -100 : 100)} // 左右側決定水平線方向
+        x2={x + (isLeftSide ? -110 : 110)} // 左右側決定水平線方向
         y2={y}
-        stroke="#ccc"
+        stroke="#737277"
         strokeWidth={1}
       />
       {/* 數量文字 */}
       <text
-        x={x + (isLeftSide ? -40 : 40)} // 左右側控制文字的水平位置
-        y={y - offset / 2}
-        textAnchor={isLeftSide ? "end" : "start"}
-        fill="#333"
-        fontSize="14"
-        fontWeight="bold"
-      >
-        {value}
-      </text>
-      {/* 即將到期文字 */}
+      x={
+        x +
+        (isLeftSide
+          ? -105 - (value.toString().length - 1) * -5 // 左側：每位數向內偏移
+          : 75 + (value.toString().length - 1) * 5) // 右側：每位數向外偏移
+      }      y={y - offset / 2+5}
+      textAnchor="middle"
+      fill="var(--key-colors-secondary, #0B49A0)"
+      style={{
+        fontFamily: '"Noto Sans HK"',
+        fontSize: "16px",
+        fontStyle: "normal",
+        fontWeight: 700,
+        lineHeight: "22px",
+        letterSpacing: "-0.32px",
+      }}
+    >
+      {value}
+    </text>
+    {/* 即将到期文字与图标 */}
+    <g
+      transform={`translate(${x + (isLeftSide ? -60 : 5)}, ${y + offset / 2})`}
+      textAnchor={isLeftSide ? "end" : "start"}
+    >
+      {/* 即将到期文字 */}
       <text
-        x={x + (isLeftSide ? -40 : 40)} // 左右側控制文字的水平位置
-        y={y + offset / 2}
-        textAnchor={isLeftSide ? "end" : "start"}
-        fill="red"
-        fontSize="12"
+       x={0} // 起始位置
+       y={5} // 起始位置
+        fill="var(--DarkGray, #737277)"
+        style={{
+          fontFamily: '"Noto Sans HK"',
+          fontSize: "12px",
+          fontStyle: "normal",
+          fontWeight: "350",
+          lineHeight: "20px",
+        }}
       >
-        即將到期 {expiringSoon}
+        即將到期
       </text>
+
+      {/* 图标 */}
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="10"
+        height="10"
+        viewBox="0 0 10 10"
+        fill="none"
+        x={isLeftSide ? 6 : 55} // 距離文字的水平位置
+        y={-4} // 垂直對齊位置
+      >
+        <path
+          d="M8.20717 2.92969H1.79311C1.60073 2.92969 1.4933 3.13281 1.61244 3.27148L4.81948 6.99023C4.91127 7.09668 5.08803 7.09668 5.1808 6.99023L8.38784 3.27148C8.50698 3.13281 8.39955 2.92969 8.20717 2.92969Z"
+          fill="#F5222D"
+        />
+      </svg>
+
+      {/* 数字 */}
+      <text
+        x={isLeftSide ? 25 : 70}// 數字相對於圖標的水平偏移
+        y={5} // 對齊文字垂直位置
+        fill="var(--Dust-Red-6, #F5222D)"
+        style={{
+          fontFamily: '"Noto Sans HK"',
+          fontSize: "12px",
+          fontStyle: "normal",
+          fontWeight: "350",
+          lineHeight: "20px",
+        }}
+      >
+        {expiringSoon}
+      </text>
+    </g>
     </g>
   );
 };
@@ -171,19 +224,35 @@ const DonutChart = ({
     })) || [];
 
   return (
-    <ResponsiveContainer width="100%" height={350}>
+    <div style={{ position: "relative", width: "100%", height: "650px" }}>
+      {/* 中心文字 */}
+      <div
+        style={{
+          position: "absolute",
+          top: "47%",
+          left: "43%",
+          transform: "translate(-50%, -50%)",
+          textAlign: "center",
+          fontSize: "24px",
+          fontWeight: "bold",
+          color: "#000",
+        }}
+      >
+        {dashboardData?.active_member_count || 0}
+      </div>
+    <ResponsiveContainer width="100%" height={500}>
       <PieChart>
         <Pie
           data={data}
           dataKey="value"
           nameKey="type"
-          cx="50%"
-          cy="50%"
+          cx="43%"
+          cy="60%"
           innerRadius={80}
           outerRadius={100}
           labelLine={false}
           label={renderCustomizedLabel}
-          minAngle={35} // 最小角度限制
+          minAngle={40} // 最小角度限制
         >
           {data.map((_, index) => (
             <Cell
@@ -195,6 +264,41 @@ const DonutChart = ({
         <Tooltip />
       </PieChart>
     </ResponsiveContainer>
+     {/* 圖例 */}
+     <div
+        className="legend-container"
+        style={{
+          marginTop: "-10px", // 調整與圖表的距離
+          textAlign: "center",
+        }}
+      >
+        {dashboardData?.membership_tiers.map((tier: string, index: number) => (
+          <div
+            key={tier}
+            className="legend-item"
+            style={{
+              display: "inline-block",
+              margin: "0 10px",
+              textAlign: "center",
+            }}
+          >
+            <span
+              className="legend-color"
+              style={{
+                display: "inline-block",
+                width: "15px",
+                height: "15px",
+                backgroundColor: dynamicColors[index],
+                marginRight: "5px",
+              }}
+            ></span>
+            <span className="legend-text" style={{ fontSize: "14px" }}>
+              {tier}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
@@ -297,97 +401,85 @@ export default function DashboardPage() {
           </Col>
         </Row>
       </div>
-      <Row className="custom-row">
-        {/* 新會員數目、到期會籍、總會員數量等卡片 */}
-        <Col span={8}>
-          <Card className="custom-card">
-            <div className="special-content-container">
-              <div className="icon-container">
-                <img src={dynamicIcons[4]} alt="新會員數目" />
+      <div className="middle-section">
+        <Row className="custom-row">
+          {/* 新會員數目、到期會籍、總會員數量等卡片 */}
+          <Col span={8}>
+            <Card className="custom-card">
+              <div className="special-content-container">
+                <div className="icon-container">
+                  <img src={dynamicIcons[4]} alt="新會員數目" />
+                </div>
+                <div className="text-container">
+                  <Title className="level-text">新會員數目</Title>
+                  <Text className="count-text">
+                    {dashboardData?.new_member_count || 0}
+                  </Text>
+                </div>
               </div>
-              <div className="text-container">
-                <Title className="level-text">新會員數目</Title>
-                <Text className="count-text">
-                  {dashboardData?.new_member_count || 0}
-                </Text>
+            </Card>
+          </Col>
+          <Col span={8}>
+            <Card className="custom-card">
+              <div className="content-container">
+                <div className="icon-container">
+                  <img src={dynamicIcons[5]} alt="到期會籍" />
+                </div>
+                <div className="text-container">
+                  <Title className="level-text">到期會籍</Title>
+                  <Text className="count-text">
+                    {dashboardData?.expiring_member_count || 0}
+                  </Text>
+                </div>
               </div>
-            </div>
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card className="custom-card">
-            <div className="content-container">
-              <div className="icon-container">
-                <img src={dynamicIcons[5]} alt="到期會籍" />
+            </Card>
+          </Col>
+          <Col span={8}>
+            <Card className="custom-card">
+              <div className="content-container">
+                <div className="icon-container">
+                  <img src={dynamicIcons[6]} alt="總會員人數" />
+                </div>
+                <div className="text-container">
+                  <Title className="level-text">總會員人數</Title>
+                  <Text className="count-text">
+                    {dashboardData?.active_member_count || 0}
+                  </Text>
+                </div>
               </div>
-              <div className="text-container">
-                <Title className="level-text">到期會籍</Title>
-                <Text className="count-text">
-                  {dashboardData?.expiring_member_count || 0}
-                </Text>
-              </div>
-            </div>
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card className="custom-card">
-            <div className="content-container">
-              <div className="icon-container">
-                <img src={dynamicIcons[6]} alt="總會員人數" />
-              </div>
-              <div className="text-container">
-                <Title className="level-text">總會員人數</Title>
-                <Text className="count-text">
-                  {dashboardData?.active_member_count || 0}
-                </Text>
-              </div>
-            </div>
-          </Card>
-        </Col>
-        {/* 會員總數圖表 */}
-        <Col span={12}>
-          <Card
-            className="custom-card"
-            title={<span className="custom-title-center">會員總數</span>}
-          >
-            <DonutChart dashboardData={dashboardData} />
-            <div
-              style={{
-                textAlign: "center",
-                fontSize: "24px",
-                fontWeight: "bold",
-                color: "#000",
-              }}
+            </Card>
+          </Col>
+        </Row>
+        {/* 下二區塊 */}
+        <Row className="bottom-row">
+          {/* 會員總數圖表 */}
+          <Col span={12}>
+            <Card
+              className="chart-card"
+              title={<span className="custom-title-center">會員總數</span>}
             >
-              {dashboardData?.active_member_count || 0}
-            </div>
-            <div className="legend-container">
-              {dashboardData?.membership_tiers.map(
-                (tier: string, index: number) => (
-                  <div key={tier} className="legend-item">
-                    <span
-                      className="legend-color"
-                      style={{ backgroundColor: dynamicColors[index] }}
-                    ></span>
-                    <span className="legend-text">{tier}</span>
-                  </div>
-                )
-              )}
-            </div>
-          </Card>
-        </Col>
-        {/* 放置實際的圖表 */}
+              <div className="chart-container">
+                <DonutChart dashboardData={dashboardData} />
+              </div>
 
-        {/* 會員加入渠道圖表 */}
-        <Col span={12}>
-          <Card
-            className="custom-card"
-            title={<span className="custom-title-center">會員加入渠道</span>}
-          >
-            <MemberChannelsChart />
-          </Card>
-        </Col>
-      </Row>
+              
+            </Card>
+          </Col>
+          {/* 放置實際的圖表 */}
+
+          {/* 會員加入渠道圖表 */}
+          <Col span={12}>
+            <Card
+              className="chart-card"
+              title={<span className="custom-title-center">會員加入渠道</span>}
+            >
+              <div className="chart-container">
+                <MemberChannelsChart />
+              </div>
+            </Card>
+          </Col>
+        </Row>
+      </div>
 
       <Row gutter={[16, 16]}>
         {/* 現正進行推廣 */}
@@ -397,15 +489,15 @@ export default function DashboardPage() {
               className="custom-title-left"
               style={{
                 textAlign: "left",
-                display: "block",
-                marginBottom: "12px",
+                display: "flex",
+                gap: "3px",
               }}
             >
               <GiftOutlined style={{ marginRight: 8 }} />
               現正進行推廣
             </span>
             <div className="list-item-container list-container">
-              {dashboardData?.active_discounts.map((item, index) => (
+              {dashboardData?.active_discounts.slice(0, 4).map((item, index) => (
                 <div key={item.discount_code_name}>
                   <div className="right-section">
                     <div className="left-section">
@@ -422,9 +514,7 @@ export default function DashboardPage() {
                       <RightOutlined />
                     </a>
                   </div>
-                  {index !== dashboardData?.active_discounts.length - 1 && (
-                    <hr />
-                  )}
+                  {index !== 3 && <hr />}
                 </div>
               ))}
             </div>
@@ -438,8 +528,8 @@ export default function DashboardPage() {
               className="custom-title-left"
               style={{
                 textAlign: "left",
-                display: "block",
-                marginBottom: "12px",
+                display: "flex",
+                gap: "6px",
               }}
             >
               <img
@@ -452,33 +542,41 @@ export default function DashboardPage() {
             <div className="list-item-container list-container">
               {dashboardData?.upcoming_broadcasts.map((item, index) => (
                 <div key={item.broadcast_name}>
-                  {/* 右侧区域 */}
-                  <div className="right-section">
-                    {/* 左侧区域 */}
-                    <div className="left-section">
-                      <span className="list-item-title">
-                        {item.broadcast_name}
-                      </span>
-                    </div>
+                  {/* 第一行：左侧内容和右侧箭头 */}
+
+                  <div className="broadcast-row">
+                    <span className="list-item-title">
+                      {item.broadcast_name}
+                    </span>
 
                     <a
                       href="/dashboard/broadcast_setting"
                       className="list-item-link"
+                      style={{ marginLeft: "auto" }}
                     >
                       <RightOutlined />
                     </a>
                   </div>
-
-                  <div className="list-item-date">
+                  {/* 第二行：左侧图标和日期 */}
+                  <div className="broadcast-row-left">
                     <img src="/Alarm.png" alt="Alarm" className="alarm-icon" />
-                    {new Date(item.scheduled_start).toLocaleString("zh-TW", {
-                      year: "numeric",
-                      month: "2-digit",
-                      day: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: false,
-                    })}
+                    <span className="list-item-date">
+                      {new Date(item.scheduled_start)
+                        .toLocaleString("zh-TW", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })
+                        .replace(/\//g, "-")}{" "}
+                      {new Date(item.scheduled_start).toLocaleTimeString(
+                        "zh-TW",
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                          hour12: false,
+                        }
+                      )}
+                    </span>
                   </div>
                   {/* 添加分隔线 */}
                   {index !== dashboardData?.upcoming_broadcasts.length - 1 && (
