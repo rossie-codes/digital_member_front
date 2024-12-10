@@ -1,7 +1,6 @@
 .dashboard-container {
   display: flex;
   gap: 22px;
-  height: 100%;
 }
 
 /* left area */
@@ -184,7 +183,7 @@
 
   padding: 16px;
   height: 430px;
-  width: 447px;
+  width: 437px;
   overflow: visible;
   flex: 1;
   min-width: 0;
@@ -284,10 +283,6 @@
 /* middle area */
 
 /* right area */
-:where(.css-dev-only-do-not-override-ni1kz0).ant-row {
-  min-width: unset !important;
-}
-
 .promotion-card,
 .broadcast-card {
   display: flex;
@@ -412,6 +407,12 @@ hr {
   gap: 8px;
   justify-content: flex-start;
 }
+.aligned-row{
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-left: 25px;
+}
 /* right area */
 
 /* RWD */
@@ -425,7 +426,8 @@ hr {
 
   .custom-row,
   .middle-section,
-  .bottom-row {
+  .bottom-row ,
+  .aligned-row{
     grid-template-columns: 1fr;
   }
 }

@@ -480,7 +480,8 @@ export default function DashboardPage() {
         </Row>
       </div>
 
-      <Row gutter={[16, 16]}>
+      <div className="aligned-row">
+      <Row  style={{ maxWidth: "300px" }}>
         {/* 現正進行推廣 */}
         <Col span={24}>
           <Card className="promotion-card" bordered={false}>
@@ -586,6 +587,8 @@ export default function DashboardPage() {
           </Card>
         </Col>
       </Row>
+      </div>
+
     </div>
   );
 }
