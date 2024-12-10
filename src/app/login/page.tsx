@@ -397,6 +397,7 @@ const LoginPage: React.FC = () => {
             </StyledButton>
           </ButtonWrapper>
         </Form.Item>
+        
       </StyledForm>
 
       <Copyright>Copyright ©2024 Produced by AKA Studio</Copyright>
