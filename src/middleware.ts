@@ -12,8 +12,12 @@ export default async function middleware(request: NextRequest) {
 
   if (isProtectedRoute) {
     if (!membi_admin_token) {
+      
+      console.log("membi_admin_token :", membi_admin_token)
+
       console.log('No membi_admin_token, redirecting to /login');
-      return NextResponse.redirect(new URL('/login', request.url));
+      
+      return Response.redirect(new URL('/login', request.url));
     }
 
     try {
@@ -24,7 +28,7 @@ export default async function middleware(request: NextRequest) {
       // membi_admin_token is valid; proceed with the request
     } catch (error) {
       console.log('Invalid membi_admin_token, redirecting to /login');
-      return NextResponse.redirect(new URL('/login', request.url));
+      return Response.redirect(new URL('/login', request.url));
     }
   }
 
@@ -35,7 +39,7 @@ export default async function middleware(request: NextRequest) {
         membi_admin_token.value,
         new TextEncoder().encode(process.env.MEMBI_ADMIN_SECRET!)
       );
-      return NextResponse.redirect(new URL('/dashboard', request.url));
+      return Response.redirect(new URL('/dashboard', request.url));
     } catch (error) {
       // membi_admin_token is invalid; allow access to public routes
     }
