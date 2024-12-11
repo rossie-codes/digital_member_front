@@ -3,7 +3,7 @@
 
 import { useState, useContext } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Form, Input, Checkbox, Typography, Anchor } from "antd";
+import { Button, Form, Input, Checkbox, Typography, Anchor, FormProps } from "antd";
 import {
   EyeOutlined,
   EyeInvisibleOutlined,
@@ -32,10 +32,6 @@ const StyledContainer = styled.div`
   background-position: center;
 `;
 
-const StyledForm = styled(Form)`
-  width: 100%;
-  max-width: 400px;
-`;
 
 const StyledSpan = styled.span`
   color: var(--key-colors-tertiary, #d74d03);
@@ -295,6 +291,19 @@ const Copyright = styled.div`
   letter-spacing: -0.28px;
 `;
 
+const ABC = styled.div`
+width: 100%;
+max-width: 400px;
+`;
+
+
+type FieldType = {
+  memberPhone?: number;
+  memberPassword?: string;
+};
+
+
+
 const LoginPage: React.FC = () => {
   const router = useRouter();
   // const { login } = useContext(AuthContext);
@@ -308,35 +317,60 @@ const LoginPage: React.FC = () => {
     setPasswordVisible((prev) => !prev); // 切換密碼顯示狀態
   };
 
-  const onFinish = async (values: any) => {
+  // const onFinish = async (values: any) => {
+  //   setLoading(true);
+  //   setError("");
+  //   try {
+  //     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin_auth/login`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       credentials: 'include', // Include cookies in the request
+  //       body: JSON.stringify({
+  //         admin_name: values.admin_name,
+  //         admin_password: values.admin_password,
+  //       }),
+  //     });
+
+  //     console.log('response:', response.ok);
+  //     if (response.ok) {
+  //       router.push('/dashboard');
+  //     } else {
+  //       // Handle login error
+  //       const errorData = await response.json();
+  //       console.error("Login error:", errorData.error);
+  //       // Display error message to the user as needed
+  //     }
+  //   } catch (err) {
+  //     console.error("Login error:", err);
+  //     setError("Login failed due to an unexpected error");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+
+
+
+  const handleSubmit: FormProps<FieldType>['onFinish'] = async (values: any) => {
     setLoading(true);
     setError("");
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin_auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Include cookies in the request
-        body: JSON.stringify({
-          admin_name: values.admin_name,
-          admin_password: values.admin_password,
-        }),
-      });
 
-      console.log('response:', response.ok);
-      if (response.ok) {
-        router.push('/dashboard');
-      } else {
-        // Handle login error
-        const errorData = await response.json();
-        console.error("Login error:", errorData.error);
-        // Display error message to the user as needed
-      }
-    } catch (err) {
-      console.error("Login error:", err);
-      setError("Login failed due to an unexpected error");
-    } finally {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin_auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include', // Include cookies in the request
+      body: JSON.stringify({
+        admin_name: values.admin_name,
+        admin_password: values.admin_password,
+      }),
+    });
+    if (response.ok) {
+      router.push('/dashboard');
+    } else {
+      const errorData = await response.json();
+      console.error('Login error:', errorData.error);
       setLoading(false);
     }
   };
@@ -352,53 +386,55 @@ const LoginPage: React.FC = () => {
       />
       <StyledSpan>登入</StyledSpan>
 
-      <StyledForm
-        name="login"
-        form={form}
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-        autoComplete="off"
-      >
-        {error && <div style={{ color: "red", marginBottom: 16 }}>{error}</div>}
-
-        <Form.Item
-          name="admin_name"
-          rules={[{ required: true, message: "請輸入您的帳戶!" }]}
-          style={{ marginBottom: "28px" }}
+      <ABC>
+        <Form
+          name="login"
+          form={form}
+          initialValues={{ remember: true }}
+          onFinish={handleSubmit}
+          autoComplete="off"
         >
-          <StyledInput placeholder="輸入帳戶" />
-        </Form.Item>
+          {error && <div style={{ color: "red", marginBottom: 16 }}>{error}</div>}
 
-        <Form.Item
-          name="admin_password"
-          rules={[{ required: true, message: "請輸入您的密碼!" }]}
-          style={{ marginBottom: "16px" }}
-        >
-          <StyledPasswordInput placeholder="輸入密碼" />
-        </Form.Item>
+          <Form.Item
+            name="admin_name"
+            rules={[{ required: true, message: "請輸入您的帳戶!" }]}
+            style={{ marginBottom: "28px" }}
+          >
+            <StyledInput placeholder="輸入帳戶" />
+          </Form.Item>
 
-        <Form.Item>
-          <FormOptions>
-            <StyledCheckbox>記住我</StyledCheckbox>
-            <StyledLink href="/forgotpassword">忘記密碼</StyledLink>
-          </FormOptions>
-        </Form.Item>
+          <Form.Item
+            name="admin_password"
+            rules={[{ required: true, message: "請輸入您的密碼!" }]}
+            style={{ marginBottom: "16px" }}
+          >
+            <StyledPasswordInput placeholder="輸入密碼" />
+          </Form.Item>
 
-        <Form.Item>
-          <ButtonWrapper>
-            <StyledButton
-              className="login_button"
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-            >
-              <StyledButtonText>登入</StyledButtonText>
-              <LoginOutlined />
-            </StyledButton>
-          </ButtonWrapper>
-        </Form.Item>
-        
-      </StyledForm>
+          <Form.Item>
+            <FormOptions>
+              <StyledCheckbox>記住我</StyledCheckbox>
+              <StyledLink href="/forgotpassword">忘記密碼</StyledLink>
+            </FormOptions>
+          </Form.Item>
+
+          <Form.Item>
+            <ButtonWrapper>
+              <StyledButton
+                className="login_button"
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+              >
+                <StyledButtonText>登入</StyledButtonText>
+                <LoginOutlined />
+              </StyledButton>
+            </ButtonWrapper>
+          </Form.Item>
+
+        </Form>
+      </ABC>
 
       <Copyright>Copyright ©2024 Produced by AKA Studio</Copyright>
     </StyledContainer>
