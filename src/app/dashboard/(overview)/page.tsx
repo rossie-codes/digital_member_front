@@ -403,6 +403,7 @@ export default function DashboardPage() {
           </Col>
         </Row>
       </div>
+
       <div className="middle-section">
         <Row className="custom-row">
           {/* 新會員數目、到期會籍、總會員數量等卡片 */}
@@ -481,114 +482,115 @@ export default function DashboardPage() {
       </div>
 
       <div className="aligned-row">
-      <Row  style={{ maxWidth: "300px" }}>
-        {/* 現正進行推廣 */}
-        <Col span={24}>
-          <Card className="promotion-card" bordered={false}>
-            <span
-              className="custom-title-left"
-              style={{
-                textAlign: "left",
-                display: "flex",
-                gap: "3px",
-              }}
-            >
-              <GiftOutlined style={{ marginRight: 8 }} />
-              現正進行推廣
-            </span>
-            <div className="list-item-container list-container">
-              {dashboardData?.active_discounts
-                .slice(0, 4)
-                .map((item, index) => (
-                  <div key={item.discount_code_name}>
-                    <div className="right-section">
-                      <div className="left-section">
-                        <TagOutlined className="list-item-icon" />
-                        <span className="list-item-text">
-                          {item.discount_code_name}
-                        </span>
+        <Row>
+          {/* 現正進行推廣 */}
+          <Col span={24}>
+            <Card className="promotion-card" bordered={false}>
+              <span
+                className="custom-title-left"
+                style={{
+                  textAlign: "left",
+                  display: "flex",
+                  gap: "3px",
+                }}
+              >
+                <GiftOutlined style={{ marginRight: 8 }} />
+                現正進行推廣
+              </span>
+              <div className="list-item-container list-container">
+                {dashboardData?.active_discounts
+                  .slice(0, 4)
+                  .map((item, index) => (
+                    <div key={item.discount_code_name}>
+                      <div className="right-section">
+                        <div className="left-section">
+                          <TagOutlined className="list-item-icon" />
+                          <span className="list-item-text">
+                            {item.discount_code_name}
+                          </span>
+                        </div>
+
+                        <a
+                          href="/dashboard/discount_code_list"
+                          style={{ marginLeft: "auto" }}
+                        >
+                          <RightOutlined />
+                        </a>
                       </div>
+                      {index !== 3 && <hr />}
+                    </div>
+                  ))}
+              </div>
+            </Card>
+          </Col>
+
+          {/* 即將傳送廣播 */}
+          <Col span={24}>
+            <Card className="broadcast-card" bordered={false}>
+              <span
+                className="custom-title-left"
+                style={{
+                  textAlign: "left",
+                  display: "flex",
+                  gap: "6px",
+                }}
+              >
+                <img
+                  src="/Megaphone.png"
+                  alt="Megaphone Icon"
+                  className="megaphone-icon"
+                />
+                即將傳送廣播
+              </span>
+              <div className="list-item-container list-container">
+                {dashboardData?.upcoming_broadcasts.map((item, index) => (
+                  <div key={item.broadcast_name}>
+                    <div className="broadcast-row">
+                      <span className="list-item-title">
+                        {item.broadcast_name}
+                      </span>
 
                       <a
-                        href="/dashboard/discount_code_list"
+                        href="/dashboard/broadcast_setting"
+                        className="list-item-link"
                         style={{ marginLeft: "auto" }}
                       >
                         <RightOutlined />
                       </a>
                     </div>
-                    {index !== 3 && <hr />}
+                    <div className="broadcast-row-left">
+                      <img
+                        src="/Alarm.png"
+                        alt="Alarm"
+                        className="alarm-icon"
+                      />
+                      <span className="list-item-date">
+                        {new Date(item.scheduled_start)
+                          .toLocaleString("zh-TW", {
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                          })
+                          .replace(/\//g, "-")}{" "}
+                        {new Date(item.scheduled_start).toLocaleTimeString(
+                          "zh-TW",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            hour12: false,
+                          }
+                        )}
+                      </span>
+                    </div>
+                    {index !==
+                      dashboardData?.upcoming_broadcasts.length - 1 && <hr />}
                   </div>
                 ))}
-            </div>
-          </Card>
-        </Col>
-
-        {/* 即將傳送廣播 */}
-        <Col span={24}>
-          <Card className="broadcast-card" bordered={false}>
-            <span
-              className="custom-title-left"
-              style={{
-                textAlign: "left",
-                display: "flex",
-                gap: "6px",
-              }}
-            >
-              <img
-                src="/Megaphone.png"
-                alt="Megaphone Icon"
-                className="megaphone-icon"
-              />
-              即將傳送廣播
-            </span>
-            <div className="list-item-container list-container">
-              {dashboardData?.upcoming_broadcasts.map((item, index) => (
-                <div key={item.broadcast_name}>
-
-                  <div className="broadcast-row">
-                    <span className="list-item-title">
-                      {item.broadcast_name}
-                    </span>
-
-                    <a
-                      href="/dashboard/broadcast_setting"
-                      className="list-item-link"
-                      style={{ marginLeft: "auto" }}
-                    >
-                      <RightOutlined />
-                    </a>
-                  </div>
-                  <div className="broadcast-row-left">
-                    <img src="/Alarm.png" alt="Alarm" className="alarm-icon" />
-                    <span className="list-item-date">
-                      {new Date(item.scheduled_start)
-                        .toLocaleString("zh-TW", {
-                          year: "numeric",
-                          month: "2-digit",
-                          day: "2-digit",
-                        })
-                        .replace(/\//g, "-")}{" "}
-                      {new Date(item.scheduled_start).toLocaleTimeString(
-                        "zh-TW",
-                        {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                          hour12: false,
-                        }
-                      )}
-                    </span>
-                  </div>
-                  {index !== dashboardData?.upcoming_broadcasts.length - 1 && (
-                    <hr />
-                  )}
-                </div>
-              ))}
-            </div>
-          </Card>
-        </Col>
-      </Row>
+              </div>
+            </Card>
+          </Col>
+        </Row>
       </div>
-
     </div>
   );
 }

@@ -29,7 +29,6 @@
   color: #1890ff; /* Example link color for selected item */
 }
 
-
 /* Styling for the Logout Button (assuming it's a standard Ant Design button) */
 .ant-btn-primary {
   background-color: #1890ff; /* Example background color */
@@ -39,7 +38,230 @@
 /* Media query for responsiveness (adjust as needed) */
 @media (max-width: 768px) {
   .ant-menu-horizontal {
-    display: none;  /* Hide the horizontal menu on smaller screens */
+    display: none; /* Hide the horizontal menu on smaller screens */
   }
   /* Add styles for a mobile menu if needed */
 }
+
+/* header */
+
+.custom-page-menu .diamondIcon {
+  width: 4.243px !important;
+  height: 4.243px;
+  background: #d9d9d9;
+  transform: rotate(45deg);
+  display: inline-block;
+  position: relative;
+}
+
+.custom-page-menu .icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 21px;
+  height: 6px;
+  margin-right: 0px;
+}
+
+.custom-page-menu .menu-item-container {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+}
+
+.custom-page-menu .caret-icon {
+  margin-right: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 21px !important;
+}
+
+.custom-page-menu .menu-item-text {
+  font-family: "Noto Sans HK";
+  font-size: 16px;
+  font-style: normal;
+  line-height: 22px;
+  letter-spacing: -0.32px;
+}
+
+.custom-page-menu .menu-item-text {
+  color: var(--key-colors-primary, #131313);
+  font-weight: 400;
+}
+
+.custom-page-menu .menu-item-selected {
+  color: var(--key-colors-tertiary, #d74d03);
+  font-weight: 700;
+}
+
+.custom-page-menu
+  :where(
+    .css-dev-only-do-not-override-ni1kz0
+  ).ant-menu-light.ant-menu-horizontal
+  > .ant-menu-item::after,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light
+  > .ant-menu.ant-menu-horizontal
+  > .ant-menu-item::after,
+.custom-page-menu
+  :where(
+    .css-dev-only-do-not-override-ni1kz0
+  ).ant-menu-light.ant-menu-horizontal
+  > .ant-menu-submenu::after,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-light
+  > .ant-menu.ant-menu-horizontal
+  > .ant-menu-submenu::after {
+  content: none !important;
+  border-bottom: none !important;
+}
+
+.custom-page-menu
+  :where(.ant-menu-light.ant-menu-horizontal)
+  > .ant-menu-item-selected::after,
+.custom-page-menu
+  :where(.ant-menu-light.ant-menu-horizontal)
+  > .ant-menu-submenu-selected::after {
+  content: none !important;
+  border-bottom: none !important;
+}
+
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal {
+  line-height: normal !important;
+}
+
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal
+  .ant-menu-item,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu-horizontal
+  .ant-menu-submenu {
+  padding-inline: 0 !important;
+  margin-right: 8px;
+}
+
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu
+  .ant-menu-item
+  .ant-menu-item-icon
+  + span,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu
+  .ant-menu-submenu-title
+  .ant-menu-item-icon
+  + span,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu
+  .ant-menu-item
+  .anticon
+  + span,
+.custom-page-menu
+  :where(.css-dev-only-do-not-override-ni1kz0).ant-menu
+  .ant-menu-submenu-title
+  .anticon
+  + span {
+  margin-inline-start: 0 !important;
+}
+
+.custom-page-menu :where(.ant-menu-horizontal) > .ant-menu-item {
+  height: 50px;
+  line-height: 50px;
+  display: flex;
+  align-items: center;
+}
+/* header */
+
+/* page */
+.custom-title-container {
+  display: flex;
+  align-items: center;
+}
+
+.custom-title-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.custom-title-text {
+  color: var(--key-colors-primary, #131313);
+
+  /* H3 */
+  font-family: "Noto Sans HK";
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 30px; /* 125% */
+  white-space: nowrap;
+}
+
+.ant-input.ant-input-disabled,
+.ant-input[disabled] {
+  display: flex;
+  height: 44px;
+  padding: 12px;
+  align-items: flex-start;
+  flex-shrink: 0;
+  align-self: stretch;
+  border-radius: 5px;
+  border: 1px solid var(--key-colors-primary, #131313);
+  background: var(--White, #fff);
+}
+
+.form-input {
+  display: flex;
+  height: 44px;
+  padding: 12px;
+  align-items: center;
+  flex-shrink: 0;
+  align-self: stretch;
+  border-radius: 5px;
+  border: 1px solid var(--key-colors-primary, #131313);
+  background: var(--White, #fff);
+}
+
+.addButton,
+.CancelButton {
+  display: flex;
+  width: 99px;
+  height: 32px;
+  padding: 8px 10px;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+}
+
+.addButton {
+  border-radius: 5px;
+  background: var(--key-colors-tertiary, #d74d03);
+}
+
+.addButton:hover {
+  background: var(--key-colors-tertiary, #d74d03) !important;
+  color: #ffffff !important;
+}
+.CancelButton {
+  border-radius: 5px;
+  background: var(--DarkGray, #737277);
+  color: #ffffff;
+}
+.CancelButton:hover {
+  background: var(--DarkGray, #737277) !important;
+  color: #ffffff !important;
+}
+
+/* page */
+
+/* wati page */
+
+.form-container {
+  width: 500px;
+  padding: 50px 20px;
+  border-radius: 10px;
+  border: 8px solid var(--key-colors-primary, #131313);
+  background: var(--key-colors-neutral, #fff);
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+/* wati page */
