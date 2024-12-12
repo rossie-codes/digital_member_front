@@ -367,7 +367,8 @@ const LoginPage: React.FC = () => {
       }),
     });
     if (response.ok) {
-      router.push('/dashboard');
+      window.location.href = '/dashboard';
+      // router.push('/dashboard');
     } else {
       const errorData = await response.json();
       console.error('Login error:', errorData.error);
