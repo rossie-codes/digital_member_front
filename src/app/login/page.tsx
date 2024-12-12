@@ -124,7 +124,8 @@ const LoginPage: React.FC = () => {
 
       console.log('response:', response.ok);
       if (response.ok) {
-        router.push('/dashboard');
+        window.location.href = '/dashboard';
+        // router.push('/dashboard');
       } else {
         // Handle login error
         const errorData = await response.json();
