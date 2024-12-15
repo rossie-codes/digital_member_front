@@ -479,7 +479,13 @@ const GetMemberListPage: React.FC = () => {
       sorter: true, // Enable server-side sorting
       sortDirections: ['ascend', 'descend', 'ascend'],
     },
-
+    {
+      title: '到期日',
+      dataIndex: 'membership_expiry_date',
+      key: 'membership_expiry_date',
+      sorter: true, // Enable server-side sorting
+      sortDirections: ['ascend', 'descend', 'ascend'],
+    },
     {
       title: '生日',
       dataIndex: 'birthday', // Adjusted dataIndex if birthday is available
@@ -487,13 +493,7 @@ const GetMemberListPage: React.FC = () => {
       sorter: true, // Enable server-side sorting
       sortDirections: ['ascend', 'descend', 'ascend'],
     },
-    {
-      title: '生日',
-      dataIndex: 'membership_expiry_date',
-      key: 'membership_expiry_date',
-      sorter: true, // Enable server-side sorting
-      sortDirections: ['ascend', 'descend', 'ascend'],
-    },
+
     {
       title: '級別',
       dataIndex: 'membership_tier',
@@ -598,13 +598,13 @@ const GetMemberListPage: React.FC = () => {
           {/* 左邊的會員卡片區域 */}
           <Col>
             <Row gutter={0} align="middle">
-              {/* 固定顯示「新會員」卡片 */}
+              {/* 固定顯示「當月新會員」卡片 */}
               <Col style={{ marginRight: '25px' }}>
                 <Card className={styles.cardContainer}>
                   <div className={styles.content}>
-                    <img src="/Amount.png" alt="新會員" className={styles.icon} />
+                    <img src="/Amount.png" alt="當月新會員" className={styles.icon} />
                     <div className={styles.textContainer}>
-                      <p className={styles.countText}>新會員</p>
+                      <p className={styles.countText}>當月新會員</p>
                       <p className={styles.BigcountText}>{stats?.new_members_count}</p>
                     </div>
                   </div>

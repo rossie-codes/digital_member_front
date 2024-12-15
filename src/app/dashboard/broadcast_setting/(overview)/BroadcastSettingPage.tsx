@@ -400,7 +400,7 @@ const BroadcastSettingPage: React.FC = () => {
       dataIndex: "scheduled_start",
       key: "scheduled_start",
       sorter: true,
-      sortDirections: ["ascend", "descend"],
+      sortDirections: ["ascend", "descend", "ascend"],
       render: (text: string) => {
         const [datePart, timePart] = text.split(" ");
         const [year, month, day] = datePart.split("-");
