@@ -590,9 +590,9 @@ const GetDiscountCodeDetailPage: React.FC = () => {
             </Card> */}
 
       {/* Delete Button */}
-      {/* <Button type="primary" danger onClick={handleDelete} style={{ marginTop: 16 }}>
+      <Button type="primary" danger onClick={handleDelete} style={{ marginTop: 16 }}>
                 Delete Discount Code
-            </Button>*/}
+            </Button>
     </>
   );
 };

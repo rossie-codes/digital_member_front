@@ -554,9 +554,9 @@ const GetRedemptionItemDetailPage: React.FC = () => {
       </Form>
 
       {/* Delete Button */}
-      {/* <Button type="primary" danger onClick={handleDelete} style={{ marginTop: 16 }}>
+      <Button type="primary" danger onClick={handleDelete} style={{ marginTop: 16 }}>
                 Delete Redemption Item
-            </Button> */}
+            </Button>
     </>
   );
 };
