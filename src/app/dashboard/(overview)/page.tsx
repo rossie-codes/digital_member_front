@@ -69,8 +69,8 @@ const data = [
 ];
 
 const MemberChannelsChart = () => (
-  <ResponsiveContainer width="100%" height={320}>
-    <BarChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 10 }}>
+  <ResponsiveContainer width="100%" height={340}>
+    <BarChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 10 }}>
       <CartesianGrid vertical={false} />
       <XAxis dataKey="channel" axisLine={false} tickLine={false} />
       <YAxis

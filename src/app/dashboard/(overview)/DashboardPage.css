@@ -2,7 +2,6 @@
   display: flex;
   gap: 22px;
   flex-wrap: nowrap;
-  width: 100%;
 }
 
 .overflow-y-auto {
@@ -24,7 +23,7 @@
 .custom-title-width {
   display: flex;
   flex: 0.6;
-  min-width: 189px;
+  width: 189px;
   height: 554px;
   padding: 20px 15px;
   flex-direction: column;

@@ -3,6 +3,7 @@
     background-color: #fff;
     padding: 0 20px;
     border-bottom: 1px solid #eee;
+    height: auto;
   }
   .ant-menu-horizontal {
     border-bottom: none;
@@ -177,3 +178,12 @@
   color: #ffffff !important; /* 確保文字保持白色 */
 }
 
+:where(.ant-menu-light.ant-menu-horizontal) > .ant-menu-item-selected::after,
+:where(.ant-menu-light) > .ant-menu.ant-menu-horizontal > .ant-menu-item-selected::after {
+  border-bottom: none !important;
+  }
+
+  .ant-menu-horizontal > .ant-menu-item::after,
+  .ant-menu-horizontal > .ant-menu-submenu::after {
+    border-bottom: none !important; /* 移除主選單底部藍線 */
+  }

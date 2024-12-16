@@ -5,7 +5,7 @@ import React, { useContext } from 'react';
 
 import { useRouter } from 'next/navigation';
 import { cookies } from 'next/headers';
-
+import { LogoutOutlined } from "@ant-design/icons";
 const LogoutButton: React.FC = () => {
 
   const router = useRouter();
@@ -19,7 +19,7 @@ const LogoutButton: React.FC = () => {
     router.push('/login');
   };
 
-  return <button onClick={handleLogout}>Logout</button>;
+  return <button onClick={handleLogout}><LogoutOutlined  style={{ marginRight: '8px' }} />登出</button>;
 };
 
 export default LogoutButton;
