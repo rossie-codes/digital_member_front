@@ -918,7 +918,8 @@
   padding: 7px 12px !important;
 }
 
-.membership-select .ant-input-number .ant-input-number-input {
+/* 強制加載自定義樣式 */
+html body .membership-select .ant-input-number .ant-input-number-input {
   padding: 7px 12px !important;
 }
 

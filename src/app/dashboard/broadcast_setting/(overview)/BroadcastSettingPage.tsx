@@ -618,7 +618,7 @@ const BroadcastSettingPage: React.FC = () => {
       setModalMemberSearchText("");
       setModalMemberFilters({});
       setModalCurrentPage(1);
-      setModalPageSize(10);
+      setModalPageSize(100);
     }
   }, [isModalVisible]);
 
@@ -863,12 +863,15 @@ const BroadcastSettingPage: React.FC = () => {
         }
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
-        width={1000}
+        width={1300}
         footer={null}
+        styles={{
+          body: { height: "80vh" }
+        }}
       >
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           {/* 左側：表單區域 */}
-          <div style={{ width: "60%", paddingRight: "16px" }}>
+          <div style={{ width: "70%", paddingRight: "0px" }}>
             <Form
               form={broadcastForm}
               layout="vertical"
@@ -1031,7 +1034,7 @@ const BroadcastSettingPage: React.FC = () => {
                 loading={loadingModalMembers}
                 pagination={{
                   current: memberCurrentPage,
-                  pageSize: 5,
+                  pageSize: 100,
                   total: memberTotalItems,
                   showTotal: (total) => `Total ${total} items`,
                   showSizeChanger: true,
@@ -1039,18 +1042,21 @@ const BroadcastSettingPage: React.FC = () => {
                   position: ["bottomRight"],
                 }}
                 onChange={handleModalMembersTableChange}
+                scroll={{ y: 220 }}
+                style={{ maxHeight: "220px" }}
               />
             </Form>
           </div>
 
           {/* 右側：動態預覽區域 */}
           <div className="previewWrapper">
-            <div className="previewHeader">
+          <div className="previewHeader">
               <h3>預覽</h3>
             </div>
 
             <div className="previewContent">
               <div className="imageContainer">
+              
                 <img
                   src="/phone.png"
                   alt="Preview Background"

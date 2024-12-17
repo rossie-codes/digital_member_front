@@ -44,7 +44,7 @@
   border-bottom: none;
 }
 
-:where(.css-dev-only-do-not-override-ni1kz0) .ant-card .ant-card-head {
+.custom-title-width .ant-card .ant-card-head {
   padding: 0 !important;
 }
 

@@ -101,7 +101,7 @@ const BroadcastDetailPage: React.FC = () => {
     useState<string>("");
   const [modalMemberFilters, setModalMemberFilters] = useState<any>({});
   const [memberCurrentPage, setModalCurrentPage] = useState<number>(1);
-  const [memberPageSize, setModalPageSize] = useState<number>(10);
+  const [memberPageSize, setModalPageSize] = useState<number>(100);
   const [memberTotalItems, setModalTotalItems] = useState<number>(0);
 
   const [selectedTemplateData, setSelectedTemplateData] = useState<any>(null);
@@ -651,7 +651,8 @@ const BroadcastDetailPage: React.FC = () => {
                 position: ["bottomRight"],
               }}
               onChange={handleModalMembersTableChange}
-              // ... other props
+              scroll={{ y: 220 }}
+              style={{ maxHeight: "220px" }}
             />
           </Form>
         </div>
