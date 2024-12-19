@@ -23,6 +23,8 @@ const WatiPage: React.FC = () => {
       );
 
       const data = await response.json();
+      console.log(data.admin_name);
+      
       setAdminName(data.admin_name);
     } catch (error) {
       console.error("Failed to fetch admin name:", error);
