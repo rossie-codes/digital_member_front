@@ -61,7 +61,7 @@ interface StatsData {
 const GetMemberListPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
-  const hasFetched = useRef(false);
+  // const hasFetched = useRef(false);
 
   const router = useRouter();
 
@@ -145,7 +145,8 @@ const GetMemberListPage: React.FC = () => {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list?${queryParams.toString()}`,
         {
-          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
         }
       );
 
@@ -154,7 +155,7 @@ const GetMemberListPage: React.FC = () => {
       }
 
       const jsonData = await response.json();
-      console.log('Parsed JSON Data:', jsonData);
+
 
       const members: any[] = jsonData.data;
       const total: number = jsonData.total;
@@ -224,11 +225,18 @@ const GetMemberListPage: React.FC = () => {
     const fetchStats = async () => {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list`, {
-          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
         });
         const data = await response.json();
-        console.log(data); // 查看後端數據結構
+        // console.log('data: ', data); // 查看後端數據結構
         setStats(data);
+        setMembershipTiers(data.membership_tiers || []);
+        const tierFilters = data.membership_tiers.map((tier: string) => ({
+          text: tier,
+          value: tier,
+        }));
+        setTierFilterOptions(tierFilters);
       } catch (error) {
         console.error("Failed to fetch stats:", error);
       }
@@ -239,38 +247,38 @@ const GetMemberListPage: React.FC = () => {
 
   // Fetch membership tier data from the backend and set filter options
 
-  useEffect(() => {
-    const fetchMembershipTiers = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list`);
-        const data = await response.json();
-        setMembershipTiers(data.membership_tiers || []);
+  // useEffect(() => {
+  //   const fetchMembershipTiers = async () => {
+  //     try {
+  //       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/member/get_member_list`);
+  //       const data = await response.json();
+  //       setMembershipTiers(data.membership_tiers || []);
 
-        const tierFilters = data.membership_tiers.map((tier: string) => ({
-          text: tier,
-          value: tier,
-        }));
-        setTierFilterOptions(tierFilters);
-      } catch (error) {
-        console.error("Failed to fetch membership tiers:", error);
-      }
-    };
+  //       const tierFilters = data.membership_tiers.map((tier: string) => ({
+  //         text: tier,
+  //         value: tier,
+  //       }));
+  //       setTierFilterOptions(tierFilters);
+  //     } catch (error) {
+  //       console.error("Failed to fetch membership tiers:", error);
+  //     }
+  //   };
 
-    fetchMembershipTiers();
-  }, []);
+  //   fetchMembershipTiers();
+  // }, []);
 
 
   // Adjusted useEffect
   useEffect(() => {
-    if (!hasFetched.current) {
-      hasFetched.current = true;
+    // if (!hasFetched.current) {
+      // hasFetched.current = true;
       fetchData({
         page: currentPage,
         pageSize: pageSize,
         filters: tableFilters,
         searchText: searchText,
       });
-    }
+    // }
   }, [currentPage, pageSize, tableFilters, searchText]);
 
   const onSearch = (value: string) => {
@@ -586,9 +594,6 @@ const GetMemberListPage: React.FC = () => {
   };
 
   if (error) return <p>Error: {error.message}</p>;
-
-
-  console.log('Stats:', stats);
 
 
   return (
