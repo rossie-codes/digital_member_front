@@ -89,7 +89,7 @@ interface Member {
 const BroadcastSettingPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
-  const hasFetched = useRef(false);
+  // const hasFetched = useRef(false);
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -194,7 +194,8 @@ const BroadcastSettingPage: React.FC = () => {
           process.env.NEXT_PUBLIC_API_URL
         }/broadcast_setting/get_broadcast_list?${queryParams.toString()}`,
         {
-          credentials: "include",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
         }
       );
 
@@ -276,14 +277,14 @@ const BroadcastSettingPage: React.FC = () => {
 
   // Fetch data when component mounts
   useEffect(() => {
-    if (!hasFetched.current) {
-      hasFetched.current = true;
+    // if (!hasFetched.current) {
+      // hasFetched.current = true;
       fetchBroadcastData({
         page: broadcastCurrentPage,
         pageSize: broadcastPageSize,
         broadcastSearchText: broadcastSearchText,
       });
-    }
+    // }
   }, [broadcastCurrentPage, broadcastPageSize, broadcastSearchText]);
 
   const onBroadcastSearch = (value: string) => {
@@ -306,10 +307,8 @@ const BroadcastSettingPage: React.FC = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/delete_broadcast/${key}`,
         {
           method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
         }
       );
 
@@ -525,7 +524,8 @@ const BroadcastSettingPage: React.FC = () => {
           process.env.NEXT_PUBLIC_API_URL
         }/broadcast_setting/get_broadcast_member_list?${queryParams.toString()}`,
         {
-          credentials: "include",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
         }
       );
 
@@ -629,10 +629,8 @@ const BroadcastSettingPage: React.FC = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/get_wati_template_detail/${templateId}`,
         {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
         }
       );
 
@@ -770,9 +768,8 @@ const BroadcastSettingPage: React.FC = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/post_new_broadcast`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
           body: JSON.stringify(dataToSubmit),
         }
       );

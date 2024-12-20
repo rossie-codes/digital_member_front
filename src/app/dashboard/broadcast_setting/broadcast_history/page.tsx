@@ -169,7 +169,8 @@ const BroadcastHistoryPage: React.FC = () => {
           process.env.NEXT_PUBLIC_API_URL
         }/broadcast_setting/get_broadcast_history_list?${queryParams.toString()}`,
         {
-          credentials: "include",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
         }
       );
 
@@ -463,7 +464,8 @@ const BroadcastHistoryPage: React.FC = () => {
           process.env.NEXT_PUBLIC_API_URL
         }/broadcast_setting/get_broadcast_member_list?${queryParams.toString()}`,
         {
-          credentials: "include",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
         }
       );
 
@@ -563,10 +565,8 @@ const BroadcastHistoryPage: React.FC = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/get_wati_template_detail/${templateId}`,
         {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
         }
       );
 
@@ -695,9 +695,8 @@ const BroadcastHistoryPage: React.FC = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/post_new_broadcast`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
           body: JSON.stringify(dataToSubmit),
         }
       );

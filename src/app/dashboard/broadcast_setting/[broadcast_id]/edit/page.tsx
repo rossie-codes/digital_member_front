@@ -121,10 +121,8 @@ const BroadcastDetailPage: React.FC = () => {
           `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/get_wati_template_detail/${templateId}`,
           {
             method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include', // Include cookies in the request
           }
         );
 
@@ -162,10 +160,8 @@ const BroadcastDetailPage: React.FC = () => {
           `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/get_broadcast_detail/${broadcast_id}`,
           {
             method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include",
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include', // Include cookies in the request
           }
         );
 
@@ -230,9 +226,8 @@ const BroadcastDetailPage: React.FC = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/broadcast_setting/put_edit_broadcast_detail/${broadcast_id}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
           body: JSON.stringify(dataToSubmit),
         }
       );
@@ -285,11 +280,11 @@ const BroadcastDetailPage: React.FC = () => {
       }
 
       const response = await fetch(
-        `${
-          process.env.NEXT_PUBLIC_API_URL
+        `${process.env.NEXT_PUBLIC_API_URL
         }/broadcast_setting/get_broadcast_member_list?${queryParams.toString()}`,
         {
-          credentials: "include",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
         }
       );
 

@@ -91,6 +91,8 @@ const GetMembershipTierPage: React.FC = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/membership_tier/get_membership_tier_setting`,
         {
           method: "GET",
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
         }
       );
 
@@ -154,7 +156,10 @@ const GetMembershipTierPage: React.FC = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/membership_tier/get_membership_basic_setting`,
         {
           method: "GET",
-        }
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
+        },
+
       );
 
       if (!response.ok) {
@@ -235,9 +240,8 @@ const GetMembershipTierPage: React.FC = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/membership_tier/post_membership_tier_setting`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include', // Include cookies in the request
           body: JSON.stringify(submissionPayload),
         }
       );
