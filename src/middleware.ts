@@ -8,7 +8,7 @@ export default async function middleware(request: NextRequest) {
   
   const publicRoutes = ['/login', '/signup', '/'];
 
-  const membi_admin_token = request.cookies.get('membi_admin_token');
+  const membi_admin_token = request.cookies.get(`${process.env.TENANT_HOST}_admin_token`);
 
   if (isProtectedRoute) {
     if (!membi_admin_token) {
