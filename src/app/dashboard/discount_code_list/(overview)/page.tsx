@@ -84,6 +84,8 @@ const DiscountCodeListPage: React.FC = () => {
   const [discountCodeStatuses, setDiscountCodeStatuses] = useState<string[]>(
     []
   );
+  const [activeCount, setActiveCount] = useState<number>(0);
+  const [scheduledCount, setScheduledCount] = useState<number>(0);
 
   const [searchText, setSearchText] = useState<string>(""); // State for search text
 
@@ -237,6 +239,8 @@ const DiscountCodeListPage: React.FC = () => {
         setDiscountTypes(responseData.discount_types || []);
         setUseLimitTypes(responseData.use_limit_types || []);
         setDiscountCodeStatuses(responseData.discount_code_status || []);
+        setActiveCount(responseData.active_count || 0);
+        setScheduledCount(responseData.scheduled_count || 0);
       }
     } catch (error: any) {
       console.error("Error fetching discount codes:", error);
@@ -671,7 +675,7 @@ const DiscountCodeListPage: React.FC = () => {
           />
           <div className="promotion-content">
             <div className="promotion-text">有效優惠</div>
-            <div className="promotion-number">5</div>
+            <div className="promotion-number">{activeCount}</div>
           </div>
         </div>
 
@@ -679,7 +683,7 @@ const DiscountCodeListPage: React.FC = () => {
           <img src="/pending.png" alt="Pending" className="promotion-image" />
           <div className="promotion-content">
             <div className="promotion-text">預定優惠</div>
-            <div className="promotion-number">8</div>
+            <div className="promotion-number">{scheduledCount}</div>
           </div>
         </div>
 

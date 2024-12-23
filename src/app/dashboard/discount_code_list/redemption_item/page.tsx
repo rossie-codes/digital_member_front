@@ -72,6 +72,7 @@ const GetGiftSettingPage: React.FC = () => {
 
   const [redemptionTypes, setRedemptionTypes] = useState<string[]>([]);
   const [redemptionItemStatuses, setRedemptionItemStatuses] = useState<string[]>([]);
+  const [activeCount, setActiveCount] = useState<number>(0);
 
   const [searchText, setSearchText] = useState<string>(''); // State for search text
 
@@ -109,6 +110,7 @@ const GetGiftSettingPage: React.FC = () => {
         // Set filter data
         setRedemptionTypes(responseData.redemption_types || []);
         setRedemptionItemStatuses(responseData.redemption_item_status || []);
+        setActiveCount(responseData.active_count || 0);
       }
     } catch (error: any) {
       console.error('Error fetching redemption items:', error);
@@ -555,7 +557,7 @@ const columns: TableColumnsType<RedemptionItem> = [
     />
     <div className="promotion-content">
       <div className="promotion-text">有效禮物</div>
-      <div className="promotion-number">5</div>
+      <div className="promotion-number">{activeCount}</div>
     </div>
   </div>
 
