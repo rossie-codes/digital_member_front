@@ -310,7 +310,7 @@ const SignupPage = () => {
           <StyledInput placeholder="輸入新名稱" />
         </Form.Item>
         <Form.Item
-          name="admin_password"
+          name="new_admin_password"
           rules={[{ required: true, message: "請輸入一個新的密碼!" }]}
           style={{ marginBottom: "16px" }}
         >
