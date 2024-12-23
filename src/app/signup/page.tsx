@@ -310,7 +310,7 @@ const SignupPage = () => {
           <StyledInput placeholder="輸入新名稱" />
         </Form.Item>
         <Form.Item
-          name="new_admin_password"
+          name="admin_password"
           rules={[{ required: true, message: "請輸入一個新的密碼!" }]}
           style={{ marginBottom: "16px" }}
         >
@@ -318,13 +318,13 @@ const SignupPage = () => {
         </Form.Item>
         <Form.Item
           name="confirm_admin_password"
-          dependencies={["new_admin_password"]}
+          dependencies={["admin_password"]}
           style={{ marginBottom: "16px" }}
           rules={[
             { required: true, message: "請再次輸入密碼!" },
             ({ getFieldValue }) => ({
               validator(_, value) {
-                if (!value || getFieldValue("new_admin_password") === value) {
+                if (!value || getFieldValue("admin_password") === value) {
                   return Promise.resolve();
                 }
                 return Promise.reject(new Error("Passwords do not match."));
